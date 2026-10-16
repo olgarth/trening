@@ -50,7 +50,9 @@ h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margi
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 10px;margin-inline:-2px}
 .top h1{font-size:30px;line-height:1;text-transform:uppercase}
 .top .sub{color:var(--muted);font-size:13px;text-align:right}
-main{display:flex;flex-direction:column;gap:14px;max-width:720px;margin-inline:auto}
+main{display:flex;flex-direction:column;gap:14px;max-width:720px;margin-inline:auto;min-width:0}
+main>*{min-width:0;max-width:100%}
+.card,.it,.hint,.prev,.it-meta,.kv{overflow-wrap:anywhere}
 .lbl{font-family:var(--f-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .muted{color:var(--muted)} .small{font-size:13px}
 .num{font-family:var(--f-display);font-variant-numeric:tabular-nums}
@@ -82,7 +84,7 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;min-height:34px;padding:0 12px;font-size:14px;font-weight:600;color:var(--muted)}
 .chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .p-good{background:var(--good-soft);color:var(--good)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-bad{background:var(--bad-soft);color:var(--bad)} .p-acc{background:var(--accent-soft);color:var(--accent)} .p-mut{background:var(--surface2);color:var(--muted)}
 .empty{color:var(--muted);text-align:center;padding:18px 8px;margin:0}
 
@@ -379,7 +381,8 @@ let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
 function defaults(){return{v:1,seedV:2,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 function load(){try{const r=localStorage.getItem(KEY);if(r){S=JSON.parse(r);fix();return}}catch(e){}S=defaults()}
-function fix(){const d=defaults(),sv=S.seedV||1;for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();if(sv<2){if(!S.catalog.some(e=>e.id==='trx_pistol')){const e=seedCatalog().find(x=>x.id==='trx_pistol');if(e)S.catalog.push(e)}S.seedV=2}}
+function fix(){const d=defaults(),sv=S.seedV||1;for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
+ if(sv<2){if(!S.catalog.some(e=>e.id==='trx_pistol')){const e=seedCatalog().find(x=>x.id==='trx_pistol');if(e)S.catalog.push(e)}S.seedV=2}}
 function save(){CACHE=null;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
 const ex=id=>S.catalog.find(e=>e.id===id);
 const band=id=>S.settings.bands.find(b=>b.id===id);
@@ -405,6 +408,8 @@ function isHard(it,s){if(!STR.includes(it.type))return false;const R=repsOf(it,s
 /* ---- TRX position model ---- */
 function defTrx(){return{height:185,foot:30,anchors:[{id:'bar',name:'Турнік',h:2.4},{id:'wall',name:'Стіна',h:2.2}]}}
 const HH={waist:['Пояс','пояс',.58],mid:['Між поясом і коліном','п/к',.43],knee:['Коліно','кол',.285],low:['Нижче коліна','н/к',.14]};
+const TRX_PUSH=['trx_push','trx_triceps'];
+const trxDirOf=exId=>{const e=ex(exId)||{};return e.trxDir||(TRX_PUSH.includes(exId)?'push':'pull')};
 const TRX_DEF={trx_squat:'leg',trx_lunge:'leg',trx_pistol:'leg',trx_legcurl:'manual',trx_knees:'manual'};
 function trxModeOf(exId){const e=ex(exId)||{};if(e.trxMode)return e.trxMode;if(e.trxAngle!=null)return e.trxAngle?'angle':'manual';return TRX_DEF[exId]||'angle'}
 const trxAngleMode=it=>trxModeOf(it.exId)==='angle';
@@ -413,14 +418,18 @@ const legShare=exId=>{const e=ex(exId)||{};return e.legShare!=null?e.legShare:(e
 function assistOfLevel(l){l=num(l)||5;return l<=3?'strong':l<=5?'mid':l<=7?'light':l<=8?'bal':'none'}
 function trxLegKg(it,s,bw){if(num(s.kgm))return num(s.kgm);if(!num(s.w)&&!s.assist)return null;if(!bw)return null;const k=(s.man||!s.assist)?assistOfLevel(s.w):s.assist;const a=ASSIST.find(x=>x[0]===k)||ASSIST[2];return bw*legShare(it.exId)*(1-a[2])}
 function trxAngle(pos){const T=S.settings.trx,H=(num(T.height)||185)/100,L=.80*H,a=.37*H;const anc=(T.anchors.find(x=>x.id===pos.anchor)||{});const A=num(pos.ah)||num(anc.h)||2.3;
- const h0=H*HH[pos.hh][2],Sl=A-h0,d=(num(pos.st)||0)*(num(T.foot)||30)/100;if(Sl<=0)return null;
- let best=null;for(let i=1;i<=336;i++){const t=i/4*Math.PI/180;const hx=d+L*Math.cos(t)-a*Math.sin(t),hy=L*Math.sin(t)+a*Math.cos(t);const f=Math.hypot(hx,hy-A)-Sl;if(!best||Math.abs(f)<Math.abs(best[1]))best=[i/4,f]}
+ const h0=H*HH[pos.hh][2],Sl=A-h0,d=(num(pos.st)||0)*(num(T.foot)||30)/100,sg=pos.dir==='push'?-1:1;if(Sl<=0)return null;
+ let tv=null;for(let i=0;i<=336;i++){const t=i/4*Math.PI/180;if(L*Math.sin(t)+sg*a*Math.cos(t)>=h0){tv=i/4;break}}
+ if(pos.vert)return tv;if(tv!=null){const r=tv*Math.PI/180,dv=-(L*Math.cos(r)-sg*a*Math.sin(r));if(d<=dv)return tv}
+ let best=null;for(let i=1;i<=336;i++){const t=i/4*Math.PI/180;const hx=d+L*Math.cos(t)-sg*a*Math.sin(t),hy=L*Math.sin(t)+sg*a*Math.cos(t);const f=Math.hypot(hx,hy-A)-Sl;if(!best||Math.abs(f)<Math.abs(best[1]))best=[i/4,f]}
  return best&&Math.abs(best[1])<.03&&best[0]<84?best[0]:null}
 function angleLevel(x){if(x==null)return 1;for(const[l,v]of[[78,1],[70,2],[63,3],[55,4],[48,5],[40,6],[32,7],[22,8]])if(x>=l)return v;return 9}
 function trxCalc(pos){const ang=trxAngle(pos);return{ang,lvl:Math.min(10,angleLevel(ang)+(pos.el?1:0))}}
-function posTxt(p){return p?`${HH[p.hh][1]} ${nf(num(p.st)||0,1)}ст${p.el?'+п':''}`:''}
+function posTxt(p){return p?`${HH[p.hh][1]} ${p.vert?'верт':nf(num(p.st)||0,1)+'ст'}${p.el?'+п':''}`:''}
 function lastTrxFor(exId){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const it=ws[i].items.find(x=>x.exId===exId&&x.type==='trx');if(it){const s=it.sets.find(s=>num(s.w));if(s)return{w:s.w,pos:s.pos?{...s.pos}:null,assist:s.assist||null,kgm:s.kgm||''}}}return null}
-function trxGrid(anc){const hs=Object.keys(HH);let rows='';for(let st=-1;st<=8;st++){const c=hs.map(h=>{const a=trxAngle({anchor:anc.id,ah:anc.h,hh:h,st});return a==null?'<td class="r muted">—</td>':`<td class="r num">${angleLevel(a)}</td>`});if(c.every(x=>x.includes('—'))&&st>0)continue;rows+=`<tr><td>${st<0?'за кріпл.':st}</td>${c.join('')}</tr>`}
+function trxGrid(anc,dir){const hs=Object.keys(HH);const cell=pos=>{const a=trxAngle(Object.assign({anchor:anc.id,ah:anc.h,dir},pos));return a==null?'<td class="r muted">—</td>':`<td class="r num">${angleLevel(a)}</td>`};
+ const vr=hs.map(h=>cell({hh:h,vert:true}));let rows=`<tr><td>Лямки вертикально</td>${vr.join('')}</tr>`;const r=dir==='push'?[-10,3]:[-1,8];
+ for(let st=r[0];st<=r[1];st++){const c=hs.map(h=>cell({hh:h,st}));if(c.every(x=>x.includes('—')))continue;if(dir==='push'&&c.every((x,i)=>x===vr[i]||x.includes('—')))continue;rows+=`<tr><td>${st}</td>${c.join('')}</tr>`}
  return`<div class="tblw"><table class="tbl"><thead><tr><th>Ступні</th>${hs.map(h=>`<th class="r">${HH[h][1]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`}
 function setTxt(it,s){const R=it.uni?`${s.rl||'–'}/${s.rr||'–'}`:(s.r||'–');let L='';switch(it.type){case'bw':L=num(s.w)?'+'+s.w:'ВТ';break;case'band':L=bandsOf(s).length>1?'('+bandLabel(bandsOf(s))+')':bandLabel(bandsOf(s));break;case'trx':L='р'+(s.w||'–')+(s.pos?' ['+posTxt(s.pos)+']':s.assist||num(s.kgm)?' ['+[s.assist?(ASSIST.find(x=>x[0]===s.assist)||['','?'])[1].toLowerCase():'',num(s.kgm)?s.kgm+'кг':''].filter(Boolean).join(' ')+']':'');break;default:L=s.w||'–'}return L+'×'+R}
 function itemStats(it,bw){
@@ -475,7 +484,7 @@ function vLog(){if(S.draft)return vDraft();
 function phImp(w,k,dg){const r=imputed(w,k);return r.v!=null?'≈ '+nf(r.v,dg):''}
 function vDraft(){const w=S.draft;
  let h=`<section class="card stack">
-  <div class="row between"><div class="wk-name">${esc(w.tplName)}</div>${w.tplNote?`<span class="pill p-mut">${esc(w.tplNote)}</span>`:''}</div>
+  <div class="wk-name">${esc(w.tplName)}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}
   <div class="metrics">
    <label class="field" style="grid-column:1/-1"><span>Дата тренування</span><input class="in" type="date" data-f="w" data-k="date" value="${esc(w.date)}" id="w-date"></label>
    <label class="field"><span>Сон, год</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>
@@ -743,7 +752,7 @@ function vSet(){const t=S.settings.theme;
  <section class="card stack"><div class="lbl">TRX</div><div class="g2"><label class="field"><span>Зріст, см</span><input class="in" inputmode="numeric" data-f="trx" data-k="height" id="trx-h" value="${esc(S.settings.trx.height)}"></label><label class="field"><span>Довжина ступні, см</span><input class="in" inputmode="decimal" data-f="trx" data-k="foot" id="trx-f" value="${esc(S.settings.trx.foot)}"></label></div>
  <div class="field"><span>Місця кріплення (висота точки кріплення від підлоги, м)</span>${S.settings.trx.anchors.map(a=>`<div class="row" style="flex-wrap:nowrap"><input class="in" data-f="anc" data-b="${a.id}" data-k="name" id="an-${a.id}" value="${esc(a.name)}" aria-label="Назва"><input class="cell" style="width:76px;flex:none" inputmode="decimal" data-f="anc" data-b="${a.id}" data-k="h" id="ah-${a.id}" value="${esc(a.h)}" aria-label="Висота, м"><button class="ib del" data-a="anc-del" data-b="${a.id}" aria-label="Видалити">✕</button></div>`).join('')}</div>
  <button class="btn full" data-a="anc-add">+ Додати кріплення</button>
- ${S.settings.trx.anchors.map(a=>`<details class="how"><summary>Таблиця рівнів: ${esc(a.name)}</summary><p class="muted small">Рядки - ступні від кріплення, стовпці - де висять ручки: пояс, між поясом і коліном, коліно, нижче коліна. Ноги на підвищенні +1.</p>${trxGrid(a)}</details>`).join('')}
+ ${S.settings.trx.anchors.map(a=>`<details class="how"><summary>Таблиця рівнів: ${esc(a.name)}</summary><p class="muted small">Рядки - ступні від кріплення (мінус = ноги з іншого боку кріплення, можливо на турніку), стовпці - де висять ручки: пояс, між поясом і коліном, коліно, нижче коліна. Ноги на підвищенні +1.</p><div class="lbl">Тяги</div>${trxGrid(a,'pull')}<div class="lbl" style="margin-top:10px">Жими і віджимання</div>${trxGrid(a,'push')}</details>`).join('')}
  <p class="muted small" style="margin:0">Типові висоти кріплень - заміряй свої. Кут перевіряється програмою iPhone «Рулетка» → «Рівень»: телефон на груди або спину в нижній точці.</p></section>
  <section class="card stack"><div class="lbl">Мої гуми</div><p class="muted small" style="margin:0">Типові значення, зміни під свої. Нові діапазони діють для наступних записів, збережені тренування не перераховуються.</p><div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button></section>
  <section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.</p>
@@ -783,7 +792,7 @@ function vSet(){const t=S.settings.theme;
   <li>Рівень - шкала 1-10 за кутом тіла: що горизонтальніше, то важче.</li>
   <li>У тягах і жимах навантаження рахується в кг: вага тіла × 0,69 × cos(кут до підлоги). Горизонтально ~69% ваги тіла, 45° ~49%, 60° ~35%, ноги на підвищенні ~73%. Похибка ±10-15%, але щоразу однакова, тож прогрес видно чесно.</li>
   <li>Кут: 78°+ = 1, 70-77° = 2, 63-69° = 3, 55-62° = 4, 48-54° = 5, 40-47° = 6, 32-39° = 7, 22-31° = 8, менше 22° = 9, ноги на підвищенні +1.</li>
-  <li>У тягах і жимах рівень рахується з положення: кріплення, висота ручок, ступні до точки опори. Розрахунок наближений (±1 рівень); точніше підлаштуєш вручну, звіривши кут у «Рулетка» → «Рівень».</li>
+  <li>У тягах і жимах рівень рахується з положення: кріплення, висота ручок, ступні до точки опори або «лямки вертикально», коли руки прямо під кріпленням (на турніку). Кут береться у стартовій позиції з прямими руками. Розрахунок наближений (±1 рівень); точніше підлаштуєш вручну, звіривши кут у «Рулетка» → «Рівень».</li>
   <li>Присідання, присідання на одній нозі й випади: навантаження = вага тіла × (1 − допомога рук). Допомога: сильна ~40%, помірна ~25%, легка ~15%, лише баланс ~5%, без рук 0. У випадах передня нога бере ~85%. Точніше - виміряти на підлогових вагах і вписати кг.</li>
   <li>Згинання ніг і підтягування колін - ручний рівень, без кг.</li>
   <li>Прогресія: повтори до верху діапазону → рівень +1 → знову з низу діапазону.</li></ul></details>
@@ -810,7 +819,7 @@ function renderExEd(){const e=EXED;const isStr=STR.includes(e.type)||e.type==='h
  ${isStr?`<label class="field"><span>Основна група м’язів</span><select class="in" data-f="exed" data-k="group" id="exed-group"><option value="">Без групи</option>${GROUPS.map(g=>`<option ${g===e.group?'selected':''}>${g}</option>`).join('')}</select></label>
  <div class="field"><span>Допоміжні (рахуються як 0,5 підходу)</span><div class="chips">${GROUPS.filter(g=>g!==e.group).map(g=>`<button class="chip ${e.sec.includes(g)?'on':''}" data-a="exed-sec" data-v="${g}">${g}</button>`).join('')}</div></div>
  <label class="chk"><input type="checkbox" data-c="exed-uni" id="exed-uni" ${e.uni?'checked':''}>Одностороння: повтори окремо Л / П</label>`:''}
- ${e.type==='trx'?(()=>{const m=e.trxMode||(e.trxAngle!=null?(e.trxAngle?'angle':'manual'):(TRX_DEF[e.id]||'angle'));return`<label class="field"><span>Як рахувати навантаження</span><select class="in" data-c="exed-trxmode" id="exed-trxmode">${[['angle','За кутом тіла (тяги, жими)'],['leg','Ноги з допомогою рук (присідання, випади)'],['manual','Ручний рівень, без кг']].map(([k,l])=>`<option value="${k}" ${k===m?'selected':''}>${l}</option>`).join('')}</select></label>${m==='leg'?`<label class="chk"><input type="checkbox" data-c="exed-lunge" id="exed-lunge" ${(e.legShare!=null?e.legShare<1:e.id==='trx_lunge')?'checked':''}>Випад / спліт: на передню ногу ~85% ваги</label>`:''}`})():''}
+ ${e.type==='trx'?(()=>{const m=e.trxMode||(e.trxAngle!=null?(e.trxAngle?'angle':'manual'):(TRX_DEF[e.id]||'angle'));return`<label class="field"><span>Як рахувати навантаження</span><select class="in" data-c="exed-trxmode" id="exed-trxmode">${[['angle','За кутом тіла (тяги, жими)'],['leg','Ноги з допомогою рук (присідання, випади)'],['manual','Ручний рівень, без кг']].map(([k,l])=>`<option value="${k}" ${k===m?'selected':''}>${l}</option>`).join('')}</select></label>${m==='angle'?`<label class="field"><span>Напрям руху</span><select class="in" data-c="exed-trxdir" id="exed-trxdir">${[['pull','Тяга до себе (обличчям до кріплення)'],['push','Жим, віджимання (спиною до кріплення)']].map(([k,l])=>`<option value="${k}" ${k===(e.trxDir||(TRX_PUSH.includes(e.id)?'push':'pull'))?'selected':''}>${l}</option>`).join('')}</select></label>`:''}${m==='leg'?`<label class="chk"><input type="checkbox" data-c="exed-lunge" id="exed-lunge" ${(e.legShare!=null?e.legShare<1:e.id==='trx_lunge')?'checked':''}>Випад / спліт: на передню ногу ~85% ваги</label>`:''}`})():''}
  ${e.type==='cardio'?`<div class="field"><span>Які показники вписувати (плюс завжди «Важкість 1-10»)</span><div class="chips">${Object.entries(CF).map(([k,v])=>`<button class="chip ${(e.cf||[]).includes(k)?'on':''}" data-a="exed-cf" data-v="${k}">${v}</button>`).join('')}</div></div>`:''}
  <button class="btn pri full" data-a="exed-save">Зберегти</button>
  ${e._new?'':'<button class="btn danger full" data-a="exed-del">Видалити з каталогу</button>'}
@@ -818,17 +827,18 @@ function renderExEd(){const e=EXED;const isStr=STR.includes(e.type)||e.type==='h
 let TX={},TXCTX=null;
 function trxSheet(u,n,keep){const it=itemBy(u);if(!it)return;TXCTX={u,n};const T=S.settings.trx;const mode=trxModeOf(it.exId);
  if(!keep){const s=it.sets[n],prev=it.sets.slice(0,n).reverse().find(x=>x.pos||x.assist)||{},last=lastTrxFor(it.exId)||{};const p=s.pos||prev.pos||last.pos;
-  TX={mode,angle:mode==='angle',anchor:p?p.anchor:T.anchors[0].id,hh:p?p.hh:'mid',st:p?num(p.st)||0:3,el:p?!!p.el:false,lvl:num(s.w)||null,manual:!!s.man||(!!num(s.w)&&!p&&!s.assist),
+  TX={mode,angle:mode==='angle',dir:trxDirOf(it.exId),vert:p?!!p.vert:false,anchor:p?p.anchor:T.anchors[0].id,hh:p?p.hh:'mid',st:p?num(p.st)||0:(trxDirOf(it.exId)==='push'?0:3),el:p?!!p.el:false,lvl:num(s.w)||null,manual:!!s.man||(!!num(s.w)&&!p&&!s.assist),
    assist:s.assist||prev.assist||last.assist||'light',pause:!!s.pause,kgm:s.kgm||''};if(mode==='leg'&&!s.man)TX.manual=false;if(!T.anchors.some(a=>a.id===TX.anchor))TX.anchor=T.anchors[0].id}
  const bw=bwOf(S.draft||{});let calc=null;
- if(TX.mode==='angle'){calc=trxCalc({anchor:TX.anchor,hh:TX.hh,st:TX.st,el:TX.el});TX.lastAng=calc.ang;if(!TX.manual||!TX.lvl)TX.lvl=calc.lvl}
+ if(TX.mode==='angle'){calc=trxCalc({anchor:TX.anchor,hh:TX.hh,st:TX.st,el:TX.el,dir:TX.dir,vert:TX.vert});TX.lastAng=calc.ang;if(!TX.manual||!TX.lvl)TX.lvl=calc.lvl}
  else if(TX.mode==='leg'){const a=ASSIST.find(x=>x[0]===TX.assist)||ASSIST[2];if(!TX.manual||!TX.lvl)TX.lvl=Math.min(10,a[3]+(TX.pause?1:0))}
  else if(!TX.lvl)TX.lvl=5;
  const chips=(arr,act,cur)=>`<div class="chips">${arr.map(([v,l])=>`<button class="chip ${v===cur?'on':''}" data-a="${act}" data-v="${v}">${esc(l)}</button>`).join('')}</div>`;
  let h=`<h3>${esc(it.name)}: підхід ${n+1}</h3>`;
  if(TX.mode==='angle'){h+=`<div class="field"><span>Кріплення</span>${chips(T.anchors.map(a=>[a.id,a.name+' '+nf(num(a.h),2)+' м']),'tx-anc',TX.anchor)}</div>
   <div class="field"><span>Ручки висять на рівні (лямки вільно)</span>${chips(Object.entries(HH).map(([k,v])=>[k,v[0]]),'tx-hh',TX.hh)}</div>
-  <div class="field"><span>Ступні від точки під кріпленням до точки опори (п'яти в тягах, носки в жимах)</span><div class="row"><button class="ib" data-a="tx-st" data-d="-0.5" aria-label="Ближче">−</button><b class="num" style="font-size:24px;min-width:56px;text-align:center">${nf(TX.st,1)}</b><button class="ib" data-a="tx-st" data-d="0.5" aria-label="Далі">+</button><span class="muted small">≈ ${f0((num(TX.st)||0)*(num(T.foot)||30))} см. Менше = важче</span></div></div>
+  <label class="chk"><input type="checkbox" data-a="tx-vert" ${TX.vert?'checked':''}>Руки прямо під кріпленням, лямки вертикально (турнік)</label>
+  ${TX.vert?'':`<div class="field"><span>Ступні від точки під кріпленням до точки опори (${TX.dir==='push'?'носки':'п\'яти'}). Мінус = ноги з іншого боку кріплення</span><div class="row"><button class="ib" data-a="tx-st" data-d="-0.5" aria-label="Ближче">−</button><b class="num" style="font-size:24px;min-width:56px;text-align:center">${nf(TX.st,1)}</b><button class="ib" data-a="tx-st" data-d="0.5" aria-label="Далі">+</button><span class="muted small">≈ ${f0((num(TX.st)||0)*(num(T.foot)||30))} см. Менше = важче</span></div></div>`}
   <label class="chk"><input type="checkbox" data-a="tx-el" ${TX.el?'checked':''}>Ноги на підвищенні (+1 рівень)</label>
   <div class="bandtotal">Кут тіла ≈ <b class="num">${calc.ang==null?'майже стоячи':f0(calc.ang)+'°'}</b> → рівень <b class="num">${calc.lvl}</b><br><span class="muted">${(()=>{const f=trxFrac({w:TX.lvl,pos:{el:TX.el},ang:TX.manual?undefined:calc.ang,man:TX.manual});return f&&bw?`Навантаження ≈ ${f0(bw*f)} кг (${f0(f*100)}% від ${f1(bw)} кг ваги тіла)`:''})()}</span></div>`}
  else if(TX.mode==='leg'){const kg=trxLegKg(it,{w:TX.lvl,assist:TX.assist,man:TX.manual,kgm:TX.kgm},bw);
@@ -850,7 +860,7 @@ function selBands(){const a=[];S.settings.bands.forEach(b=>{for(let i=0;i<(BANDS
 function bandTotalTxt(){const a=selBands();if(!a.length)return'<span class="muted">Гуму не обрано</span>';const lo=a.reduce((t,b)=>t+(num(b.min)||0),0),hi=a.reduce((t,b)=>t+(num(b.max)||0),0);return`${esc(bandLabel(a))}: <b class="num">≈ ${f1((lo+hi)/2)} кг</b> <span class="muted">(${f0(lo)}-${f0(hi)})</span>`}
 let BANDCTX=null;
 function exportSheet(obj,fname,title){const txt=JSON.stringify(obj);EXP={txt,fname};
- openSheet(`<h3>${esc(title)}</h3><p class="muted small" style="margin:0">«Завантажити файл» збереже .json. На iPhone обери «Зберегти у Файли» → iCloud Drive. Якщо збереження недоступне, натисни «Скопіювати» і встав текст у Нотатки.</p><div class="g2"><button class="btn pri" data-a="dl">Завантажити файл</button><button class="btn" data-a="copy">Скопіювати</button></div><textarea class="in" readonly id="exp-ta" style="min-height:120px;font-size:12px">${esc(txt)}</textarea><button class="btn ghost full" data-a="close">Закрити</button>`,'exp')}
+ openSheet(`<h3>${esc(title)}</h3><p class="muted small" style="margin:0">«Завантажити файл» збереже .json. На iPhone обери «Зберегти у Файли» → iCloud Drive. Якщо збереження недоступне, натисни «Скопіювати» і встав текст у Нотатки.</p><div class="g2"><button class="btn pri" data-a="dl">Завантажити файл</button><button class="btn" data-a="copy">Скопіювати</button></div><textarea class="in" readonly id="exp-ta" style="min-height:120px;font-size:16px">${esc(txt)}</textarea><button class="btn ghost full" data-a="close">Закрити</button>`,'exp')}
 function importSheet(mode){IMPMODE=mode;openSheet(`<h3>${mode==='tpl'?'Імпорт шаблонів':'Відновлення з копії'}</h3><p class="muted small" style="margin:0">${mode==='tpl'?'Шаблони з файлу додадуться до наявних. Нові вправи потраплять у каталог.':'Усі поточні дані буде замінено даними з копії.'}</p>
  <label class="btn full">Обрати файл<input type="file" accept=".json,application/json,text/plain" data-c="imp-file" id="imp-file" style="position:absolute;opacity:0;width:1px;height:1px"></label>
  <label class="field"><span>Або встав текст копії</span><textarea class="in" id="imp-ta" placeholder="{...}"></textarea></label>
@@ -889,12 +899,13 @@ const ACT={
  'pick-trx'(el){trxSheet(el.dataset.i,+el.dataset.n)},
  'tx-anc'(el){TX.anchor=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-hh'(el){TX.hh=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
- 'tx-st'(el){TX.st=Math.max(-2,Math.min(12,(num(TX.st)||0)+ +el.dataset.d));TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-vert'(){TX.vert=!TX.vert;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-st'(el){TX.st=Math.max(-10,Math.min(12,(num(TX.st)||0)+ +el.dataset.d));TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-el'(){TX.el=!TX.el;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-lv'(el){TX.lvl=Math.max(1,Math.min(10,(TX.lvl||1)+ +el.dataset.d));TX.manual=true;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-as'(el){TX.assist=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-pause'(){TX.pause=!TX.pause;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
- 'tx-apply'(){const it=itemBy(TXCTX.u);if(!it)return;if(TX.mode==='leg'){it.sets.forEach((s,k)=>{if(k===TXCTX.n||(k>TXCTX.n&&!(repsOf(it,s)||{}).tot)){s.w=String(TX.lvl);s.assist=TX.assist;s.pause=TX.pause;s.man=!!TX.manual;s.kgm=TX.kgm;delete s.pos;delete s.ang}});save();closeSheet();return}const pos=TX.angle?{anchor:TX.anchor,ah:(S.settings.trx.anchors.find(a=>a.id===TX.anchor)||{}).h,hh:TX.hh,st:TX.st,el:TX.el}:null;
+ 'tx-apply'(){const it=itemBy(TXCTX.u);if(!it)return;if(TX.mode==='leg'){it.sets.forEach((s,k)=>{if(k===TXCTX.n||(k>TXCTX.n&&!(repsOf(it,s)||{}).tot)){s.w=String(TX.lvl);s.assist=TX.assist;s.pause=TX.pause;s.man=!!TX.manual;s.kgm=TX.kgm;delete s.pos;delete s.ang}});save();closeSheet();return}const pos=TX.angle?{anchor:TX.anchor,ah:(S.settings.trx.anchors.find(a=>a.id===TX.anchor)||{}).h,hh:TX.hh,st:TX.st,el:TX.el,dir:TX.dir,vert:TX.vert}:null;
   it.sets.forEach((s,k)=>{if(k===TXCTX.n||(k>TXCTX.n&&!(repsOf(it,s)||{}).tot)){s.w=String(TX.lvl);if(pos){s.pos={...pos};s.ang=TX.lastAng;s.man=!!TX.manual}else{delete s.pos;delete s.ang;delete s.man}}});save();closeSheet()},
  'anc-add'(){S.settings.trx.anchors.push({id:'a'+uid(),name:'Нове кріплення',h:2.3});save();render()},
  'anc-del'(el){const id=el.dataset.b;if(S.settings.trx.anchors.length<2){toast('Має лишитися хоча б одне кріплення');return}S.settings.trx.anchors=S.settings.trx.anchors.filter(a=>a.id!==id);save();render()},
@@ -970,7 +981,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(!c)re
  if(c==='setphase'){S.settings.phase=el.value;save();return}
  if(c==='it-uni'){const it=itemBy(el.dataset.i);it.uni=el.checked;save();render();return}
  if(c==='ovm'){S.ui.ovm=el.value}else if(c==='ovt'){S.ui.ovt=el.value}else if(c==='exk'){S.ui.exk=el.value;S.ui.exm=''}else if(c==='corr'){S.ui.corr=el.checked}else if(c==='month'){S.ui.month=el.value}
- else if(c==='exed-type'){EXED.type=el.value;renderExEd();return}else if(c==='exed-uni'){EXED.uni=el.checked;return}else if(c==='exed-trxmode'){EXED.trxMode=el.value;delete EXED.trxAngle;renderExEd();return}else if(c==='exed-lunge'){EXED.legShare=el.checked?.85:1;return}
+ else if(c==='exed-type'){EXED.type=el.value;renderExEd();return}else if(c==='exed-uni'){EXED.uni=el.checked;return}else if(c==='exed-trxdir'){EXED.trxDir=el.value;return}else if(c==='exed-trxmode'){EXED.trxMode=el.value;delete EXED.trxAngle;renderExEd();return}else if(c==='exed-lunge'){EXED.legShare=el.checked?.85:1;return}
  else if(c==='imp-file'){const f=el.files&&el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(String(r.result));r.onerror=()=>toast('Не вдалося прочитати файл');r.readAsText(f);return}
  else return;save();render()});
 setInterval(()=>{if(S.ui.tab==='log'&&S.draft&&!S.draft._edit)$('#tsub').textContent='триває '+Math.max(0,Math.round((Date.now()-S.draft.startedAt)/6e4))+' хв'},30000);
