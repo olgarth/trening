@@ -50,7 +50,17 @@ h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margi
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 10px;margin-inline:-2px}
 .top h1{font-size:30px;line-height:1;text-transform:uppercase}
 .top .sub{color:var(--muted);font-size:13px;text-align:right}
-main{display:flex;flex-direction:column;gap:14px;max-width:720px;margin-inline:auto;min-width:0}
+main{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-inline:auto;min-width:0}
+.top{max-width:760px;margin-inline:auto}
+body.wide main,body.wide .top{max-width:1080px}
+@media (hover:hover){.btn:hover:not(:disabled){background:var(--surface2)}.btn.pri:hover:not(:disabled){filter:brightness(1.08);background:var(--accent)}.tpl:hover,.hrow:hover,.exrow:hover{border-color:var(--accent)}.chip:hover{border-color:var(--accent)}}
+@media (min-width:900px){
+ body.wide .tgroup,body.wide .hist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ body.wide .tgroup>.gh,body.wide .hist>.gh{grid-column:1/-1}
+ body.wide .kpis{grid-template-columns:repeat(3,1fr)}
+ .tm>*{width:100%;max-width:760px;margin-inline:auto}
+ nav.tabs{grid-template-columns:repeat(5,minmax(0,140px));justify-content:center}
+}
 main>*{min-width:0;max-width:100%}
 .card,.it,.hint,.prev,.it-meta,.kv{overflow-wrap:anywhere}
 .lbl{font-family:var(--f-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
@@ -82,7 +92,7 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .seg button{flex:1 0 auto;border:0;background:transparent;border-radius:9px;min-height:36px;padding:0 12px;font-weight:600;font-size:14px;color:var(--muted);white-space:nowrap}
 .seg button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;min-height:34px;padding:0 12px;font-size:14px;font-weight:600;color:var(--muted)}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;min-height:34px;padding:0 12px;font-size:14px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;line-height:1.2;text-align:center}
 .chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .p-good{background:var(--good-soft);color:var(--good)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-bad{background:var(--bad-soft);color:var(--bad)} .p-acc{background:var(--accent-soft);color:var(--accent)} .p-mut{background:var(--surface2);color:var(--muted)}
@@ -166,7 +176,7 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .tbl tr.sel td{background:var(--accent-soft)}
 .tbl tr[data-a]{cursor:pointer}
 .up{color:var(--good);font-weight:700} .down{color:var(--bad);font-weight:700}
-.gbar{display:grid;grid-template-columns:minmax(92px,32%) 1fr 64px;gap:8px;align-items:center;padding:5px 0}
+.gbar{display:grid;grid-template-columns:minmax(116px,42%) 1fr 56px;gap:8px;align-items:center;padding:5px 0}
 .gbar .nm{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .track{position:relative;height:14px;background:var(--surface2);border-radius:7px;overflow:hidden}
 .track .zone{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--good) 16%,transparent)}
@@ -264,6 +274,14 @@ body.tmopen{overflow:hidden}
 .tm-snd{align-self:center;color:inherit}
 .tm-snd input{accent-color:currentColor}
 input[type=range]{width:100%;accent-color:var(--accent);min-height:32px}
+.chip.mus-p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip.mus-s{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.muslegend{display:flex;gap:6px}.muslegend .chip{min-height:26px;font-size:12px}
+.musreg{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.gdet>summary{list-style:none;cursor:pointer}.gdet>summary::-webkit-details-marker{display:none}
+.gdet[open]>summary .nm{color:var(--accent)}
+.gsub{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);padding:3px 4px 3px 14px}
+.gsub b{color:var(--fg);font-size:15px}
 .tm-big{font:700 40px var(--f-display);text-align:center}
 .tm-sum{display:flex;flex-direction:column;gap:10px}
 .tm-done .cell{background:var(--surface)}
@@ -294,7 +312,36 @@ details.how li{margin-bottom:6px}
 "use strict";
 /* ========== constants ========== */
 const KEY='trainlog.v1';
-const GROUPS=['Груди','Спина','Передня дельта','Середня дельта','Задня дельта','Трапеції','Біцепс','Трицепс','Квадрицепс','Сідниці','Біцепс стегна','Ікри','Прес'];
+const GROUPS=['Груди','Спина','Трапеції','Розгиначі спини','Передня дельта','Середня дельта','Задня дельта','Ротатори','Біцепс','Передпліччя','Трицепс','Квадрицепс','Біцепс стегна','Сідниці','Привідні','Ікри','Прес'];
+const MINOR=['Розгиначі спини','Ротатори','Передпліччя','Привідні'];
+const REGIONS=['Груди','Спина','Плечі','Руки','Ноги','Кор'];
+const MUSCLES=[
+ ['chest_upper','Груди: верх','Груди','Груди'],['chest_mid','Груди: середина і низ','Груди','Груди'],
+ ['lats','Найширші','Спина','Спина'],['teres','Великий круглий','Спина','Спина'],['rhomb','Ромбоподібні','Спина','Спина'],['traps_up','Трапеції: верх','Трапеції','Спина'],['traps_mid','Трапеції: середина і низ','Трапеції','Спина'],['erect','Розгиначі спини','Розгиначі спини','Спина'],
+ ['delt_front','Передня дельта','Передня дельта','Плечі'],['delt_mid','Середня дельта','Середня дельта','Плечі'],['delt_rear','Задня дельта','Задня дельта','Плечі'],['rotator','Ротаторна манжета','Ротатори','Плечі'],
+ ['biceps','Біцепс','Біцепс','Руки'],['brach','Брахіаліс','Біцепс','Руки'],['forearm','Передпліччя','Передпліччя','Руки'],['triceps_long','Трицепс: довга голівка','Трицепс','Руки'],['triceps_lat','Трицепс: латеральна і медіальна','Трицепс','Руки'],
+ ['quads','Квадрицепс','Квадрицепс','Ноги'],['hams','Біцепс стегна','Біцепс стегна','Ноги'],['glute_max','Великий сідничний','Сідниці','Ноги'],['glute_med','Середній сідничний','Сідниці','Ноги'],['adductors','Привідні','Привідні','Ноги'],['calves','Литкові (ікри)','Ікри','Ноги'],
+ ['abs','Прямий м’яз живота','Прес','Кор'],['obliques','Косі м’язи живота','Прес','Кор']].map(([id,name,grp,reg])=>({id,name,grp,reg}));
+const MUS=Object.fromEntries(MUSCLES.map(m=>[m.id,m]));
+const GRP_REG={'Груди':'Груди','Спина':'Спина','Трапеції':'Спина','Розгиначі спини':'Спина','Передня дельта':'Плечі','Середня дельта':'Плечі','Задня дельта':'Плечі','Ротатори':'Плечі','Біцепс':'Руки','Передпліччя':'Руки','Трицепс':'Руки','Квадрицепс':'Ноги','Біцепс стегна':'Ноги','Сідниці':'Ноги','Привідні':'Ноги','Ікри':'Ноги','Прес':'Кор'};
+const OLD2MUS={'Груди':'chest_mid','Спина':'lats','Трапеції':'traps_up','Передня дельта':'delt_front','Середня дельта':'delt_mid','Задня дельта':'delt_rear','Біцепс':'biceps','Трицепс':'triceps_lat','Квадрицепс':'quads','Сідниці':'glute_max','Біцепс стегна':'hams','Ікри':'calves','Прес':'abs'};
+const MUS_SEED={bss_db:'quads,glute_max|adductors,glute_med',bss_band:'quads,glute_max|adductors,glute_med',bss_bw:'quads,glute_max|adductors,glute_med',pull_neutral:'lats|biceps,brach,rhomb,teres',pull:'lats|biceps,rhomb,teres,traps_mid',pull_wide:'lats,teres|biceps,rhomb',pull_chin:'lats|biceps,brach',row_low_bar:'lats,rhomb|traps_mid,delt_rear,biceps',
+ incline_db:'chest_upper|delt_front,triceps_lat',leg_curl:'hams|calves',leg_ext:'quads|',lat_raise:'delt_mid|traps_up',leg_press:'quads|glute_max,adductors',cs_row:'lats,rhomb|traps_mid,delt_rear,biceps',dips:'chest_mid|triceps_lat,delt_front',rdl_db:'hams,glute_max|erect,adductors',calf:'calves|',calf_1:'calves|',knee_raise:'abs|obliques',leg_raise:'abs|obliques',
+ band_pulldown:'lats|biceps,teres',band_pushup:'chest_mid|triceps_lat,delt_front',band_rdl:'hams,glute_max|erect',band_raise:'delt_mid|',band_abd:'delt_mid|',band_lunge:'quads,glute_max|adductors',band_row:'lats,rhomb|delt_rear,biceps',pushup_feet:'chest_upper|delt_front,triceps_lat',slider_curl:'hams|glute_max',rev_crunch:'abs|',pistol_assist:'quads,glute_max|glute_med,adductors',band_leg_curl:'hams|',nordic:'hams|',
+ lat_pulldown:'lats|biceps,teres,rhomb',hammer_press:'chest_mid|triceps_lat,delt_front',rev_fly:'delt_rear|rhomb,traps_mid',oh_ext:'triceps_long|',rear_raise:'delt_rear|rhomb',shrug:'traps_up|forearm',db_curl:'biceps|brach,forearm',tri_ext:'triceps_long|triceps_lat',split_sq_bw:'quads,glute_max|adductors',glute_bridge_1:'glute_max|hams,glute_med',pushup:'chest_mid|triceps_lat,delt_front',pistol:'quads,glute_max|glute_med,adductors',diamond:'triceps_lat|chest_mid',army_pushup:'chest_mid|triceps_lat',band_rdl_1:'hams,glute_max|glute_med',band_upright:'delt_mid|traps_up',hyper:'erect,glute_max|hams',
+ trx_row:'lats,rhomb|biceps,delt_rear',trx_push:'chest_mid|triceps_lat,delt_front',trx_squat:'quads|glute_max',trx_lunge:'quads,glute_max|adductors',trx_legcurl:'hams|glute_max',trx_y:'delt_rear,traps_mid|rotator',trx_biceps:'biceps|brach',trx_triceps:'triceps_long|',trx_knees:'abs|obliques',trx_pistol:'quads,glute_max|glute_med',
+ kb_swing:'glute_max,hams|erect',kb_goblet:'quads|glute_max',kb_thruster:'quads,delt_front|glute_max,triceps_lat',kb_snatch:'glute_max|delt_mid,traps_up',kb_clean_press:'delt_front|glute_max,triceps_lat',burpee:'chest_mid|quads',jump_squat:'quads|glute_max,calves',climber:'abs|',jjack:'|',
+ mr_band_rear:'delt_rear|rhomb,traps_mid',mr_band_dl:'glute_max,hams|erect',mr_tyson:'chest_mid|triceps_lat',mr_side_lunge:'quads,adductors|glute_med',mr_band_row:'lats,rhomb|biceps',mr_band_thruster:'quads,delt_front|glute_max',mr_deadbug:'abs|obliques',mr_plank_leg:'abs|glute_max'};
+const seedMus=id=>{const v=MUS_SEED[id];if(v==null)return null;const[a,b]=v.split('|');return{prim:a?a.split(','):[],sec:b?b.split(','):[]}};
+const musGrp=x=>MUS[x]?MUS[x].grp:(GRP_REG[x]?x:null);
+const musName=x=>MUS[x]?MUS[x].name:x;
+const primOf=o=>o.prim||(o.group?[o.group]:[]);
+function musContrib(it){const g={},m={};const add=(x,w)=>{const gr=musGrp(x);if(!gr)return;m[x]=Math.max(m[x]||0,w);g[gr]=Math.max(g[gr]||0,w)};(it.sec||[]).forEach(x=>add(x,.5));primOf(it).forEach(x=>add(x,1));return{g,m}}
+function convEx(e){if(e.prim)return e;const seed=SEED_EX.find(x=>x[0]===e.id);const sm=seedMus(e.id);
+ if(sm&&seed&&(e.group||'')===(seed[3]||'')&&JSON.stringify(e.sec||[])===JSON.stringify(seed[4]||[])){e.prim=sm.prim;e.sec=sm.sec}
+ else{e.prim=e.group&&OLD2MUS[e.group]?[OLD2MUS[e.group]]:[];e.sec=(e.sec||[]).map(x=>MUS[x]?x:OLD2MUS[x]).filter(Boolean)}
+ delete e.group;return e}
+function regionOf(e){const p=primOf(e)[0];const gr=musGrp(p);return gr?GRP_REG[gr]:null}
 const TYPES={weight:'Штанга / тренажер',db1:'1 гантель',db2:'2 гантелі',bw:'Власна вага',band:'Гума',trx:'TRX',hiit:'HIIT (раунди)',cardio:'Кардіо'};
 const STR=['weight','db1','db2','bw','band','trx'];
 const LOADLBL={weight:'Кг',db1:'Кг',db2:'Кг 1 шт',bw:'+ Кг',band:'Гума',trx:'Рівень'};
@@ -399,7 +446,7 @@ const SEED_EX=[
  ['bike','Велотренажер','cardio','',[],0,['time','dist','kcal','watts','hr']],
  ['rower','Гребний тренажер','cardio','',[],0,['time','dist','kcal','watts','hr']],
  ['elliptical','Еліптичний тренажер','cardio','',[],0,['time','kcal','hr']]];
-function seedCatalog(){return SEED_EX.map(([id,name,type,group,sec,uni,cf])=>({id,name,type,group,sec,uni:!!uni,cf:cf||null}))}
+function seedCatalog(){return SEED_EX.map(([id,name,type,group,sec,uni,cf])=>{const sm=seedMus(id)||{prim:group&&OLD2MUS[group]?[OLD2MUS[group]]:[],sec:(sec||[]).map(x=>OLD2MUS[x]).filter(Boolean)};return{id,name,type,prim:sm.prim,sec:sm.sec,uni:!!uni,cf:cf||null}})}
 function TB(name,tag,blk,note){const nm=id=>(SEED_EX.find(x=>x[0]===id)||[])[1]||id;return{id:uid(),name,tag,note:note||'',items:[{kind:'block',name:blk.name,fmt:blk.fmt,cfg:blk.cfg,ex:blk.ex.map(([id,t,mode])=>({exId:id,name:nm(id),load:/^kb_/.test(id)?'kb':'none',w:'',band:'',mode:mode||'reps',target:t?String(t):''}))}]}}
 const MR_IDS=['mr_band_rear','mr_band_dl','mr_tyson','mr_side_lunge','mr_band_row','mr_band_thruster','mr_deadbug','mr_plank_leg'];
 function defMorning(){const nm=id=>(SEED_EX.find(x=>x[0]===id)||[])[1]||id;return{note:'Розминка 3-4 хв (суглобова мобілізація). 1 коло, RPE 4-6/10',days:{},block:{uid:'morning',type:'block',name:'Ранкова зарядка V2',fmt:'int',cfg:{work:30,rest:20,rounds:1,between:0},ex:MR_IDS.map(id=>({exId:id,name:nm(id),load:'none',w:'',band:'',mode:'time',target:''})),res:{}}}}
@@ -450,7 +497,7 @@ let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
 function defaults(){return{v:1,seedV:5,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 function load(){try{const r=localStorage.getItem(KEY);if(r){S=JSON.parse(r);fix();return}}catch(e){}S=defaults()}
-function fix(){const d=defaults(),sv=S.seedV||1;for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
+function fix(){const d=defaults(),sv=S.seedV||1;(S.catalog||[]).forEach(convEx);(S.workouts||[]).concat(S.draft?[S.draft]:[]).forEach(w=>(w.items||[]).forEach(it=>{if(it.type==='block'||it.prim)return;const e=(S.catalog||[]).find(x=>x.id===it.exId);if(e&&e.prim){it.prim=e.prim.slice();it.sec=(e.sec||[]).slice();delete it.group}else if(it.group||it.sec){const c=convEx({group:it.group,sec:it.sec});it.prim=c.prim;it.sec=c.sec;delete it.group}}));for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
  if(sv<5){if(S.morning){const M=S.morning;if(!S.templates.some(t=>t.tag===WARM)){const b=M.block||defMorning().block;S.templates.push({id:uid(),name:b.name,tag:WARM,note:M.note||'',items:[{kind:'block',name:b.name,fmt:b.fmt,cfg:b.cfg,ex:b.ex}]})}const tn=(S.templates.find(t=>t.tag===WARM)||{}).name||'Зарядка';Object.keys(M.days||{}).forEach(d=>{if(!S.workouts.some(w=>w.tag===WARM&&w.date===d))S.workouts.push({id:uid(),date:d,tplName:tn,tag:WARM,quick:true,items:[],startedAt:+new Date(d+'T07:00')})});delete S.morning}else if(sv<4&&!S.templates.some(t=>t.tag===WARM))S.templates.push(warmTpl());S.seedV=5}
  if(sv<4){seedCatalog().filter(e=>MR_IDS.includes(e.id)&&!S.catalog.some(c=>c.id===e.id)).forEach(e=>S.catalog.push(e));S.seedV=Math.max(S.seedV||1,4)}
  if(sv<3){const hs=hiitSeeds();S.templates=S.templates.map(t=>{const nt=hs.find(h=>h.name===t.name);if(nt&&(t.name==='HIIT. Гиря'||t.name==='HIIT. Власна вага')&&t.items.length&&t.items.every(i=>!i.kind&&(ex(i.exId)||{}).type==='hiit'))return Object.assign(nt,{id:t.id});return t});hs.forEach(h=>{if(!S.templates.some(t=>t.name===h.name))S.templates.push(h)});S.seedV=Math.max(S.seedV||1,3)}
@@ -516,7 +563,7 @@ function itemStats(it,bw){if(it.type==='block')return blockStats(it);
  if(it.type==='hiit'){let work=0,reps=0,ton=0,rounds=0;const rests=[];it.sets.forEach(s=>{const wk=num(s.work),r=num(s.r),kg=num(s.w);if(!wk&&!r)return;rounds++;work+=wk||0;reps+=r||0;ton+=(kg||0)*(r||0);const rs=num(s.rest);if(rs)rests.push(rs)});return{has:rounds>0,rounds,work,reps,ton,vol:ton,hard:0,rest:avg(rests)}}
  if(it.type==='cardio'){const s=it.sets[0]||{};const t=num(s.time),d=num(s.dist);if(!t&&!d)return{has:false};return{has:true,time:t,dist:d,kcal:num(s.kcal),hr:num(s.hr),watts:num(s.watts),rpe:num(s.rpe),pace:t&&d?t/d:null,vol:0,hard:0}}
  return{has:false}}
-function wStats(w){const bw=bwOf(w);let vol=0,hard=0,exn=0;const groups={};w.items.forEach(it=>{const st=itemStats(it,bw);if(!st.has)return;exn++;vol+=st.vol||0;hard+=st.hard||0;if(st.hard){if(it.group)groups[it.group]=(groups[it.group]||0)+st.hard;(it.sec||[]).forEach(g=>groups[g]=(groups[g]||0)+st.hard*.5)}});return{vol,hard,exn,groups}}
+function wStats(w){const bw=bwOf(w);let vol=0,hard=0,exn=0;const groups={},mus={};w.items.forEach(it=>{const st=itemStats(it,bw);if(!st.has)return;exn++;vol+=st.vol||0;hard+=st.hard||0;if(st.hard){const c=musContrib(it);for(const k in c.g)groups[k]=(groups[k]||0)+st.hard*c.g[k];for(const k in c.m)mus[k]=(mus[k]||0)+st.hard*c.m[k]}});return{vol,hard,exn,groups,mus}}
 const keyOf=it=>it.type==='block'?'blk|'+it.name:it.exId+'|'+it.type;
 function calc(){if(CACHE&&CACHE.scope===SCOPE)return CACHE;const ses={},ws=sortedW(),wst={};
  for(const w of ws){const bw=bwOf(w);wst[w.id]=wStats(w);for(const it of w.items){const st=itemStats(it,bw);if(!st.has)continue;const k=keyOf(it);(ses[k]=ses[k]||{k,name:it.name,type:it.type,exId:it.exId,ses:[]}).ses.push(Object.assign({d:w.date,wid:w.id,tag:w.tag,phase:w.phase||''},st))}}
@@ -527,6 +574,7 @@ function calc(){if(CACHE&&CACHE.scope===SCOPE)return CACHE;const ses={},ws=sorte
 function periodStart(){const p=S.ui.period;return p?daysAgo(p):'0000-00-00'}
 function weeksSpan(ws,start){if(!ws.length)return 1;const first=ws[0].date>start?ws[0].date:start;const days=(new Date(todayStr()+'T12:00')-new Date(first+'T12:00'))/864e5+1;return Math.max(1,days/7)}
 function groupSets(ws){const C=calc(),g={};ws.forEach(w=>{const st=C.wst[w.id];for(const k in st.groups)g[k]=(g[k]||0)+st.groups[k]});return g}
+function musSets(ws){const C=calc(),m={};ws.forEach(w=>{const st=C.wst[w.id];for(const k in (st.mus||{}))m[k]=(m[k]||0)+st.mus[k]});return m}
 function pearson(x,y){const n=x.length;if(n<3)return null;const mx=avg(x),my=avg(y);let a=0,b=0,c=0;for(let i=0;i<n;i++){a+=(x[i]-mx)*(y[i]-my);b+=(x[i]-mx)**2;c+=(y[i]-my)**2}return b&&c?a/Math.sqrt(b*c):null}
 function prevSession(exId,w){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const x=ws[i];if(x.id===w.id||x.date>w.date)continue;const item=x.items.find(i=>i.exId===exId);if(item&&item.sets.some(s=>Object.values(s).some(v=>v!==''&&v!=null&&typeof v!=='object')))return{w:x,item}}return null}
 function lastBandFor(exId){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const it=ws[i].items.find(x=>x.exId===exId&&x.type==='band');if(it){const s=it.sets.find(s=>bandsOf(s).length);if(s){const r=bandsOf(s).map(b=>{const cur=band(b.id);return cur?{...cur}:{...b}});r.bmode=s.bmode;r.bstr=s.bstr;return r}}}return null}
@@ -534,7 +582,7 @@ const repMax=r=>{const m=String(r||'').match(/\d+/g);return m?+m[m.length-1]:nul
 
 /* ========== draft building ========== */
 function blankSet(it,t={},b){if(it.type==='hiit')return{work:t.work||'',rest:t.rest||'',r:'',w:''};if(it.type==='cardio')return{};const s={r:'',rl:'',rr:'',w:'',rir:'',rest:''};if(it.type==='band'&&b&&b.length){s.bands=b.map(x=>({...x}));if(b.bmode)s.bmode=b.bmode;if(b.bstr)s.bstr=b.bstr}if(it.type==='trx'&&b&&b.w){s.w=b.w;if(b.pos)s.pos={...b.pos};if(b.assist)s.assist=b.assist;if(b.kgm)s.kgm=b.kgm;if(b.ang!==undefined)s.ang=b.ang;if(b.man)s.man=b.man}return s}
-function makeItem(e,t={}){const type=t.type||e.type;const it={uid:uid(),exId:e.id,name:e.name,type,uni:!!e.uni,group:e.group||'',sec:(e.sec||[]).slice(),cf:e.cf?e.cf.slice():null,tgt:{sets:t.sets||'',reps:t.reps||'',rir:t.rir||'',note:t.note||'',work:t.work||'',rest:t.rest||''},sets:[]};
+function makeItem(e,t={}){const type=t.type||e.type;const it={uid:uid(),exId:e.id,name:e.name,type,uni:!!e.uni,group:'',prim:primOf(e).slice(),sec:(e.sec||[]).slice(),cf:e.cf?e.cf.slice():null,tgt:{sets:t.sets||'',reps:t.reps||'',rir:t.rir||'',note:t.note||'',work:t.work||'',rest:t.rest||''},sets:[]};
  const n=type==='cardio'?1:Math.max(1,+t.sets||2);const b=type==='band'?(lastBandFor(e.id)||null):type==='trx'?lastTrxFor(e.id):null;for(let i=0;i<n;i++)it.sets.push(blankSet(it,t,b));return it}
 function newWorkout(tpl){const w={id:uid(),date:todayStr(),tplId:tpl?tpl.id:null,tplName:tpl?tpl.name:'Довільне тренування',tag:tpl?tpl.tag:'Інше',tplNote:tpl?tpl.note:'',phase:S.settings.phase||'',sleep:'',well:'',dur:'',bw:'',notes:'',items:[],startedAt:Date.now()};if(tpl)tpl.items.forEach(t=>{if(t.kind==='block'){w.items.push(makeBlock(t));return}const e=ex(t.exId);if(e)w.items.push(makeItem(e,t))});return w}
 const itemBy=u=>S.draft&&S.draft.items.find(i=>i.uid===u);
@@ -546,6 +594,7 @@ function applyTheme(){const t=S.settings.theme;const r=document.documentElement;
 function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm(S.draft)?'warm':'main'):(t==='hist'||t==='stats')?(S.ui.scope==='warm'&&S.settings.warmOn!==false?'warm':'main'):'main';$('#ttl').textContent=TITLES[t];document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
  let sub='';if(t==='log'&&S.draft)sub=S.draft._edit?'редагування':'триває '+Math.max(0,Math.round((Date.now()-S.draft.startedAt)/6e4))+' хв';$('#tsub').textContent=sub;
  for(const k in CH)delete CH[k];
+ document.body.classList.toggle('wide',t!=='log'||!S.draft);
  $('#main').innerHTML=({log:vLog,hist:vHist,stats:vStats,tpl:vTpl,set:vSet})[t]();attachCharts()}
 
 /* ========== LOG ========== */
@@ -716,7 +765,7 @@ function signals(ws){const C=calc(),out=[],t=todayStr();
   if(last.score>best*1.005&&last.d>=addDays(t,-14))out.push([1,'p-good','Рекорд',`${o.label}: 1ПМ ≈ ${f1(last.score)} (${pct(last.score/best-1)})`]);
   else if(last.score<best*.95)out.push([0,'p-bad','Спад',`${o.label}: ${pct(last.score/best-1)} від найкращого. Перевір сон, відновлення, техніку${last.phase==='deficit'?' Фаза: дефіцит, невеликий спад тут очікуваний':''}`]);
   else if(s.length>=5){const l4=s.slice(-4),pre=s.slice(0,-4);if(pre.length&&Math.max(...l4.map(x=>x.score))<=Math.max(...pre.map(x=>x.score))*1.005)out.push([2,'p-warn','Застій',`${o.label}: 4 сесії без нового максимуму. Зміни діапазон повторень, додай підхід або зроби легкий тиждень`])}});
- const gs=groupSets(ws),wk=weeksSpan(ws,periodStart());if(ws.length>=3){const low=GROUPS.filter(g=>gs[g]&&gs[g]/wk<6).map(g=>`${g} ${f1(gs[g]/wk)}`);if(low.length)out.push([3,'p-warn','Мало',`Підходів на тиждень менше 6: ${low.join(', ')}`]);const zero=GROUPS.filter(g=>!gs[g]);if(zero.length)out.push([4,'p-mut','Не тренуються',zero.join(', ')]);
+ const gs=groupSets(ws),wk=weeksSpan(ws,periodStart());if(ws.length>=3){const low=GROUPS.filter(g=>!MINOR.includes(g)&&gs[g]&&gs[g]/wk<6).map(g=>`${g} ${f1(gs[g]/wk)}`);if(low.length)out.push([3,'p-warn','Мало',`Підходів на тиждень менше 6: ${low.join(', ')}`]);const zero=GROUPS.filter(g=>!MINOR.includes(g)&&!gs[g]);if(zero.length)out.push([4,'p-mut','Не тренуються',zero.join(', ')]);
   const hi=GROUPS.filter(g=>(gs[g]||0)/wk>20).map(g=>`${g} ${f1(gs[g]/wk)}`);if(hi.length)out.push([3,'p-warn','Багато',`Понад 20 підходів на тиждень: ${hi.join(', ')}. Слідкуй за відновленням`])}
  const wl=ws.map(w=>num(w.well)).filter(x=>x!=null);if(wl.length>=6){const l3=avg(wl.slice(-3)),all=avg(wl);if(l3<=all-1.5)out.push([0,'p-bad','Втома',`Самопочуття останніх 3 тренувань ${f1(l3)} проти ${f1(all)} у середньому. Можливо, час розвантажитись`])}
  if(!out.length)return`<p class="muted small" style="margin:0">Нічого тривожного. Сигнали з’являються, коли є щонайменше 2 сесії вправи.</p>`;
@@ -752,12 +801,17 @@ function stExercise(){const C=calc(),ps=periodStart();
  h+=`</section>`;
  h+=`<section class="card stack"><div class="lbl">Усі вправи за період</div><div class="tblw"><table class="tbl"><thead><tr><th>Вправа</th><th class="r">Сес.</th><th class="r">1ПМ</th><th class="r">Δ</th></tr></thead><tbody>${list.map(x=>{const st=STR.includes(x.o.type);const c=st?chg(x.s.map(y=>y.score)):null;const l=x.s[x.s.length-1];return`<tr data-a="sel-ex" data-v="${esc(x.o.k)}" class="${x.o.k===o.k?'sel':''}"><td>${esc(x.o.label)}</td><td class="r">${x.s.length}</td><td class="r num">${st?f1(l.score):'—'}</td><td class="r ${c>0?'up':c<0?'down':''}">${st?pct(c):''}</td></tr>`}).join('')}</tbody></table></div><p class="muted small" style="margin:0">Δ - зміна 1ПМ від початку до кінця періоду (середнє перших двох сесій проти останніх двох).</p></section>`;
  return h}
-function groupBars(g,wk){return GROUPS.map(gr=>{const v=(g[gr]||0)/wk;const st=v<6?['p-warn','мало']:v<10?['p-mut','помірно']:v<=20?['p-good','норма']:['p-warn','багато'];const max=25;
-  return`<div class="gbar"><span class="nm">${gr}</span><div class="track"><span class="zone" style="left:${10/max*100}%;width:${10/max*100}%"></span><span class="fill" style="width:${Math.min(100,v/max*100)}%"></span></div><span class="vv">${nf(v,1)}<small>${st[1]}</small></span></div>`}).join('')}
+const SHORT_GROUPS=['Груди','Спина','Передня дельта','Середня дельта','Задня дельта','Трапеції','Біцепс','Трицепс','Квадрицепс','Сідниці','Біцепс стегна','Ікри','Прес'];
+const musFull=()=>S.settings.musMode!=='short';
+function groupBars(g,wk,m){m=m||{};const max=25;let cur='';const full=musFull();return(full?GROUPS:SHORT_GROUPS).map(gr=>{const v=(g[gr]||0)/wk;const minor=MINOR.includes(gr);const st=minor?['','доп.']:v<6?['p-warn','мало']:v<10?['p-mut','помірно']:v<=20?['p-good','норма']:['p-warn','багато'];
+  const reg=GRP_REG[gr];const head=full&&reg!==cur?`<div class="gh">${reg}</div>`:'';cur=reg;
+  const subs=!full?'':Object.keys(m).filter(k=>musGrp(k)===gr).map(k=>`<div class="gsub"><span>${esc(MUS[k]?MUS[k].name:k+' (без деталізації)')}</span><b class="num">${nf(m[k]/wk,1)}</b></div>`).join('');
+  const bar=`<span class="nm">${gr}</span><div class="track">${minor?'':`<span class="zone" style="left:${10/max*100}%;width:${10/max*100}%"></span>`}<span class="fill" style="width:${Math.min(100,v/max*100)}%"></span></div><span class="vv">${nf(v,1)}<small>${st[1]}</small></span>`;
+  return head+(subs?`<details class="gdet"><summary class="gbar">${bar}</summary>${subs}</details>`:`<div class="gbar">${bar}</div>`)}).join('')}
 function stGroups(){const ws=sortedW().filter(w=>w.date>=periodStart());if(!ws.length)return`<p class="empty">У цьому періоді тренувань немає.</p>`;
- const wk=weeksSpan(ws,periodStart()),g=groupSets(ws);
- return`<section class="card stack"><div class="lbl">Робочі підходи на тиждень</div>${groupBars(g,wk)}
- <p class="muted small" style="margin:0">Робочий підхід - RIR 4 і менше (або RIR не вписаний). Основний м’яз вправи = 1 підхід, допоміжний = 0,5. Зелена зона 10-20 підходів - поширений орієнтир для росту м’язів (Schoenfeld, Israetel). Менше 6 зазвичай вистачає лише на підтримку. Це орієнтир, а не норма: дивись і на прогрес 1ПМ. HIIT і кардіо сюди не входять.</p>
+ const wk=weeksSpan(ws,periodStart()),g=groupSets(ws),m=musSets(ws);
+ return`<section class="card stack"><div class="lbl">Робочі підходи на тиждень</div>${musFull()?'<p class="muted small" style="margin:0">Натисни на групу, щоб побачити окремі м’язи. Короткий вигляд - у Налаштуваннях.</p>':''}${groupBars(g,wk,m)}
+ <p class="muted small" style="margin:0">Робочий підхід - RIR 4 і менше (або RIR не вписаний). Основний м’яз вправи = 1 підхід, допоміжний = 0,5 (у межах групи береться більше значення, щоб, наприклад, найширші й ромбоподібні в одній тязі не дали 2 підходи «Спині»). «доп.» - дрібні групи без цільової зони: зазвичай їм вистачає непрямої роботи. Зелена зона 10-20 підходів - поширений орієнтир для росту м’язів (Schoenfeld, Israetel). Менше 6 зазвичай вистачає лише на підтримку. Це орієнтир, а не норма: дивись і на прогрес 1ПМ. HIIT і кардіо сюди не входять.</p>
  <p class="muted small" style="margin:0">Період: ${ws.length} тренувань за ${nf(wk,1)} тиж.</p></section>`}
 function monthsList(){const s=new Set(S.workouts.map(w=>w.date.slice(0,7)));s.add(todayStr().slice(0,7));return[...s].sort().reverse()}
 function monthReport(ym){const C=calc();const ws=C.ws.filter(w=>w.date.startsWith(ym));const y=+ym.slice(0,4),m=+ym.slice(5);const dim=new Date(y,m,0).getDate();const isCur=todayStr().startsWith(ym);const days=isCur?+todayStr().slice(8):dim;const wk=Math.max(1,days/7);const start=ym+'-01',base0=addDays(start,-60);
@@ -766,7 +820,7 @@ function monthReport(ym){const C=calc();const ws=C.ws.filter(w=>w.date.startsWit
  const byTag={};prog.forEach(p=>(byTag[p.tag]=byTag[p.tag]||[]).push(p.ch));
  const byPhase={};prog.forEach(p=>{if(p.phase)(byPhase[p.phase]=byPhase[p.phase]||[]).push(p.ch)});const phases={};ws.forEach(w=>{const k=w.phase||'';phases[k]=(phases[k]||0)+1});
  const cardio={},hiit={rounds:0,work:0,n:0};ws.forEach(w=>w.items.forEach(it=>{const st=itemStats(it,bwOf(w));if(!st.has)return;if(it.type==='cardio'){const c=cardio[it.name]=cardio[it.name]||{n:0,time:0,dist:0,kcal:0};c.n++;c.time+=st.time||0;c.dist+=st.dist||0;c.kcal+=st.kcal||0}if(it.type==='hiit'){hiit.n++;hiit.rounds+=st.rounds;hiit.work+=st.work}if(it.type==='block'){hiit.n++;hiit.work+=st.work;hiit.reps=(hiit.reps||0)+st.reps}}));
- return{morning:mMonth(ym),byPhase,phases,ym,ws,wk,vol,hard,dur:impStat(ws,'dur'),sl:impStat(ws,'sleep'),wl:impStat(ws,'well'),bw:ws.map(w=>num(w.bw)).filter(x=>x!=null),groups:groupSets(ws),prog,idx:median(prog.map(p=>p.ch)),byTag,cardio,hiit,tags:[...new Set(ws.map(w=>w.tag||'Інше'))]}}
+ return{mus:musSets(ws),morning:mMonth(ym),byPhase,phases,ym,ws,wk,vol,hard,dur:impStat(ws,'dur'),sl:impStat(ws,'sleep'),wl:impStat(ws,'well'),bw:ws.map(w=>num(w.bw)).filter(x=>x!=null),groups:groupSets(ws),prog,idx:median(prog.map(p=>p.ch)),byTag,cardio,hiit,tags:[...new Set(ws.map(w=>w.tag||'Інше'))]}}
 function phaseTxt(ph){const e=Object.entries(ph).filter(([k])=>k);if(!e.length)return'не вказано';return e.map(([k,n])=>`${PHASES[k]} ${n}`).join(', ')}
 function phaseBlock(R){const has=Object.keys(R.phases).some(k=>k);if(!has)return'';const dom=Object.entries(R.phases).filter(([k])=>k).sort((a,b)=>b[1]-a[1])[0][0];
  let note='';if(dom==='deficit')note='На дефіциті ціль - утримати силу. Спад до кількох відсотків нормальний, ріст - дуже добрий результат.';else if(dom==='bulk')note='На наборі очікуваний стабільний ріст. Застій або спад тут - сигнал переглянути програму або відновлення.';else if(dom==='maint')note='На підтримці ріст зазвичай повільний, але стабільний.';
@@ -788,7 +842,7 @@ function stReport(){const ms=monthsList();const ym=ms.includes(S.ui.month)?S.ui.
  ${Object.keys(R.byTag).length>1?`<div class="sec"><div class="lbl">Прогресія за місцем</div>${Object.entries(R.byTag).map(([t,a])=>`<div class="row between"><span>${esc(t)} <span class="muted small">(${a.length})</span></span><b class="${median(a)>0?'up':median(a)<0?'down':''}">${pct(median(a))}</b></div>`).join('')}</div>`:''}
  ${up.length?`<div class="sec"><div class="lbl">Найбільший ріст</div>${up.slice(0,3).filter(p=>p.ch>0).map(p=>`<div class="row between"><span class="small">${esc(p.o.label)}</span><b class="up">${pct(p.ch)}</b></div>`).join('')||'<span class="muted small">Росту немає</span>'}</div>
  <div class="sec"><div class="lbl">Спад</div>${up.slice().reverse().slice(0,3).filter(p=>p.ch<0).map(p=>`<div class="row between"><span class="small">${esc(p.o.label)}</span><b class="down">${pct(p.ch)}</b></div>`).join('')||'<span class="muted small">Спаду немає</span>'}</div>`:'<p class="muted small" style="margin:0">Для прогресії потрібні ті самі вправи в попередні 60 днів.</p>'}
- <div class="sec"><div class="lbl">Підходи на тиждень по групах</div>${groupBars(R.groups,R.wk)}</div>
+ <div class="sec"><div class="lbl">Підходи на тиждень по групах</div>${groupBars(R.groups,R.wk,R.mus)}</div>
  ${Object.keys(R.cardio).length?`<div class="sec"><div class="lbl">Кардіо</div>${Object.entries(R.cardio).map(([n,c])=>`<div class="row between small"><span>${esc(n)} ×${c.n}</span><span class="num">${f0(c.time)} хв${c.dist?' · '+f1(c.dist)+' км':''}${c.kcal?' · '+f0(c.kcal)+' ккал':''}</span></div>`).join('')}</div>`:''}
  ${R.morning.n&&warmOn()?`<div class="sec"><div class="lbl">Ранкова зарядка</div><div class="small">${R.morning.n} з ${R.morning.days} днів · найдовша серія ${R.morning.best}</div></div>`:''}
  ${R.hiit.n?`<div class="sec"><div class="lbl">HIIT</div><div class="small">${R.hiit.n} блоків / вправ · ${f1(R.hiit.work/60)} хв роботи${R.hiit.rounds?' · '+R.hiit.rounds+' раундів':''}${R.hiit.reps?' · '+R.hiit.reps+' повт.':''}</div></div>`:''}
@@ -798,7 +852,7 @@ function reportText(R){const L=[];L.push(`Звіт тренувань: ${MON[+R.
  L.push(`Сон: ${f1(R.sl.v)} год, самопочуття: ${f1(R.wl.v)}, тривалість: ${f0(R.dur.v)} хв`);L.push(`Фаза харчування: ${phaseTxt(R.phases)}`);L.push(`Загальна прогресія 1ПМ: ${pct(R.idx)} (${R.prog.length} вправ)`);Object.entries(R.byPhase).forEach(([k,a])=>L.push(`  ${PHASES[k]}: ${pct(median(a))}`));
  Object.entries(R.byTag).forEach(([t,a])=>L.push(`  ${t}: ${pct(median(a))}`));
  R.prog.slice().sort((a,b)=>b.ch-a.ch).forEach(p=>L.push(`  ${p.o.label}: ${pct(p.ch)}`));
- L.push('Підходи на тиждень:');GROUPS.forEach(g=>L.push(`  ${g}: ${nf((R.groups[g]||0)/R.wk,1)}`));
+ L.push('Підходи на тиждень:');(musFull()?GROUPS.filter(g=>!MINOR.includes(g)||R.groups[g]):SHORT_GROUPS).forEach(g=>L.push(`  ${g}: ${nf((R.groups[g]||0)/R.wk,1)}`));
  Object.entries(R.cardio).forEach(([n,c])=>L.push(`Кардіо ${n}: ${c.n} разів, ${f0(c.time)} хв${c.dist?', '+f1(c.dist)+' км':''}`));
  if(R.morning.n&&warmOn())L.push(`Ранкова зарядка: ${R.morning.n} з ${R.morning.days} днів, найдовша серія ${R.morning.best}`);
  if(R.hiit.n)L.push(`HIIT: ${R.hiit.n} блоків / вправ, ${f1(R.hiit.work/60)} хв роботи${R.hiit.reps?', '+R.hiit.reps+' повт.':''}`);return L.join('\n')}
@@ -832,10 +886,10 @@ function vTplEdit(t){let h=`<div class="row between"><button class="btn ghost" d
 function vCatalog(){const q=(S.ui.catq||'').toLowerCase();
  let h=`<button class="btn pri full" data-a="ex-new">+ Нова вправа</button><input class="in" data-f="catq" id="catq" value="${esc(S.ui.catq||'')}" placeholder="Пошук вправи" type="search">`;
  h+=`<div class="card" id="catlist">${catalogList(q,'ex-edit')}</div>`;return h}
-function catalogList(q,act){const by={};S.catalog.filter(e=>!q||e.name.toLowerCase().includes(q)).forEach(e=>{const g=e.type==='cardio'?'Кардіо':e.type==='hiit'?'HIIT':(e.group||'Без групи');(by[g]=by[g]||[]).push(e)});
- const order=GROUPS.concat(['HIIT','Кардіо','Без групи']);const ks=Object.keys(by).sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+function catalogList(q,act){const by={};S.catalog.filter(e=>!q||e.name.toLowerCase().includes(q)).forEach(e=>{const g=e.type==='cardio'?'Кардіо':e.type==='hiit'?'HIIT':(regionOf(e)||'Без групи');(by[g]=by[g]||[]).push(e)});
+ const order=REGIONS.concat(['HIIT','Кардіо','Без групи']);const ks=Object.keys(by).sort((a,b)=>order.indexOf(a)-order.indexOf(b));
  if(!ks.length)return`<p class="empty">Нічого не знайдено.</p>`;
- return ks.map(g=>`<div class="gh">${esc(g)}</div><div class="exlist">${by[g].sort((a,b)=>a.name.localeCompare(b.name,'uk')).map(e=>`<button class="exrow" data-a="${act}" data-e="${e.id}"><span>${esc(e.name)}<small>${TYPES[e.type]}${e.uni?' · Л/П':''}${e.sec&&e.sec.length?' · + '+e.sec.join(', '):''}</small></span><span class="muted">›</span></button>`).join('')}</div>`).join('')}
+ return ks.map(g=>`<div class="gh">${esc(g)}</div><div class="exlist">${by[g].sort((a,b)=>a.name.localeCompare(b.name,'uk')).map(e=>`<button class="exrow" data-a="${act}" data-e="${e.id}"><span>${esc(e.name)}<small>${TYPES[e.type]}${e.uni?' · Л/П':''}${primOf(e).length?' · '+primOf(e).map(musName).join(', '):''}${e.sec&&e.sec.length?' · доп.: '+e.sec.map(musName).join(', '):''}</small></span><span class="muted">›</span></button>`).join('')}</div>`).join('')}
 
 /* ========== SETTINGS ========== */
 function bandRows(selectable,sel){sel=sel||{};return S.settings.bands.map(b=>`<div class="bandrow ${sel[b.id]?'on':''}" id="brow-${b.id}"><div class="l1"><input type="color" value="${esc(b.hex)}" data-f="band" data-b="${b.id}" data-k="hex" id="bc-${b.id}" aria-label="Колір"><input class="in" data-f="band" data-b="${b.id}" data-k="name" id="bn-${b.id}" value="${esc(b.name)}" aria-label="Назва">${selectable?`<div class="stepper"><button class="ib" data-a="bq" data-b="${b.id}" data-d="-1" aria-label="Менше">−</button><b class="num" id="bq-${b.id}">${sel[b.id]||0}</b><button class="ib" data-a="bq" data-b="${b.id}" data-d="1" aria-label="Більше">+</button></div>`:''}</div>
@@ -847,6 +901,7 @@ function vSet(){const t=S.settings.theme;
  <label class="chk"><input type="checkbox" data-c="duck" id="set-duck" ${S.settings.duck!==false?'checked':''}>Приглушувати музику на час сигналу</label>
  <button class="btn" data-a="snd-test">Перевірити звук</button>
  <p class="muted small" style="margin:0">Сигнал не може бути гучнішим за загальну гучність iPhone. Тому він різкий і високий, щоб пробиватися крізь музику, а музика на мить притихає (Safari 16.4 і новіші). Гучність 100% - максимум без спотворень.</p></section>
+ <section class="card stack"><div class="lbl">Статистика м’язів</div><div class="seg"><button class="${musFull()?'':'on'}" data-a="musmode" data-v="short">Коротка</button><button class="${musFull()?'on':''}" data-a="musmode" data-v="full">Розширена</button></div><p class="muted small" style="margin:0">Коротка: 13 основних груп, як раніше (груди, спина, дельти, біцепс, трицепс, ноги, ікри, прес). Розширена: групи по зонах плюс розгиначі, ротатори, передпліччя, привідні, і розкриття до окремих м’язів. Вибір м’язів у вправах детальний в обох режимах.</p></section>
  <section class="card stack"><div class="lbl">Зарядка</div><label class="chk"><input type="checkbox" data-c="warmon" id="set-warm" ${S.settings.warmOn!==false?'checked':''}>Показувати зарядку</label>
  ${S.settings.warmOn!==false?`<div class="field"><span>Картка зарядки на екрані «Запис»</span><div class="seg"><button class="${S.settings.warmPos==='bottom'?'':'on'}" data-a="warmpos" data-v="top">Зверху</button><button class="${S.settings.warmPos==='bottom'?'on':''}" data-a="warmpos" data-v="bottom">Знизу</button></div></div>`:''}
  <p class="muted small" style="margin:0">Вимкнена зарядка ховається з «Запису», «Історії» та «Аналітики». Записи і шаблони зберігаються, повернути можна будь-коли.</p></section>
@@ -922,14 +977,15 @@ let toastT;function toast(msg,undoFn){clearTimeout(toastT);UNDO=undoFn||null;$('
 function confirmSheet(text,ok,fn,danger=true){openSheet(`<h3>${esc(text)}</h3><div class="g2"><button class="btn" data-a="close">Скасувати</button><button class="btn ${danger?'danger':'pri'}" data-a="confirm-ok">${esc(ok)}</button></div>`,'confirm');CONFIRM=fn}
 let CONFIRM=null;
 function pickerSheet(cb,title){PICK=cb;openSheet(`<h3>${esc(title||'Обери вправу')}</h3><input class="in" type="search" data-f="pickq" id="pickq" placeholder="Пошук"><button class="btn full" data-a="ex-new" data-from="pick">+ Створити нову вправу</button><div id="picklist">${catalogList('','pick')}</div>`,'pick')}
-function exEditor(e,fromPick){EXED=e?JSON.parse(JSON.stringify(e)):{id:'u_'+uid(),name:'',type:'weight',group:'',sec:[],uni:false,cf:null,_new:true};EXED._fromPick=!!fromPick;renderExEd()}
+function exEditor(e,fromPick){EXED=e?convEx(JSON.parse(JSON.stringify(e))):{id:'u_'+uid(),name:'',type:'weight',prim:[],sec:[],uni:false,cf:null,_new:true};EXED._fromPick=!!fromPick;renderExEd()}
 function renderExEd(){const e=EXED;const isStr=STR.includes(e.type)||e.type==='hiit';
  openSheet(`<h3>${e._new?'Нова вправа':'Вправа'}</h3>
  <label class="field"><span>Назва</span><input class="in" data-f="exed" data-k="name" id="exed-name" value="${esc(e.name)}" placeholder="Напр. Жим гантелей сидячи"></label>
  <label class="field"><span>Тип навантаження</span><select class="in" data-c="exed-type" id="exed-type">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${k===e.type?'selected':''}>${v}</option>`).join('')}</select></label>
  ${MODEHINT[e.type]?`<div class="hint">${MODEHINT[e.type]}</div>`:''}
- ${isStr?`<label class="field"><span>Основна група м’язів</span><select class="in" data-f="exed" data-k="group" id="exed-group"><option value="">Без групи</option>${GROUPS.map(g=>`<option ${g===e.group?'selected':''}>${g}</option>`).join('')}</select></label>
- <div class="field"><span>Допоміжні (рахуються як 0,5 підходу)</span><div class="chips">${GROUPS.filter(g=>g!==e.group).map(g=>`<button class="chip ${e.sec.includes(g)?'on':''}" data-a="exed-sec" data-v="${g}">${g}</button>`).join('')}</div></div>
+ ${isStr?`<div class="field"><span>М’язи: натисни один раз - основний (1 підхід), двічі - допоміжний (0,5), втретє - прибрати</span>
+ <div class="muslegend"><span class="chip mus-p">основний</span><span class="chip mus-s">допоміжний</span></div>
+ ${REGIONS.map(r=>`<div class="musreg"><div class="lbl">${r}</div><div class="chips">${MUSCLES.filter(m=>m.reg===r).map(m=>`<button class="chip ${e.prim.includes(m.id)?'mus-p':e.sec.includes(m.id)?'mus-s':''}" data-a="exed-mus" data-v="${m.id}">${m.name}</button>`).join('')}</div></div>`).join('')}</div>
  <label class="chk"><input type="checkbox" data-c="exed-uni" id="exed-uni" ${e.uni?'checked':''}>Одностороння: повтори окремо Л / П</label>`:''}
  ${e.type==='trx'?(()=>{const m=e.trxMode||(e.trxAngle!=null?(e.trxAngle?'angle':'manual'):(TRX_DEF[e.id]||'angle'));return`<label class="field"><span>Як рахувати навантаження</span><select class="in" data-c="exed-trxmode" id="exed-trxmode">${[['angle','За кутом тіла (тяги, жими)'],['leg','Ноги з допомогою рук (присідання, випади)'],['manual','Ручний рівень, без кг']].map(([k,l])=>`<option value="${k}" ${k===m?'selected':''}>${l}</option>`).join('')}</select></label>${m==='angle'?`<label class="field"><span>Напрям руху</span><select class="in" data-c="exed-trxdir" id="exed-trxdir">${[['pull','Тяга до себе (обличчям до кріплення)'],['push','Жим, віджимання (спиною до кріплення)']].map(([k,l])=>`<option value="${k}" ${k===(e.trxDir||(TRX_PUSH.includes(e.id)?'push':'pull'))?'selected':''}>${l}</option>`).join('')}</select></label>`:''}${m==='leg'?`<label class="chk"><input type="checkbox" data-c="exed-lunge" id="exed-lunge" ${(e.legShare!=null?e.legShare<1:e.id==='trx_lunge')?'checked':''}>Випад / спліт: на передню ногу ~85% ваги</label>`:''}`})():''}
  ${e.type==='cardio'?`<div class="field"><span>Які показники вписувати (плюс завжди «Важкість 1-10»)</span><div class="chips">${Object.entries(CF).map(([k,v])=>`<button class="chip ${(e.cf||[]).includes(k)?'on':''}" data-a="exed-cf" data-v="${k}">${v}</button>`).join('')}</div></div>`:''}
@@ -985,7 +1041,7 @@ function importSheet(mode){IMPMODE=mode;openSheet(`<h3>${mode==='tpl'?'Імпо�
 function doImport(txt){let o;try{o=JSON.parse(txt)}catch(e){toast('Це не схоже на файл копії. Перевір, що текст скопійовано повністю');return}
  if(IMPMODE==='all'){if(!o||!Array.isArray(o.workouts)||!Array.isArray(o.catalog)){toast('У файлі немає повної копії. Для шаблонів скористайся «Імпорт шаблонів»');return}S=o;fix();save();closeSheet();toast('Дані відновлено');return}
  const tpls=o&&(o.templates||[]);const cat=o&&(o.catalog||[]);if(!tpls.length){toast('У файлі немає шаблонів');return}
- const map={};cat.forEach(e=>{const byId=ex(e.id);if(byId&&byId.name===e.name){map[e.id]=e.id;return}const byName=S.catalog.find(x=>x.name.toLowerCase()===String(e.name).toLowerCase());if(byName){map[e.id]=byName.id;return}const ne=Object.assign({},e,{id:byId?'u_'+uid():e.id});S.catalog.push(ne);map[e.id]=ne.id});
+ const map={};cat.forEach(e=>{const byId=ex(e.id);if(byId&&byId.name===e.name){map[e.id]=e.id;return}const byName=S.catalog.find(x=>x.name.toLowerCase()===String(e.name).toLowerCase());if(byName){map[e.id]=byName.id;return}const ne=convEx(Object.assign({},e,{id:byId?'u_'+uid():e.id}));S.catalog.push(ne);map[e.id]=ne.id});
  tpls.forEach(t=>S.templates.push({id:uid(),name:t.name,tag:t.tag||'Інше',note:t.note||'',items:(t.items||[]).map(i=>i.kind==='block'?Object.assign({},i,{ex:(i.ex||[]).map(x=>Object.assign({},x,{exId:map[x.exId]||x.exId}))}):Object.assign({},i,{exId:map[i.exId]||i.exId})).filter(i=>i.kind==='block'||ex(i.exId))}));
  save();closeSheet();toast('Додано шаблонів: '+tpls.length)}
 function saveTplSheet(){const w=S.draft;openSheet(`<h3>Зберегти як шаблон</h3><label class="field"><span>Назва шаблону</span><input class="in" id="nt-name" value="${esc(w.tplId?w.tplName+' (новий)':'Мій шаблон')}"></label>
@@ -1060,7 +1116,7 @@ const ACT={
  'ex-new'(el){exEditor(null,el.dataset.from==='pick')},
  'ex-edit'(el){exEditor(ex(el.dataset.e),false)},
  pick(el){const e=ex(el.dataset.e);const cb=PICK;PICK=null;cb&&cb(e)},
- 'exed-sec'(el){const g=el.dataset.v;EXED.sec=EXED.sec.includes(g)?EXED.sec.filter(x=>x!==g):EXED.sec.concat(g);renderExEd()},
+ 'exed-mus'(el){const id=el.dataset.v,e=EXED;if(e.prim.includes(id)){e.prim=e.prim.filter(x=>x!==id);e.sec=e.sec.concat(id)}else if(e.sec.includes(id)){e.sec=e.sec.filter(x=>x!==id)}else e.prim=e.prim.concat(id);renderExEd()},
  'exed-cf'(el){const k=el.dataset.v;const a=EXED.cf||[];EXED.cf=a.includes(k)?a.filter(x=>x!==k):a.concat(k);renderExEd()},
  'exed-save'(){const e=EXED;e.name=(e.name||'').trim();if(!e.name){toast('Впиши назву вправи');return}if(e._new&&S.catalog.some(x=>x.name.toLowerCase()===e.name.toLowerCase())){toast('Вправа з такою назвою вже є');return}
   const fromPick=e._fromPick,isNew=e._new;delete e._new;delete e._fromPick;if(e.type==='cardio'&&!(e.cf&&e.cf.length))e.cf=['time','dist','kcal','hr'];if(e.type!=='cardio')e.cf=null;
@@ -1241,6 +1297,7 @@ Object.assign(ACT,{
  'w-mark'(){const d=todayStr();const q=S.workouts.filter(w=>isWarm(w)&&w.date===d);if(q.length){const quick=q.filter(w=>w.quick);if(!quick.length){toast('Сьогодні вже є записана зарядка. Видалити її можна в історії');return}S.workouts=S.workouts.filter(w=>!(w.quick&&isWarm(w)&&w.date===d))}else{const t=S.templates.find(x=>x.tag===WARM);S.workouts.push({id:uid(),date:d,tplName:t?t.name:'Зарядка',tag:WARM,quick:true,items:[],startedAt:Date.now()})}save();render()},
  'w-stats'(){S.ui.scope='warm';S.ui.tab='stats';save();render();window.scrollTo(0,0)},
  'snd-test'(){audioInit();beep(1200,.15,true);setTimeout(()=>beep(1800,.45,true),400);if(S.settings.sound===false)toast('Звук у таймері вимкнено, це лише перевірка')},
+ musmode(el){S.settings.musMode=el.dataset.v;save();render()},
  warmpos(el){S.settings.warmPos=el.dataset.v;save();render()},
  scope(el){S.ui.scope=el.dataset.v;S.ui.exk='';save();render()},
  'blk-edit'(el){const it=itemBy(el.dataset.i);if(it)openBed({kind:'draft',uid:it.uid},it)},
