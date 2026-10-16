@@ -196,6 +196,10 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .bandrow input[type=color]{width:34px;height:34px;border:0;padding:0;background:none;border-radius:50%;flex:none}
 .bandrow .l2{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
 .bandrow .l2 .cell{width:68px;height:38px;font-size:16px}
+.stepper{display:flex;align-items:center;gap:6px;flex:none}.stepper b{min-width:22px;text-align:center;font-size:20px}
+.sheetfoot{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom,0px));background:var(--bg);padding:8px 0 calc(18px + env(safe-area-inset-bottom,0px));margin-bottom:calc(-18px - env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
+.bandtotal{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+.bandbtn .dot+.dot{margin-left:-8px}
 
 /* nav */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
@@ -243,7 +247,7 @@ const GROUPS=['Груди','Спина','Передня дельта','Сере�
 const TYPES={weight:'Штанга / тренажер',db1:'1 гантель',db2:'2 гантелі',bw:'Власна вага',band:'Гума',trx:'TRX',hiit:'HIIT (раунди)',cardio:'Кардіо'};
 const STR=['weight','db1','db2','bw','band','trx'];
 const LOADLBL={weight:'Кг',db1:'Кг',db2:'Кг 1 шт',bw:'+ Кг',band:'Гума',trx:'Рівень'};
-const MODEHINT={weight:'',db1:'Вага однієї гантелі, рахується ×1',db2:'Вага однієї гантелі, в обсязі рахується ×2',bw:'Лише додаткова вага. Вагу тіла додаю сам',band:'Колір гуми. Рахується середина її діапазону',trx:'Рівень 1-10: вище = важче. Спершу повтори до верху діапазону, потім рівень +1'};
+const MODEHINT={weight:'',db1:'Вага однієї гантелі, рахується ×1',db2:'Вага однієї гантелі, в обсязі рахується ×2',bw:'Лише додаткова вага. Вагу тіла додаю сам',band:'Гума: можна кілька. Рахується сума середин їхніх діапазонів',trx:'Рівень 1-10: вище = важче. Спершу повтори до верху діапазону, потім рівень +1'};
 const E1UNIT={weight:'кг',db1:'кг',db2:'кг/гант.',bw:'кг з ВТ',band:'≈кг',trx:'інд.'};
 const CF={time:'Час, хв',dist:'Дистанція, км',kcal:'Ккал',hr:'Сер. пульс',watts:'Сер. потужн., Вт',rpm:'Сер. RPM',speed:'Швидкість, км/год',incline:'Нахил, %'};
 const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набір'};
@@ -384,14 +388,17 @@ const sortedW=()=>S.workouts.slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?
 function imputed(w,k){const v=num(w[k]);if(v!=null)return{v,imp:false};const ws=sortedW();let pool=ws.filter(x=>x.id!==w.id&&x.date<=w.date&&num(x[k])!=null);if(!pool.length)pool=ws.filter(x=>x.id!==w.id&&num(x[k])!=null);if(!pool.length)return{v:null,imp:true};return{v:avg(pool.map(x=>num(x[k]))),imp:true}}
 function bwOf(w){const r=imputed(w,'bw');return r.v!=null?r.v:num(S.settings.bw)}
 function repsOf(it,s){if(it.uni){const l=num(s.rl),r=num(s.rr);if(l==null&&r==null)return null;return{tot:(l||0)+(r||0),per:l!=null&&r!=null?(l+r)/2:(l??r)}}const r=num(s.r);return r==null?null:{tot:r,per:r}}
-const bandKg=b=>b?((num(b.min)||0)+(num(b.max)||0))/2:null;
-function baseLoad(it,s,bw){switch(it.type){case'weight':case'db1':case'db2':case'trx':return num(s.w);case'bw':return(bw||0)+(num(s.w)||0);case'band':return bandKg(s.band)}return null}
+const bandsOf=s=>s.bands&&s.bands.length?s.bands:(s.band?[s.band]:[]);
+const bandMid=b=>((num(b.min)||0)+(num(b.max)||0))/2;
+const bandKg=s=>{const a=bandsOf(s);return a.length?a.reduce((t,b)=>t+bandMid(b),0):null};
+function bandLabel(a){if(!a.length)return'гума';const c={};a.forEach(b=>c[b.name]=(c[b.name]||0)+1);return Object.entries(c).map(([n,k])=>k>1?n+'×'+k:n).join('+')}
+function baseLoad(it,s,bw){switch(it.type){case'weight':case'db1':case'db2':case'trx':return num(s.w);case'bw':return(bw||0)+(num(s.w)||0);case'band':return bandKg(s)}return null}
 function volLoad(it,s,bw){if(it.type==='trx')return null;const L=baseLoad(it,s,bw);if(L==null)return null;return it.type==='db2'?L*2:L}
 function e1rm(L,reps,rir){if(!L||!reps)return null;const t=reps+(rir||0);return t<=1?L:L*(1+t/30)}
 function setE1(it,s,bw){const R=repsOf(it,s);if(!R||!R.per)return null;return e1rm(baseLoad(it,s,bw),R.per,num(s.rir))}
 function setVol(it,s,bw){const R=repsOf(it,s);if(!R)return 0;const L=volLoad(it,s,bw);return L?L*R.tot:0}
 function isHard(it,s){if(!STR.includes(it.type))return false;const R=repsOf(it,s);if(!R||!R.tot)return false;const rir=num(s.rir);return rir==null||rir<=4}
-function setTxt(it,s){const R=it.uni?`${s.rl||'–'}/${s.rr||'–'}`:(s.r||'–');let L='';switch(it.type){case'bw':L=num(s.w)?'+'+s.w:'ВТ';break;case'band':L=s.band?s.band.name:'гума';break;case'trx':L='р'+(s.w||'–');break;default:L=s.w||'–'}return L+'×'+R}
+function setTxt(it,s){const R=it.uni?`${s.rl||'–'}/${s.rr||'–'}`:(s.r||'–');let L='';switch(it.type){case'bw':L=num(s.w)?'+'+s.w:'ВТ';break;case'band':L=bandsOf(s).length>1?'('+bandLabel(bandsOf(s))+')':bandLabel(bandsOf(s));break;case'trx':L='р'+(s.w||'–');break;default:L=s.w||'–'}return L+'×'+R}
 function itemStats(it,bw){
  if(STR.includes(it.type)){let vol=0,best=null,bs=null,hard=0,sets=0;const rests=[];
   it.sets.forEach(s=>{const R=repsOf(it,s);if(!R||!R.tot)return;sets++;vol+=setVol(it,s,bw);const e=setE1(it,s,bw);if(e!=null&&(best==null||e>best)){best=e;bs=s}if(isHard(it,s))hard++;const r=num(s.rest);if(r)rests.push(r)});
@@ -412,11 +419,11 @@ function weeksSpan(ws,start){if(!ws.length)return 1;const first=ws[0].date>start
 function groupSets(ws){const C=calc(),g={};ws.forEach(w=>{const st=C.wst[w.id];for(const k in st.groups)g[k]=(g[k]||0)+st.groups[k]});return g}
 function pearson(x,y){const n=x.length;if(n<3)return null;const mx=avg(x),my=avg(y);let a=0,b=0,c=0;for(let i=0;i<n;i++){a+=(x[i]-mx)*(y[i]-my);b+=(x[i]-mx)**2;c+=(y[i]-my)**2}return b&&c?a/Math.sqrt(b*c):null}
 function prevSession(exId,w){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const x=ws[i];if(x.id===w.id||x.date>w.date)continue;const item=x.items.find(i=>i.exId===exId);if(item&&item.sets.some(s=>Object.values(s).some(v=>v!==''&&v!=null&&typeof v!=='object')))return{w:x,item}}return null}
-function lastBandFor(exId){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const it=ws[i].items.find(x=>x.exId===exId&&x.type==='band');if(it){const s=it.sets.find(s=>s.band);if(s){const cur=band(s.band.id);return cur?{...cur}:{...s.band}}}}return null}
+function lastBandFor(exId){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const it=ws[i].items.find(x=>x.exId===exId&&x.type==='band');if(it){const s=it.sets.find(s=>bandsOf(s).length);if(s)return bandsOf(s).map(b=>{const cur=band(b.id);return cur?{...cur}:{...b}})}}return null}
 const repMax=r=>{const m=String(r||'').match(/\d+/g);return m?+m[m.length-1]:null};
 
 /* ========== draft building ========== */
-function blankSet(it,t={},b){if(it.type==='hiit')return{work:t.work||'',rest:t.rest||'',r:'',w:''};if(it.type==='cardio')return{};const s={r:'',rl:'',rr:'',w:'',rir:'',rest:''};if(it.type==='band'&&b)s.band={...b};return s}
+function blankSet(it,t={},b){if(it.type==='hiit')return{work:t.work||'',rest:t.rest||'',r:'',w:''};if(it.type==='cardio')return{};const s={r:'',rl:'',rr:'',w:'',rir:'',rest:''};if(it.type==='band'&&b&&b.length)s.bands=b.map(x=>({...x}));return s}
 function makeItem(e,t={}){const type=t.type||e.type;const it={uid:uid(),exId:e.id,name:e.name,type,uni:!!e.uni,group:e.group||'',sec:(e.sec||[]).slice(),cf:e.cf?e.cf.slice():null,tgt:{sets:t.sets||'',reps:t.reps||'',rir:t.rir||'',note:t.note||'',work:t.work||'',rest:t.rest||''},sets:[]};
  const n=type==='cardio'?1:Math.max(1,+t.sets||2);const b=type==='band'?(lastBandFor(e.id)||null):null;for(let i=0;i<n;i++)it.sets.push(blankSet(it,t,b));return it}
 function newWorkout(tpl){const w={id:uid(),date:todayStr(),tplId:tpl?tpl.id:null,tplName:tpl?tpl.name:'Довільне тренування',tag:tpl?tpl.tag:'Інше',tplNote:tpl?tpl.note:'',phase:S.settings.phase||'',sleep:'',well:'',dur:'',bw:'',notes:'',items:[],startedAt:Date.now()};if(tpl)tpl.items.forEach(t=>{const e=ex(t.exId);if(e)w.items.push(makeItem(e,t))});return w}
@@ -485,13 +492,13 @@ function prevLine(it,p){const st=itemStats(p.item,bwOf(p.w));let txt='';
  let hint='';const rm=repMax(it.tgt.reps);
  if(STR.includes(it.type)&&rm&&p.item.type===it.type){const done=p.item.sets.filter(s=>{const R=repsOf(p.item,s);return R&&R.tot});
   if(done.length){const all=done.every(s=>{if(p.item.uni){const l=num(s.rl),r=num(s.rr);return(l??0)>=rm&&(r??0)>=rm}return(num(s.r)||0)>=rm});
-   hint=all?`<span class="pill p-good">↑ ${it.type==='trx'?'рівень +1':it.type==='band'?'важча гума':'додай навантаження'}</span>`:`<span class="pill p-acc">→ те саме, + повтори</span>`}}
+   hint=all?`<span class="pill p-good">↑ ${it.type==='trx'?'рівень +1':it.type==='band'?'важча гума або ще одна':'додай навантаження'}</span>`:`<span class="pill p-acc">→ те саме, + повтори</span>`}}
  return`<div class="prev">Минулого разу ${dShort(p.w.date)}: <b>${esc(txt||'—')}</b>${hint}</div>`}
 function strRows(it,prev){const ps=prev&&prev.item.type===it.type?prev.item.sets:[];
  let h=`<div class="sets"><div class="srow h"><span></span><span>${it.uni?'Повт Л / П':'Повт'}</span><span>${LOADLBL[it.type]}</span><span>RIR</span><span>Відп, с</span></div>`;
  it.sets.forEach((s,n)=>{const p=ps[n]||{};const a=`data-f="s" data-i="${it.uid}" data-n="${n}"`;const id=`${it.uid}-${n}`;
   const reps=it.uni?`<div class="lr"><input class="cell" inputmode="numeric" ${a} data-k="rl" id="rl-${id}" value="${esc(s.rl)}" placeholder="${esc(p.rl??'Л')}" aria-label="Повтори ліва"><input class="cell" inputmode="numeric" ${a} data-k="rr" id="rr-${id}" value="${esc(s.rr)}" placeholder="${esc(p.rr??'П')}" aria-label="Повтори права"></div>`:`<input class="cell" inputmode="numeric" ${a} data-k="r" id="r-${id}" value="${esc(s.r)}" placeholder="${esc(p.r??'')}" aria-label="Повтори">`;
-  const load=it.type==='band'?`<button class="bandbtn" data-a="pick-band" data-i="${it.uid}" data-n="${n}">${s.band?`<i class="dot" style="background:${esc(s.band.hex)}"></i><span>${esc(s.band.name)}</span>`:'<span class="muted">Обрати</span>'}</button>`:`<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??(it.type==='bw'?'0':''))}" aria-label="${LOADLBL[it.type]}">`;
+  const load=it.type==='band'?`<button class="bandbtn" data-a="pick-band" data-i="${it.uid}" data-n="${n}">${bandsOf(s).length?bandsOf(s).map(b=>`<i class="dot" style="background:${esc(b.hex)}"></i>`).join('')+`<span>${esc(bandsOf(s).length>1?'≈'+f0(bandKg(s)):bandsOf(s)[0].name)}</span>`:'<span class="muted">Обрати</span>'}</button>`:`<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??(it.type==='bw'?'0':''))}" aria-label="${LOADLBL[it.type]}">`;
   h+=`<div class="srow"><span class="i">${n+1}</span>${reps}${load}<input class="cell" inputmode="decimal" ${a} data-k="rir" id="rir-${id}" value="${esc(s.rir)}" placeholder="${esc(p.rir??'')}" aria-label="RIR"><input class="cell" inputmode="numeric" ${a} data-k="rest" id="rs-${id}" value="${esc(s.rest)}" placeholder="${esc(p.rest??'')}" aria-label="Відпочинок, секунд"></div>`});
  return h+`</div>`}
 function hiitRows(it,prev){const ps=prev&&prev.item.type==='hiit'?prev.item.sets:[];
@@ -703,7 +710,7 @@ function catalogList(q,act){const by={};S.catalog.filter(e=>!q||e.name.toLowerCa
  return ks.map(g=>`<div class="gh">${esc(g)}</div><div class="exlist">${by[g].sort((a,b)=>a.name.localeCompare(b.name,'uk')).map(e=>`<button class="exrow" data-a="${act}" data-e="${e.id}"><span>${esc(e.name)}<small>${TYPES[e.type]}${e.uni?' · Л/П':''}${e.sec&&e.sec.length?' · + '+e.sec.join(', '):''}</small></span><span class="muted">›</span></button>`).join('')}</div>`).join('')}
 
 /* ========== SETTINGS ========== */
-function bandRows(selectable,cur){return S.settings.bands.map(b=>`<div class="bandrow ${cur===b.id?'on':''}"><div class="l1"><input type="color" value="${esc(b.hex)}" data-f="band" data-b="${b.id}" data-k="hex" id="bc-${b.id}" aria-label="Колір"><input class="in" data-f="band" data-b="${b.id}" data-k="name" id="bn-${b.id}" value="${esc(b.name)}" aria-label="Назва">${selectable?`<button class="btn ${cur===b.id?'pri':''}" data-a="band-set" data-b="${b.id}">${cur===b.id?'Обрано':'Обрати'}</button>`:''}</div>
+function bandRows(selectable,sel){sel=sel||{};return S.settings.bands.map(b=>`<div class="bandrow ${sel[b.id]?'on':''}" id="brow-${b.id}"><div class="l1"><input type="color" value="${esc(b.hex)}" data-f="band" data-b="${b.id}" data-k="hex" id="bc-${b.id}" aria-label="Колір"><input class="in" data-f="band" data-b="${b.id}" data-k="name" id="bn-${b.id}" value="${esc(b.name)}" aria-label="Назва">${selectable?`<div class="stepper"><button class="ib" data-a="bq" data-b="${b.id}" data-d="-1" aria-label="Менше">−</button><b class="num" id="bq-${b.id}">${sel[b.id]||0}</b><button class="ib" data-a="bq" data-b="${b.id}" data-d="1" aria-label="Більше">+</button></div>`:''}</div>
  <div class="l2">Діапазон, кг <input class="cell" inputmode="decimal" data-f="band" data-b="${b.id}" data-k="min" id="bmin-${b.id}" value="${esc(b.min)}" aria-label="Від, кг"> – <input class="cell" inputmode="decimal" data-f="band" data-b="${b.id}" data-k="max" id="bmax-${b.id}" value="${esc(b.max)}" aria-label="До, кг"><span style="flex:1"></span>${selectable?'':`<button class="ib del" data-a="band-del" data-b="${b.id}" aria-label="Видалити гуму">✕</button>`}</div></div>`).join('')}
 function vSet(){const t=S.settings.theme;
  return`<section class="card stack"><div class="lbl">Тема</div><div class="seg">${[['auto','Як у системі'],['light','Світла'],['dark','Темна']].map(([k,l])=>`<button class="${t===k?'on':''}" data-a="theme" data-v="${k}">${l}</button>`).join('')}</div></section>
@@ -770,8 +777,12 @@ function renderExEd(){const e=EXED;const isStr=STR.includes(e.type)||e.type==='h
  <button class="btn pri full" data-a="exed-save">Зберегти</button>
  ${e._new?'':'<button class="btn danger full" data-a="exed-del">Видалити з каталогу</button>'}
  <button class="btn ghost full" data-a="close">Скасувати</button>`,'exed')}
-function bandSheet(u,n){const it=itemBy(u);if(!it)return;const cur=it.sets[n].band&&it.sets[n].band.id;BANDCTX={u,n};
- openSheet(`<h3>Гума для підходу ${n+1}</h3><p class="muted small" style="margin:0">Обрана гума ставиться в цей підхід і в наступні порожні. Змінений діапазон діє з цього тренування і далі.</p><div>${bandRows(true,cur)}</div><button class="btn full" data-a="band-add">+ Нова гума</button><button class="btn ghost full" data-a="close">Готово</button>`,'band')}
+function bandSheet(u,n,keep){const it=itemBy(u);if(!it)return;if(!keep){BANDSEL={};bandsOf(it.sets[n]).forEach(b=>BANDSEL[b.id]=(BANDSEL[b.id]||0)+1)}BANDCTX={u,n};
+ openSheet(`<h3>Гуми для підходу ${n+1}</h3><p class="muted small" style="margin:0">Можна обрати кілька гум і однакові по кілька штук, навантаження сумується. Вибір ставиться в цей підхід і в наступні порожні. Змінений діапазон діє з цього тренування і далі.</p>
+ <div>${bandRows(true,BANDSEL)}</div><button class="btn full" data-a="band-add">+ Нова гума</button><div class="sheetfoot"><div class="bandtotal" id="band-total">${bandTotalTxt()}</div><div class="g2"><button class="btn" data-a="close">Скасувати</button><button class="btn pri" data-a="band-apply">Застосувати</button></div></div>`,'band')}
+let BANDSEL={};
+function selBands(){const a=[];S.settings.bands.forEach(b=>{for(let i=0;i<(BANDSEL[b.id]||0);i++)a.push({...b})});return a}
+function bandTotalTxt(){const a=selBands();if(!a.length)return'<span class="muted">Гуму не обрано</span>';const lo=a.reduce((t,b)=>t+(num(b.min)||0),0),hi=a.reduce((t,b)=>t+(num(b.max)||0),0);return`${esc(bandLabel(a))}: <b class="num">≈ ${f1((lo+hi)/2)} кг</b> <span class="muted">(${f0(lo)}-${f0(hi)})</span>`}
 let BANDCTX=null;
 function exportSheet(obj,fname,title){const txt=JSON.stringify(obj);EXP={txt,fname};
  openSheet(`<h3>${esc(title)}</h3><p class="muted small" style="margin:0">«Завантажити файл» збереже .json. На iPhone обери «Зберегти у Файли» → iCloud Drive. Якщо збереження недоступне, натисни «Скопіювати» і встав текст у Нотатки.</p><div class="g2"><button class="btn pri" data-a="dl">Завантажити файл</button><button class="btn" data-a="copy">Скопіювати</button></div><textarea class="in" readonly id="exp-ta" style="min-height:120px;font-size:12px">${esc(txt)}</textarea><button class="btn ghost full" data-a="close">Закрити</button>`,'exp')}
@@ -804,12 +815,13 @@ const ACT={
  start(el){const t=S.templates.find(x=>x.id===el.dataset.t);S.draft=newWorkout(t||null);save();render();window.scrollTo(0,0)},
  mv(el){const w=S.draft,i=w.items.findIndex(x=>x.uid===el.dataset.i),j=i+ +el.dataset.d;if(j<0||j>=w.items.length)return;[w.items[i],w.items[j]]=[w.items[j],w.items[i]];save();render();const c=document.getElementById('it-'+el.dataset.i);c&&c.scrollIntoView({block:'center'})},
  'del-item'(el){const w=S.draft,i=w.items.findIndex(x=>x.uid===el.dataset.i);const [rm]=w.items.splice(i,1);save();render();toast('Вправу прибрано з сьогоднішнього тренування',()=>{S.draft&&S.draft.items.splice(i,0,rm)})},
- 'add-set'(el){const it=itemBy(el.dataset.i);const last=it.sets[it.sets.length-1]||{};const s=blankSet(it,{},last.band||null);if(it.type==='hiit'){s.work=last.work||'';s.rest=last.rest||'';s.w=last.w||''}it.sets.push(s);save();render()},
+ 'add-set'(el){const it=itemBy(el.dataset.i);const last=it.sets[it.sets.length-1]||{};const s=blankSet(it,{},bandsOf(last));if(it.type==='hiit'){s.work=last.work||'';s.rest=last.rest||'';s.w=last.w||''}it.sets.push(s);save();render()},
  'del-set'(el){const it=itemBy(el.dataset.i);if(it.sets.length>1)it.sets.pop();save();render()},
  'add-item'(){pickerSheet(e=>{S.draft.items.push(makeItem(e,{sets:e.type==='cardio'?1:2}));save();closeSheet();setTimeout(()=>window.scrollTo(0,document.body.scrollHeight),30)})},
  'pick-band'(el){bandSheet(el.dataset.i,+el.dataset.n)},
- 'band-set'(el){const b=band(el.dataset.b);const it=itemBy(BANDCTX.u);if(!it)return;it.sets.forEach((s,k)=>{if(k===BANDCTX.n||(k>BANDCTX.n&&!(repsOf(it,s)||{}).tot))s.band={...b}});save();closeSheet()},
- 'band-add'(){S.settings.bands.push({id:'b'+uid(),name:'Нова гума',hex:'#8A8F98',min:'',max:''});save();if(SHEET==='band')bandSheet(BANDCTX.u,BANDCTX.n);else render()},
+ bq(el){const id=el.dataset.b;BANDSEL[id]=Math.max(0,Math.min(9,(BANDSEL[id]||0)+ +el.dataset.d));const q=document.getElementById('bq-'+id);if(q)q.textContent=BANDSEL[id];const r=document.getElementById('brow-'+id);if(r)r.classList.toggle('on',BANDSEL[id]>0);const t=document.getElementById('band-total');if(t)t.innerHTML=bandTotalTxt()},
+ 'band-apply'(){const a=selBands();const it=itemBy(BANDCTX.u);if(!it)return;it.sets.forEach((s,k)=>{if(k===BANDCTX.n||(k>BANDCTX.n&&!(repsOf(it,s)||{}).tot)){delete s.band;s.bands=a.map(x=>({...x}))}});save();closeSheet()},
+ 'band-add'(){S.settings.bands.push({id:'b'+uid(),name:'Нова гума',hex:'#8A8F98',min:'',max:''});save();if(SHEET==='band')bandSheet(BANDCTX.u,BANDCTX.n,true);else render()},
  'band-del'(el){const id=el.dataset.b;confirmSheet('Видалити цю гуму зі списку?','Видалити',()=>{S.settings.bands=S.settings.bands.filter(b=>b.id!==id);save()})},
  finish(){finish()},
  'save-tpl'(){saveTplSheet()},
@@ -868,12 +880,12 @@ document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)ret
  if(f==='tpl'){const t=S.templates.find(x=>x.id===S.ui.editTpl);if(t){t[k]=v;save()}return}
  if(f==='ti'){const t=S.templates.find(x=>x.id===S.ui.editTpl);if(t){t.items[+el.dataset.n][k]=v;save();if(k==='type')render()}return}
  if(f==='set'){S.settings[k]=v;save();return}
- if(f==='band'){const b=band(el.dataset.b);if(!b)return;b[k]=v;if(S.draft)S.draft.items.forEach(it=>it.sets.forEach(s=>{if(s.band&&s.band.id===b.id)s.band={...b}}));save();return}
+ if(f==='band'){const b=band(el.dataset.b);if(!b)return;b[k]=v;if(S.draft)S.draft.items.forEach(it=>it.sets.forEach(s=>{if(s.band&&s.band.id===b.id)s.band={...b};if(s.bands)s.bands=s.bands.map(x=>x.id===b.id?{...b}:x)}));save();const t=document.getElementById('band-total');if(t)t.innerHTML=bandTotalTxt();return}
  if(f==='exed'){EXED[k]=v;return}
  if(f==='pickq'){$('#picklist').innerHTML=catalogList(v.toLowerCase(),'pick');return}
  if(f==='catq'){S.ui.catq=v;$('#catlist').innerHTML=catalogList(v.toLowerCase(),'ex-edit');return}});
 document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(!c)return;
- if(c==='it-type'){const it=itemBy(el.dataset.i);it.type=el.value;if(it.type==='band'){const b=lastBandFor(it.exId);it.sets.forEach(s=>{if(!s.band&&b)s.band={...b}})}save();render();return}
+ if(c==='it-type'){const it=itemBy(el.dataset.i);it.type=el.value;if(it.type==='band'){const b=lastBandFor(it.exId);it.sets.forEach(s=>{if(!bandsOf(s).length&&b)s.bands=b.map(x=>({...x}))})}save();render();return}
  if(c==='w-phase'){S.draft.phase=el.value;if(!S.draft._edit)S.settings.phase=el.value;save();return}
  if(c==='setphase'){S.settings.phase=el.value;save();return}
  if(c==='it-uni'){const it=itemBy(el.dataset.i);it.uni=el.checked;save();render();return}
