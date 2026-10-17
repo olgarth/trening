@@ -70,6 +70,7 @@ body.wide main,body.wide .top{max-width:1080px}
 }
 main>*{min-width:0;max-width:100%}
 .card,.it,.hint,.prev,.it-meta,.kv{overflow-wrap:anywhere}
+.tbl th,.tbl td{overflow-wrap:normal;word-break:normal}
 .lbl{font-family:var(--f-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .muted{color:var(--muted)} .small{font-size:13px}
 .num{font-family:var(--f-display);font-variant-numeric:tabular-nums}
@@ -503,7 +504,7 @@ function mmss(sec){if(!sec)return '0:00';sec=Math.round(sec);return Math.floor(s
 /* ========== state ========== */
 let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
-function defaults(){return{v:1,seedV:5,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
+function defaults(){return{v:1,seedV:6,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 let PERSIST=null;
 const SNAP='trainlog.snap.',SNAPN=7;let LOADFAIL=false;
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -517,8 +518,9 @@ function load(){const r=lsGet(KEY);if(!r){S=defaults();return}
  let o;try{o=JSON.parse(r)}catch(e){LOADFAIL=true;lsSet(SNAP+todayStr()+'-broken',r);S=defaults();return}
  snapshot(r,'');if((o.seedV||1)<(defaults().seedV))snapshot(r,'pre-v'+(o.seedV||1));
  S=o;try{fix()}catch(e){console.error(e);LOADFAIL=true;S=o;try{const d=defaults();for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k]}catch(e2){}}}
-function fix(){const d=defaults(),sv=S.seedV||1;(S.catalog||[]).forEach(convEx);(S.workouts||[]).concat(S.draft?[S.draft]:[]).forEach(w=>(w.items||[]).forEach(it=>{if(it.type==='block'||it.prim)return;const e=(S.catalog||[]).find(x=>x.id===it.exId);if(e&&e.prim){it.prim=e.prim.slice();it.sec=(e.sec||[]).slice();delete it.group}else if(it.group||it.sec){const c=convEx({group:it.group,sec:it.sec});it.prim=c.prim;it.sec=c.sec;delete it.group}}));for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
- if(sv<5){if(S.morning){const M=S.morning;if(!S.templates.some(t=>t.tag===WARM)){const b=M.block||defMorning().block;S.templates.push({id:uid(),name:b.name,tag:WARM,note:M.note||'',items:[{kind:'block',name:b.name,fmt:b.fmt,cfg:b.cfg,ex:b.ex}]})}const tn=(S.templates.find(t=>t.tag===WARM)||{}).name||'Зарядка';Object.keys(M.days||{}).forEach(d=>{if(!S.workouts.some(w=>w.tag===WARM&&w.date===d))S.workouts.push({id:uid(),date:d,tplName:tn,tag:WARM,quick:true,items:[],startedAt:+new Date(d+'T07:00')})});delete S.morning}else if(sv<4&&!S.templates.some(t=>t.tag===WARM))S.templates.push(warmTpl());S.seedV=5}
+function fix(){const d=defaults(),sv=S.seedV||1;(S.catalog||[]).forEach(convEx);(S.workouts||[]).concat(S.draft?[S.draft]:[]).forEach(w=>(w.items||[]).forEach(it=>{if(it.type==='block'||it.prim)return;const e=(S.catalog||[]).find(x=>x.id===it.exId);if(e&&e.prim){it.prim=e.prim.slice();it.sec=(e.sec||[]).slice();delete it.group}else if(it.group||it.sec){const c=convEx({group:it.group,sec:it.sec});it.prim=c.prim;it.sec=c.sec;delete it.group}}));for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();if(!S.settings.trx.std)S.settings.trx.std=defStd();if(!S.settings.trx.amode)S.settings.trx.amode='std';if(S.settings.trx.manH==null)S.settings.trx.manH=1.82;if(!S.settings.trx.place)S.settings.trx.place='bar';S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
+ if(sv<6){(S.settings.trx&&S.settings.trx.anchors||[]).forEach(a=>{if(a.id==='bar'){if(!a.kind)a.kind='bar';if(num(a.h)===2.4)a.h=1.82}if(a.id==='wall'){if(a.name==='Стіна'){a.name='Дверний проєм';a.kind='door'}if(num(a.h)===2.2)a.h=1.82}});S.seedV=6}
+ if(sv<5){if(S.morning){const M=S.morning;if(!S.templates.some(t=>t.tag===WARM)){const b=M.block||defMorning().block;S.templates.push({id:uid(),name:b.name,tag:WARM,note:M.note||'',items:[{kind:'block',name:b.name,fmt:b.fmt,cfg:b.cfg,ex:b.ex}]})}const tn=(S.templates.find(t=>t.tag===WARM)||{}).name||'Зарядка';Object.keys(M.days||{}).forEach(d=>{if(!S.workouts.some(w=>w.tag===WARM&&w.date===d))S.workouts.push({id:uid(),date:d,tplName:tn,tag:WARM,quick:true,items:[],startedAt:+new Date(d+'T07:00')})});delete S.morning}else if(sv<4&&!S.templates.some(t=>t.tag===WARM))S.templates.push(warmTpl());S.seedV=Math.max(S.seedV||1,5)}
  if(sv<4){seedCatalog().filter(e=>MR_IDS.includes(e.id)&&!S.catalog.some(c=>c.id===e.id)).forEach(e=>S.catalog.push(e));S.seedV=Math.max(S.seedV||1,4)}
  if(sv<3){const hs=hiitSeeds();S.templates=S.templates.map(t=>{const nt=hs.find(h=>h.name===t.name);if(nt&&(t.name==='HIIT. Гиря'||t.name==='HIIT. Власна вага')&&t.items.length&&t.items.every(i=>!i.kind&&(ex(i.exId)||{}).type==='hiit'))return Object.assign(nt,{id:t.id});return t});hs.forEach(h=>{if(!S.templates.some(t=>t.name===h.name))S.templates.push(h)});S.seedV=Math.max(S.seedV||1,3)}
  if(sv<2){if(!S.catalog.some(e=>e.id==='trx_pistol')){const e=seedCatalog().find(x=>x.id==='trx_pistol');if(e)S.catalog.push(e)}S.seedV=Math.max(S.seedV||1,2)}}
@@ -552,7 +554,12 @@ function setE1(it,s,bw){const R=repsOf(it,s);if(!R||!R.per)return null;return e1
 function setVol(it,s,bw){const R=repsOf(it,s);if(!R)return 0;const L=volLoad(it,s,bw);return L?L*R.tot:0}
 function isHard(it,s){if(!STR.includes(it.type))return false;const R=repsOf(it,s);if(!R||!R.tot)return false;const rir=num(s.rir);return rir==null||rir<=4}
 /* ---- TRX position model ---- */
-function defTrx(){return{height:185,foot:30,anchors:[{id:'bar',name:'Турнік',h:2.4},{id:'wall',name:'Стіна',h:2.2}]}}
+function defStd(){return{anchor:1.83,fs:105,ml:63,mc:38,fl:22}}
+function defTrx(){return{height:185,foot:30,mode:'std',amode:'std',manH:1.82,place:'bar',std:defStd(),anchors:[{id:'bar',name:'Турнік',h:1.82,kind:'bar'},{id:'wall',name:'Дверний проєм',h:1.82,kind:'door'}]}}
+const AKIND={bar:['Турнік','Можна стати прямо під точкою кріплення (лямки вертикально) і ставити ноги за точку кріплення (мінусові кроки).'],door:['Двері','За точку кріплення не зайти: кроки від 0 і більше. Стати під кріпленням можна, якщо двері відчинені на тебе.'],other:['Інше','']};
+const akind=a=>a&&AKIND[a.kind]?a.kind:'other';
+function ancOf(id){return S.settings.trx.anchors.find(a=>a.id===id)}
+const HSTD={fs:['Fully Shortened','FS','найкоротші: тяги'],ml:['Mid Length','ML','середина: стоячи, Y-підйоми'],mc:['Mid Calf','MC','петлі 20-30 см від підлоги: вправи на підлозі'],fl:['Fully Lengthened','FL','найдовші: жими, віджимання']};
 const HH={waist:['Пояс','пояс',.58],mid:['Між поясом і коліном','п/к',.43],knee:['Коліно','кол',.285],low:['Нижче коліна','н/к',.14]};
 const TRX_PUSH=['trx_push','trx_triceps'];
 const trxDirOf=exId=>{const e=ex(exId)||{};return e.trxDir||(TRX_PUSH.includes(exId)?'push':'pull')};
@@ -563,20 +570,33 @@ const ASSIST=[['strong','Сильна',.40,2],['mid','Помірна',.25,4],['l
 const legShare=exId=>{const e=ex(exId)||{};return e.legShare!=null?e.legShare:(exId==='trx_lunge'?.85:1)};
 function assistOfLevel(l){l=num(l)||5;return l<=3?'strong':l<=5?'mid':l<=7?'light':l<=8?'bal':'none'}
 function trxLegKg(it,s,bw){if(num(s.kgm))return num(s.kgm);if(!num(s.w)&&!s.assist)return null;if(!bw)return null;const k=(s.man||!s.assist)?assistOfLevel(s.w):s.assist;const a=ASSIST.find(x=>x[0]===k)||ASSIST[2];return bw*legShare(it.exId)*(1-a[2])}
-function trxAngle(pos){const T=S.settings.trx,H=(num(T.height)||185)/100,L=.80*H,a=.37*H;const anc=(T.anchors.find(x=>x.id===pos.anchor)||{});const A=num(pos.ah)||num(anc.h)||2.3;
- const h0=H*HH[pos.hh][2],Sl=A-h0,d=(num(pos.st)||0)*(num(T.foot)||30)/100,sg=pos.dir==='push'?-1:1;if(Sl<=0)return null;
+function trxAngle(pos){const T=S.settings.trx,H=(num(T.height)||185)/100,L=.80*H,a=.37*H;let A,h0;
+ if(pos.sys==='std'){A=stdAnchorH(pos);h0=stdHandleH(pos.len,A)}else{const anc=T.anchors.find(x=>x.id===pos.anchor);A=(anc&&num(anc.h))||num(pos.ah)||2.3;h0=H*(HH[pos.hh]||HH.mid)[2]}
+ const Sl=A-h0,d=(num(pos.st)||0)*(num(T.foot)||30)/100,sg=pos.dir==='push'?-1:1;if(Sl<=0)return null;
  let tv=null;for(let i=0;i<=336;i++){const t=i/4*Math.PI/180;if(L*Math.sin(t)+sg*a*Math.cos(t)>=h0){tv=i/4;break}}
  if(pos.vert)return tv;if(tv!=null){const r=tv*Math.PI/180,dv=-(L*Math.cos(r)-sg*a*Math.sin(r));if(d<=dv)return tv}
  let best=null;for(let i=1;i<=336;i++){const t=i/4*Math.PI/180;const hx=d+L*Math.cos(t)-sg*a*Math.sin(t),hy=L*Math.sin(t)+sg*a*Math.cos(t);const f=Math.hypot(hx,hy-A)-Sl;if(!best||Math.abs(f)<Math.abs(best[1]))best=[i/4,f]}
  return best&&Math.abs(best[1])<.03&&best[0]<84?best[0]:null}
 function angleLevel(x){if(x==null)return 1;for(const[l,v]of[[78,1],[70,2],[63,3],[55,4],[48,5],[40,6],[32,7],[22,8]])if(x>=l)return v;return 9}
 function trxCalc(pos){const ang=trxAngle(pos);return{ang,lvl:Math.min(10,angleLevel(ang)+(pos.el?1:0))}}
-function posTxt(p){return p?`${HH[p.hh][1]} ${p.vert?'верт':nf(num(p.st)||0,1)+'ст'}${p.el?'+п':''}`:''}
+function stdAnchorH(pos){const T=S.settings.trx,sd=T.std||defStd();if(pos.amode==='man')return num(pos.ah)||num(T.manH)||1.82;if(pos.amode==='std'||!pos.anchor||pos.anchor==='std')return num(sd.anchor)||1.83;const anc=T.anchors.find(x=>x.id===pos.anchor);return(anc&&num(anc.h))||num(pos.ah)||num(sd.anchor)||1.83}
+function stdStrap(len){const sd=S.settings.trx.std||defStd();return(num(sd.anchor)||1.83)-(num(sd[len])||63)/100}
+function stdHandleH(len,A){return Math.max(.02,A-stdStrap(len))}
+const LM=[['плечі',.82],['груди',.72],['пояс',.58],['середина стегна',.45],['коліно',.285],['середина литки',.18],['щиколотка',.06]];
+function bodyH(){return(num(S.settings.trx.height)||185)/100}
+function lmOf(h){const H=bodyH();if(h<=.04)return'на підлозі';let best=LM[0];LM.forEach(l=>{if(Math.abs(l[1]*H-h)<Math.abs(best[1]*H-h))best=l});const d=h-best[1]*H;return Math.abs(d)<.04?best[0]:(d>0?'трохи вище: ':'трохи нижче: ')+best[0]}
+function hTxt(h){return`≈ ${f0(h*100)} см · ${lmOf(h)}`}
+function anchorsAll(keep){const sd=S.settings.trx.std||defStd(),A=num(sd.anchor)||1.83;const own=S.settings.trx.anchors;const dup=own.some(a=>Math.abs((num(a.h)||0)-A)<=.03);return(dup&&keep!==true?[]:[{id:'std',name:'Стандарт TRX',h:A}]).concat(own)}
+function txPos(){return{sys:'std',amode:TX.amode,ah:TX.amode==='man'?(num(TX.ah)||num(S.settings.trx.manH)||1.82):undefined,place:TX.place,len:TX.len,st:TX.st,el:TX.el,dir:TX.dir,vert:TX.vert}}
+function nearestStdKey(A,h){let best=null;Object.keys(HSTD).forEach(k=>{const d=Math.abs(stdHandleH(k,A)-h);if(!best||d<best[1])best=[k,d]});return best?best[0]:null}
+function nearestStd(A,h){let best=null;Object.keys(HSTD).forEach(k=>{const d=Math.abs(stdHandleH(k,A)-h);if(!best||d<best[1])best=[k,d]});return best&&best[1]<.12?HSTD[best[0]][1]:null}
+function posLbl(p){if(p.sys==='std'&&(p.amode||p.place))return(HSTD[p.len]||HSTD.ml)[1]+(p.amode==='man'?' '+nf(num(p.ah)||0,2)+'м':'')+(p.place==='door'?'/дв':'');return p.sys==='std'?(HSTD[p.len]||HSTD.ml)[1]+(p.anchor&&p.anchor!=='std'?(akind(ancOf(p.anchor))==='door'?'/дв':'/тур'):''):(HH[p.hh]||HH.mid)[1]}
+function posTxt(p){return p?`${posLbl(p)} ${p.vert?'верт':nf(num(p.st)||0,1)+'ст'}${p.el?'+п':''}`:''}
 function lastTrxFor(exId){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const it=ws[i].items.find(x=>x.exId===exId&&x.type==='trx');if(it){const s=it.sets.find(s=>num(s.w));if(s)return{w:s.w,pos:s.pos?{...s.pos}:null,assist:s.assist||null,kgm:s.kgm||''}}}return null}
-function trxGrid(anc,dir){const hs=Object.keys(HH);const cell=pos=>{const a=trxAngle(Object.assign({anchor:anc.id,ah:anc.h,dir},pos));return a==null?'<td class="r muted">—</td>':`<td class="r num">${angleLevel(a)}</td>`};
- const vr=hs.map(h=>cell({hh:h,vert:true}));let rows=`<tr><td>Лямки вертикально</td>${vr.join('')}</tr>`;const r=dir==='push'?[-10,3]:[-1,8];
+function trxGrid(anc,dir,std){const hs=std?Object.keys(HSTD):Object.keys(HH);const cell=pos=>{if(std){pos.len=pos.hh;delete pos.hh}const a=trxAngle(Object.assign(std?{sys:'std',amode:'man',ah:num(anc.h)||1.83,dir}:{anchor:anc.id,ah:anc.h,dir},pos));return a==null?'<td class="r muted">—</td>':`<td class="r num">${angleLevel(a)}</td>`};
+ const vr=hs.map(h=>cell({hh:h,vert:true}));let rows=`<tr><td>Лямки вертикально</td>${vr.join('')}</tr>`;const r=akind(anc)==='door'?[0,dir==='push'?3:8]:dir==='push'?[-10,3]:[-1,8];
  for(let st=r[0];st<=r[1];st++){const c=hs.map(h=>cell({hh:h,st}));if(c.every(x=>x.includes('—')))continue;if(dir==='push'&&c.every((x,i)=>x===vr[i]||x.includes('—')))continue;rows+=`<tr><td>${st}</td>${c.join('')}</tr>`}
- return`<div class="tblw"><table class="tbl"><thead><tr><th>Ступні</th>${hs.map(h=>`<th class="r">${HH[h][1]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`}
+ return`<div class="tblw"><table class="tbl"><thead><tr><th>Ступні</th>${hs.map(h=>`<th class="r">${std?HSTD[h][1]:HH[h][1]}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`}
 function setTxt(it,s){const R=it.uni?`${s.rl||'–'}/${s.rr||'–'}`:(s.r||'–');let L='';switch(it.type){case'bw':L=num(s.w)?'+'+s.w:'ВТ';break;case'band':{const ex2=[bandEach(s,it)?'на руку':'',(BSTR[s.bstr]||BSTR.mid)[2]].filter(Boolean);const core=bandLabel(bandsOf(s));L=bandsOf(s).length>1||ex2.length?'('+core+(ex2.length?', '+ex2.join(', '):'')+')':core;break}case'trx':L='р'+(s.w||'–')+(s.pos?' ['+posTxt(s.pos)+']':s.assist||num(s.kgm)?' ['+[s.assist?(ASSIST.find(x=>x[0]===s.assist)||['','?'])[1].toLowerCase():'',num(s.kgm)?s.kgm+'кг':''].filter(Boolean).join(' ')+']':'');break;default:L=s.w||'–'}return L+'×'+R}
 function itemStats(it,bw){if(it.type==='block')return blockStats(it);
  if(STR.includes(it.type)){let vol=0,best=null,bs=null,hard=0,sets=0;const rests=[];
@@ -704,7 +724,7 @@ function strRows(it,prev){const ps=prev&&prev.item.type===it.type?prev.item.sets
  let h=`<div class="sets"><div class="srow h"><span></span><span>${it.uni?'Повт Л / П':'Повт'}</span><span>${LOADLBL[it.type]}</span><span>RIR</span><span>Відп, с</span></div>`;
  it.sets.forEach((s,n)=>{const p=ps[n]||{};const a=`data-f="s" data-i="${it.uid}" data-n="${n}"`;const id=`${it.uid}-${n}`;
   const reps=it.uni?`<div class="lr"><input class="cell" inputmode="numeric" ${a} data-k="rl" id="rl-${id}" value="${esc(s.rl)}" placeholder="${esc(p.rl??'Л')}" aria-label="Повтори ліва"><input class="cell" inputmode="numeric" ${a} data-k="rr" id="rr-${id}" value="${esc(s.rr)}" placeholder="${esc(p.rr??'П')}" aria-label="Повтори права"></div>`:`<input class="cell" inputmode="numeric" ${a} data-k="r" id="r-${id}" value="${esc(s.r)}" placeholder="${esc(p.r??'')}" aria-label="Повтори">`;
-  const load=it.type==='trx'?`<button class="bandbtn" data-a="pick-trx" data-i="${it.uid}" data-n="${n}" style="justify-content:center">${num(s.w)?`<b class="num" style="font-size:18px">р${esc(s.w)}</b>${s.pos?`<span class="muted" style="font-size:11px">${esc(HH[s.pos.hh][1])} ${nf(num(s.pos.st)||0,1)}</span>`:''}`:'<span class="muted">Рівень</span>'}</button>`:it.type==='band'?`<button class="bandbtn" data-a="pick-band" data-i="${it.uid}" data-n="${n}">${bandsOf(s).length?bandsOf(s).map(b=>`<i class="dot" style="background:${esc(b.hex)}"></i>`).join('')+`<span>${esc(bandsOf(s).length>1||bandEach(s,it)||(s.bstr&&s.bstr!=='mid')?'≈'+f0(bandKg(s,it)):bandsOf(s)[0].name)}</span>`:'<span class="muted">Обрати</span>'}</button>`:`<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??(it.type==='bw'?'0':''))}" aria-label="${LOADLBL[it.type]}">`;
+  const load=it.type==='trx'?`<button class="bandbtn" data-a="pick-trx" data-i="${it.uid}" data-n="${n}" style="justify-content:center">${num(s.w)?`<b class="num" style="font-size:18px">р${esc(s.w)}</b>${s.pos?`<span class="muted" style="font-size:11px">${esc(posLbl(s.pos))} ${s.pos.vert?'в':nf(num(s.pos.st)||0,1)}</span>`:''}`:'<span class="muted">Рівень</span>'}</button>`:it.type==='band'?`<button class="bandbtn" data-a="pick-band" data-i="${it.uid}" data-n="${n}">${bandsOf(s).length?bandsOf(s).map(b=>`<i class="dot" style="background:${esc(b.hex)}"></i>`).join('')+`<span>${esc(bandsOf(s).length>1||bandEach(s,it)||(s.bstr&&s.bstr!=='mid')?'≈'+f0(bandKg(s,it)):bandsOf(s)[0].name)}</span>`:'<span class="muted">Обрати</span>'}</button>`:`<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??(it.type==='bw'?'0':''))}" aria-label="${LOADLBL[it.type]}">`;
   h+=`<div class="srow"><span class="i">${n+1}</span>${reps}${load}<input class="cell" inputmode="decimal" ${a} data-k="rir" id="rir-${id}" value="${esc(s.rir)}" placeholder="${esc(p.rir??'')}" aria-label="RIR"><input class="cell" inputmode="numeric" ${a} data-k="rest" id="rs-${id}" value="${esc(s.rest)}" placeholder="${esc(p.rest??'')}" aria-label="Відпочинок, секунд"></div>`});
  return h+`</div>`}
 function hiitRows(it,prev){const ps=prev&&prev.item.type==='hiit'?prev.item.sets:[];
@@ -942,12 +962,17 @@ function vSet(){const t=S.settings.theme;
  <p class="muted small" style="margin:0">Вимкнена зарядка ховається з «Запису», «Історії» та «Аналітики». Записи і шаблони зберігаються, повернути можна будь-коли.</p></section>
  <section class="card stack"><label class="field"><span>Поточна фаза харчування</span>${phaseSel(S.settings.phase||'','setphase','set-phase')}</label><p class="muted small" style="margin:0">Ставиться в кожне нове тренування, поки не зміниш. Змінити можна тут або в самому тренуванні.</p></section>
  <section class="card stack"><label class="field"><span>Вага тіла за замовчуванням, кг</span><input class="in" inputmode="decimal" data-f="set" data-k="bw" id="set-bw" value="${esc(S.settings.bw)}"></label><p class="muted small" style="margin:0">Використовується для вправ з власною вагою, поки ти не впишеш вагу тіла в тренуванні. Далі береться середнє вписаних значень.</p></section>
- <section class="card stack"><div class="lbl">TRX</div><div class="g2"><label class="field"><span>Зріст, см</span><input class="in" inputmode="numeric" data-f="trx" data-k="height" id="trx-h" value="${esc(S.settings.trx.height)}"></label><label class="field"><span>Довжина ступні, см</span><input class="in" inputmode="decimal" data-f="trx" data-k="foot" id="trx-f" value="${esc(S.settings.trx.foot)}"></label></div>
- <div class="field"><span>Місця кріплення (висота точки кріплення від підлоги, м)</span>${S.settings.trx.anchors.map(a=>`<div class="row" style="flex-wrap:nowrap"><input class="in" data-f="anc" data-b="${a.id}" data-k="name" id="an-${a.id}" value="${esc(a.name)}" aria-label="Назва"><input class="cell" style="width:76px;flex:none" inputmode="decimal" data-f="anc" data-b="${a.id}" data-k="h" id="ah-${a.id}" value="${esc(a.h)}" aria-label="Висота, м"><button class="ib del" data-a="anc-del" data-b="${a.id}" aria-label="Видалити">✕</button></div>`).join('')}</div>
- <button class="btn full" data-a="anc-add">+ Додати кріплення</button>
- ${S.settings.trx.anchors.map(a=>`<details class="how"><summary>Таблиця рівнів: ${esc(a.name)}</summary><p class="muted small">Рядки - ступні від кріплення (мінус = ноги з іншого боку кріплення, можливо на турніку), стовпці - де висять ручки: пояс, між поясом і коліном, коліно, нижче коліна. Ноги на підвищенні +1.</p><div class="lbl">Тяги</div>${trxGrid(a,'pull')}<div class="lbl" style="margin-top:10px">Жими і віджимання</div>${trxGrid(a,'push')}</details>`).join('')}
- <p class="muted small" style="margin:0">Типові висоти кріплень - заміряй свої. Кут перевіряється програмою iPhone «Рулетка» → «Рівень»: телефон на груди або спину в нижній точці.</p></section>
- <section class="card stack"><div class="lbl">Мої гуми</div><p class="muted small" style="margin:0">Діапазон - від слабкого до повного натягу гуми. Типові значення, зміни під свої. Нові діапазони діють для наступних записів, збережені тренування не перераховуються.</p><div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button></section>
+ <section class="card stack"><div class="lbl">TRX</div>
+ <p class="muted small" style="margin:0">Положення петель - за стандартом TRX (довжина лямок FS, ML, MC, FL). Кріплення - стандартної висоти або своєї, вписаної вручну. Програма рахує кут тіла, рівень і кг.</p>
+ <div class="g2"><label class="field"><span>Зріст, см</span><input class="in" inputmode="numeric" data-f="trx" data-k="height" id="trx-h" value="${esc(S.settings.trx.height)}"></label><label class="field"><span>Довжина ступні, см</span><input class="in" inputmode="decimal" data-f="trx" data-k="foot" id="trx-f" value="${esc(S.settings.trx.foot)}"></label></div>
+ <div class="field"><span>Висота кріплення для нових записів</span><div class="seg"><button class="${S.settings.trx.amode==='man'?'':'on'}" data-a="trxam" data-v="std">Стандарт ${nf(num(S.settings.trx.std.anchor)||1.83,2)} м</button><button class="${S.settings.trx.amode==='man'?'on':''}" data-a="trxam" data-v="man">Вручну</button></div></div>
+ ${S.settings.trx.amode==='man'?`<label class="field"><span>Своя висота кріплення, м (запам’ятовується з останнього запису)</span><input class="in" inputmode="decimal" data-f="trx" data-k="manH" id="trx-manh" value="${esc(S.settings.trx.manH)}"></label>`:''}
+ ${trxStdSettings()}
+ ${trxHeights().map(a=>`<details class="how"><summary>Таблиця рівнів: ${esc(a.name)} ${nf(num(a.h),2)} м</summary><p class="muted small">Рядки - ступні від точки під кріпленням до точки опори (мінус = ноги за точкою кріплення, тільки на турніку), стовпці - довжина лямок. Ноги на підвищенні +1.</p><div class="lbl">Тяги</div>${trxGrid(a,'pull',true)}<div class="lbl" style="margin-top:10px">Жими і віджимання</div>${trxGrid(a,'push',true)}</details>`).join('')}
+ ${trxRefTable()}
+ <button class="btn full" data-a="trx-recalc">Перерахувати збережені тренування TRX</button>
+ <p class="muted small" style="margin:0">Після зміни зросту, ступні, висоти кріплення чи калібрування петель натисни, щоб рівні й кг у збережених записах перерахувались. Рівні, виставлені вручну, не змінюються.</p>
+ <p class="muted small" style="margin:0">Кут перевіряється програмою iPhone «Рулетка» → «Рівень»: телефон на груди або спину в нижній точці.</p></section><p class="muted small" style="margin:0">Діапазон - від слабкого до повного натягу гуми. Типові значення, зміни під свої. Нові діапазони діють для наступних записів, збережені тренування не перераховуються.</p><div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button></section>
  <section class="card stack"><div class="lbl">Автокопії на цьому пристрої</div><p class="muted small" style="margin:0">Програма щодня сама зберігає копію даних (останні 7). Вони рятують від помилки програми, але не від очищення даних Safari - для цього потрібна копія в iCloud.${PERSIST===true?' Браузер підтвердив постійне зберігання.':''}</p>
  ${snapKeys().map(snapInfo).filter(Boolean).map(x=>`<div class="row between"><span class="small">${dShort(x.date)}.${x.date.slice(0,4)}${x.tag?' <span class="muted">('+esc(x.tag)+')</span>':''} · ${x.n} трен.</span><button class="btn" data-a="snap-restore" data-k="${esc(x.k)}">Відновити</button></div>`).join('')||'<p class="muted small" style="margin:0">Автокопій ще немає.</p>'}</section>
  <section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.</p>
@@ -992,11 +1017,26 @@ function vSet(){const t=S.settings.theme;
   <li>Прогрес порівнюється за назвою блоку, тому не змінюй її без потреби.</li>
   <li><b>Зарядка</b> - окреме місце в шаблонах. Шаблони з ним показуються в картці «Зарядка» на екрані «Запис», а записи йдуть в окрему статистику й історію (перемикач «Тренування / Зарядка» в «Історії» та «Аналітиці»). В основні показники вони не потрапляють.</li>
   <li>На iPhone: увімкни звук (не беззвучний режим), вібрації немає. Екран тримається ввімкненим; якщо заблокувати телефон, сигнали не грають, але таймер після повернення покаже правильну фазу.</li></ul></details>
+ <details class="how"><summary>Регулювання за стандартом TRX</summary><ul class="small">
+  <li><b>Кріплення.</b> Точка кріплення (якір) приблизно на 1,83 м (6 футів) від підлоги.</li>
+  <li><b>Довжина лямок</b> - за жовтими мітками на лямках:
+   <br><b>FS · Fully Shortened</b> - максимально вкорочені (верхні мітки): тяги (Low Row тощо).
+   <br><b>ML · Mid Length</b> - середина (подвійні мітки посередині): вправи стоячи, Y-підйоми.
+   <br><b>MC · Mid Calf</b> - низ петель для ніг на рівні середини литки, 20-30 см від підлоги: вправи на підлозі (планка, пайк, згинання ніг).
+   <br><b>FL · Fully Lengthened</b> - максимально подовжені, петлі ≈ 8 см від підлоги: жими й віджимання (щоб лямка не терла).</li>
+  <li><b>Положення тіла відносно кріплення:</b> SF - стоячи обличчям, SFA - стоячи спиною, SSW - боком; GF, GFA, GSW - те саме на підлозі.</li>
+  <li><b>Як змінювати важкість (принципи TRX):</b>
+   <br><b>Вектор (кут тіла)</b> - що крутіший кут, то важче; крок до кріплення або від нього.
+   <br><b>Стабільність</b> - вужча опора (ноги разом, одна нога) важче.
+   <br><b>Маятник</b> - старт за точкою під кріпленням полегшує, перед нею ускладнює.
+   <br>Інтенсивність = опір + стабільність.</li>
+  <li>У програмі «Стандарт TRX» рахує кут і кг з довжини лямок, висоти кріплення (стандарт або вручну), твого зросту і кроків. Де висять ручки відносно твого тіла - у таблиці «Орієнтири» в Налаштуваннях → TRX. Висоти ручок для FS/ML/MC/FL - орієнтовні, заміряй свої в Налаштуваннях → TRX і натисни «Перерахувати».</li>
+  <li>Джерела: <a href="https://www.trxtraining.com/train/how-to-get-started-with-your-trx-suspension-trainer" target="_blank" rel="noopener">TRX: як почати</a>, <a href="https://www.trxtraining.com/train/when-to-shorten-and-length-the-trx-suspension-trainer" target="_blank" rel="noopener">TRX: коли вкорочувати й подовжувати</a>.</li></ul></details>
  <details class="how"><summary>Рівні TRX</summary><ul class="small">
   <li>Рівень - шкала 1-10 за кутом тіла: що горизонтальніше, то важче.</li>
   <li>У тягах і жимах навантаження рахується в кг: вага тіла × 0,69 × cos(кут до підлоги). Горизонтально ~69% ваги тіла, 45° ~49%, 60° ~35%, ноги на підвищенні ~73%. Похибка ±10-15%, але щоразу однакова, тож прогрес видно чесно.</li>
   <li>Кут: 78°+ = 1, 70-77° = 2, 63-69° = 3, 55-62° = 4, 48-54° = 5, 40-47° = 6, 32-39° = 7, 22-31° = 8, менше 22° = 9, ноги на підвищенні +1.</li>
-  <li>У тягах і жимах рівень рахується з положення: кріплення, висота ручок, ступні до точки опори або «лямки вертикально», коли руки прямо під кріпленням (на турніку). Кут береться у стартовій позиції з прямими руками. Розрахунок наближений (±1 рівень); точніше підлаштуєш вручну, звіривши кут у «Рулетка» → «Рівень».</li>
+  <li>У тягах і жимах рівень рахується з положення: висота кріплення, довжина лямок (FS/ML/MC/FL), ступні до точки опори або «лямки вертикально», коли руки прямо під кріпленням. На турніку можна ставити ноги за точку кріплення (мінусові кроки), на дверях - ні. Кут береться у стартовій позиції з прямими руками. Розрахунок наближений (±1 рівень); точніше підлаштуєш вручну, звіривши кут у «Рулетка» → «Рівень».</li>
   <li>Присідання, присідання на одній нозі й випади: навантаження = вага тіла × (1 − допомога рук). Допомога: сильна ~40%, помірна ~25%, легка ~15%, лише баланс ~5%, без рук 0. У випадах передня нога бере ~85%. Точніше - виміряти на підлогових вагах і вписати кг.</li>
   <li>Згинання ніг і підтягування колін - ручний рівень, без кг.</li>
   <li>Прогресія: повтори до верху діапазону → рівень +1 → знову з низу діапазону.</li></ul></details>
@@ -1008,9 +1048,9 @@ function vSet(){const t=S.settings.theme;
 
 /* ========== SHEETS & TOAST ========== */
 let SHEET=null,PICK=null,EXED=null,EXP=null,IMPMODE='all',UNDO=null;
-function openSheet(html,kind){const same=SHEET===(kind||'x');const old=document.querySelector('#sheetHost .sheet');const st=same&&old?old.scrollTop:0;const ae=document.activeElement,aeId=same&&ae&&ae.id&&old&&old.contains(ae)?ae.id:null;
+function openSheet(html,kind){const same=SHEET===(kind||'x');const old=document.querySelector('#sheetHost .sheet');const st=same&&old?old.scrollTop:0;const ae=document.activeElement,aeId=same&&ae&&ae.id&&old&&old.contains(ae)?ae.id:null;let selS=null,selE=null;try{if(aeId){selS=ae.selectionStart;selE=ae.selectionEnd}}catch(e){}
  SHEET=kind||'x';document.body.classList.add('sheetopen');$('#sheetHost').innerHTML=`<div class="scrim" data-a="close"></div><div class="sheet${same&&old?' noanim':''}" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
- const nw=document.querySelector('#sheetHost .sheet');if(nw&&st)nw.scrollTop=st;if(aeId){const f=document.getElementById(aeId);if(f&&f.tagName==='INPUT')try{f.focus({preventScroll:true})}catch(e){}}}
+ const nw=document.querySelector('#sheetHost .sheet');if(nw&&st)nw.scrollTop=st;if(aeId){const f=document.getElementById(aeId);if(f&&f.tagName==='INPUT')try{f.focus({preventScroll:true});if(selS!=null)f.setSelectionRange(selS,selE)}catch(e){}}}
 function closeSheet(rerender=true){const k=SHEET;SHEET=null;$('#sheetHost').innerHTML='';document.body.classList.remove('sheetopen');if(rerender||k==='band')render()}
 let toastT;function toast(msg,undoFn){clearTimeout(toastT);UNDO=undoFn||null;$('#toastHost').innerHTML=`<div class="toast" role="status"><span>${esc(msg)}</span>${undoFn?'<button data-a="undo">Повернути</button>':''}</div>`;toastT=setTimeout(()=>{$('#toastHost').innerHTML='';UNDO=null},undoFn?6000:3000)}
 function confirmSheet(text,ok,fn,danger=true){openSheet(`<h3>${esc(text)}</h3><div class="g2"><button class="btn" data-a="close">Скасувати</button><button class="btn ${danger?'danger':'pri'}" data-a="confirm-ok">${esc(ok)}</button></div>`,'confirm');CONFIRM=fn}
@@ -1032,20 +1072,32 @@ function renderExEd(){const e=EXED;const isStr=STR.includes(e.type)||e.type==='h
  ${e._new?'':'<button class="btn danger full" data-a="exed-del">Видалити з каталогу</button>'}
  <button class="btn ghost full" data-a="close">Скасувати</button>`,'exed')}
 let TX={},TXCTX=null;
+function trxHeights(){const T=S.settings.trx,A=num(T.std.anchor)||1.83,M=num(T.manH)||1.82;const a=[{id:'std',name:'Стандарт',h:A,kind:'bar'}];if(Math.abs(M-A)>.02)a.push({id:'man',name:'Вручну',h:M,kind:'bar'});return a}
+function trxRefTable(){const H=bodyH(),as=trxHeights();
+ const body=`<div class="tblw"><table class="tbl"><thead><tr><th>Орієнтир на тілі</th><th class="r">см від підлоги</th></tr></thead><tbody>${LM.map(l=>`<tr><td>${l[0]}</td><td class="r num">${f0(l[1]*H*100)}</td></tr>`).join('')}</tbody></table></div>`;
+ const std=`<div class="tblw"><table class="tbl"><thead><tr><th>Довжина</th>${as.map(a=>`<th class="r">${esc(a.name)} ${nf(num(a.h),2)} м</th>`).join('')}</tr></thead><tbody>${Object.keys(HSTD).map(k=>`<tr><td>${HSTD[k][1]}<br><span class="muted small">${HSTD[k][0]}</span></td>${as.map(a=>{const h=stdHandleH(k,num(a.h)||1.83);return`<td class="r small">${f0(h*100)} см<br><span class="muted">${esc(lmOf(h))}</span></td>`}).join('')}</tr>`).join('')}</tbody></table></div>`;
+ return`<details class="how"><summary>Орієнтири: де висять ручки відносно тіла</summary><p class="muted small">Розраховано на твій зріст ${f0(H*100)} см. Ручки - коли лямки вільно висять.</p><div class="lbl">Орієнтири на тілі</div>${body}<div class="lbl" style="margin-top:10px">Довжини TRX: висота ручок і рівень тіла</div>${std}</details>`}
+function curAncKind(){if(!TX)return'other';return TX.place==='door'?'door':'bar'}
+function trxStdSettings(){const sd=S.settings.trx.std;const f=(k,l,im)=>`<label class="field"><span>${l}</span><input class="in" inputmode="${im||'numeric'}" data-f="trxstd" data-k="${k}" id="ts-${k}" value="${esc(sd[k])}"></label>`;
+ return`<div class="field"><span>Калібрування довжин TRX: висота ручок від підлоги (см), коли кріплення на стандартній висоті і лямки вільно висять. Типові значення, заміряй свої</span>
+ ${f('anchor','Стандартна висота кріплення, м (TRX ≈ 1,83)','decimal')}<div class="g2">${Object.keys(HSTD).map(k=>f(k,`${HSTD[k][1]} - ${HSTD[k][0]}`)).join('')}</div></div>
+ <p class="muted small" style="margin:0">Якщо кріплення вище чи нижче стандарту (вручну), довжина лямки та сама, тож ручки висять вище або нижче на різницю висот. Програма враховує це сама.</p>`}
 function trxSheet(u,n,keep){const it=itemBy(u);if(!it)return;TXCTX={u,n};const T=S.settings.trx;const mode=trxModeOf(it.exId);
  if(!keep){const s=it.sets[n],prev=it.sets.slice(0,n).reverse().find(x=>x.pos||x.assist)||{},last=lastTrxFor(it.exId)||{};const p=s.pos||prev.pos||last.pos;
-  TX={mode,angle:mode==='angle',dir:trxDirOf(it.exId),vert:p?!!p.vert:false,anchor:p?p.anchor:T.anchors[0].id,hh:p?p.hh:'mid',st:p?num(p.st)||0:(trxDirOf(it.exId)==='push'?0:3),el:p?!!p.el:false,lvl:num(s.w)||null,manual:!!s.man||(!!num(s.w)&&!p&&!s.assist),
-   assist:s.assist||prev.assist||last.assist||'light',pause:!!s.pause,kgm:s.kgm||''};if(mode==='leg'&&!s.man)TX.manual=false;if(!T.anchors.some(a=>a.id===TX.anchor))TX.anchor=T.anchors[0].id}
+  const oldA=p&&p.anchor&&p.anchor!=='std'?ancOf(p.anchor):null;
+  TX={mode,angle:mode==='angle',dir:trxDirOf(it.exId),sys:'std',place:p?(p.place||(oldA&&akind(oldA)==='door'?'door':'bar')):(T.place||'bar'),amode:p?(p.amode||(oldA?'man':(p.sys==='std'?'std':'man'))):(T.amode||'std'),ah:p&&p.amode==='man'&&num(p.ah)?num(p.ah):(oldA?num(oldA.h):(p&&!p.sys&&num(p.ah)?num(p.ah):(num(T.manH)||1.82))),sanchor:p&&p.sys==='std'?(p.anchor||'std'):(p&&p.anchor&&T.anchors.some(a=>a.id===p.anchor)?p.anchor:(anchorsAll()[0]||{id:'std'}).id),len:p&&p.len?p.len:(p&&p.hh&&HH[p.hh]?(nearestStdKey(num((oldA||{}).h)||num(p.ah)||1.83,bodyH()*HH[p.hh][2])||(trxDirOf(it.exId)==='push'?'fl':'fs')):(trxDirOf(it.exId)==='push'?'fl':'fs')),vert:p?!!p.vert:false,anchor:p&&p.anchor&&T.anchors.some(x=>x.id===p.anchor)?p.anchor:T.anchors[0].id,hh:p&&HH[p.hh]?p.hh:'mid',st:p?num(p.st)||0:(trxDirOf(it.exId)==='push'?0:3),el:p?!!p.el:false,lvl:num(s.w)||null,manual:!!s.man||(!!num(s.w)&&!p&&!s.assist),
+   assist:s.assist||prev.assist||last.assist||'light',pause:!!s.pause,kgm:s.kgm||''};if(mode==='leg'&&!s.man)TX.manual=false;if(TX.place==='door'&&TX.st<0)TX.st=0}
  const bw=bwOf(S.draft||{});let calc=null;
- if(TX.mode==='angle'){calc=trxCalc({anchor:TX.anchor,hh:TX.hh,st:TX.st,el:TX.el,dir:TX.dir,vert:TX.vert});TX.lastAng=calc.ang;if(!TX.manual||!TX.lvl)TX.lvl=calc.lvl}
+ if(TX.mode==='angle'){calc=trxCalc(txPos());TX.lastAng=calc.ang;if(!TX.manual||!TX.lvl)TX.lvl=calc.lvl}
  else if(TX.mode==='leg'){const a=ASSIST.find(x=>x[0]===TX.assist)||ASSIST[2];if(!TX.manual||!TX.lvl)TX.lvl=Math.min(10,a[3]+(TX.pause?1:0))}
  else if(!TX.lvl)TX.lvl=5;
  const chips=(arr,act,cur)=>`<div class="chips">${arr.map(([v,l])=>`<button class="chip ${v===cur?'on':''}" data-a="${act}" data-v="${v}">${esc(l)}</button>`).join('')}</div>`;
  let h=`<h3>${esc(it.name)}: підхід ${n+1}</h3>`;
- if(TX.mode==='angle'){h+=`<div class="field"><span>Кріплення</span>${chips(T.anchors.map(a=>[a.id,a.name+' '+nf(num(a.h),2)+' м']),'tx-anc',TX.anchor)}</div>
-  <div class="field"><span>Ручки висять на рівні (лямки вільно)</span>${chips(Object.entries(HH).map(([k,v])=>[k,v[0]]),'tx-hh',TX.hh)}</div>
-  <label class="chk"><input type="checkbox" data-a="tx-vert" ${TX.vert?'checked':''}>Руки прямо під кріпленням, лямки вертикально (турнік)</label>
-  ${TX.vert?'':`<div class="field"><span>Ступні від точки під кріпленням до точки опори (${TX.dir==='push'?'носки':'п\'яти'}). Мінус = ноги з іншого боку кріплення</span><div class="row"><button class="ib" data-a="tx-st" data-d="-0.5" aria-label="Ближче">−</button><b class="num" style="font-size:24px;min-width:56px;text-align:center">${nf(TX.st,1)}</b><button class="ib" data-a="tx-st" data-d="0.5" aria-label="Далі">+</button><span class="muted small">≈ ${f0((num(TX.st)||0)*(num(T.foot)||30))} см. Менше = важче</span></div></div>`}
+ if(TX.mode==='angle'){const A=stdAnchorH(txPos()),hh=stdHandleH(TX.len,A),Ast=num(T.std.anchor)||1.83;h+=`<div class="field"><span>Місце</span>${chips([['bar','Турнік'],['door','Дверний проєм']],'tx-place',TX.place)}<span class="muted small">${AKIND[TX.place==='door'?'door':'bar'][1]}</span></div>
+  <div class="field"><span>Висота кріплення</span>${chips([['std','Стандарт '+nf(Ast,2)+' м'],['man','Вручну']],'tx-am',TX.amode)}${TX.amode==='man'?`<div class="row"><input class="cell" style="width:110px" inputmode="decimal" data-f="txah" id="tx-ah" value="${esc(TX.ah)}" aria-label="Висота кріплення, м"><span class="muted small">м від підлоги до точки кріплення</span></div>`:''}</div>
+  <div class="field"><span>Довжина лямок</span>${chips(Object.entries(HSTD).map(([k,v])=>[k,v[1]+' · '+v[0]]),'tx-len',TX.len)}<span class="muted small" id="tx-hh-info">${esc(HSTD[TX.len][2])}. Ручки ${hTxt(hh)}</span></div>
+  <label class="chk"><input type="checkbox" data-a="tx-vert" ${TX.vert?'checked':''}>Руки прямо під кріпленням, лямки вертикально</label>
+  ${TX.vert?'':`<div class="field"><span>Ступні від точки під кріпленням до точки опори (${TX.dir==='push'?'носки':'п\'яти'}). ${curAncKind()==='door'?'Двері: тільки 0 і більше':'Мінус = ноги з іншого боку кріплення'}</span><div class="row"><button class="ib" data-a="tx-st" data-d="-0.5" aria-label="Ближче">−</button><b class="num" style="font-size:24px;min-width:56px;text-align:center">${nf(TX.st,1)}</b><button class="ib" data-a="tx-st" data-d="0.5" aria-label="Далі">+</button><span class="muted small">≈ ${f0((num(TX.st)||0)*(num(T.foot)||30))} см. Менше = важче</span></div></div>`}
   <label class="chk"><input type="checkbox" data-a="tx-el" ${TX.el?'checked':''}>Ноги на підвищенні (+1 рівень)</label>
   <div class="bandtotal">Кут тіла ≈ <b class="num">${calc.ang==null?'майже стоячи':f0(calc.ang)+'°'}</b> → рівень <b class="num">${calc.lvl}</b><br><span class="muted">${(()=>{const f=trxFrac({w:TX.lvl,pos:{el:TX.el},ang:TX.manual?undefined:calc.ang,man:TX.manual});return f&&bw?`Навантаження ≈ ${f0(bw*f)} кг (${f0(f*100)}% від ${f1(bw)} кг ваги тіла)`:''})()}</span></div>`}
  else if(TX.mode==='leg'){const kg=trxLegKg(it,{w:TX.lvl,assist:TX.assist,man:TX.manual,kgm:TX.kgm},bw);
@@ -1111,17 +1163,25 @@ const ACT={
  bmode(el){BCFG.mode=el.dataset.v;bandSheet(BANDCTX.u,BANDCTX.n,true)},
  bstr(el){BCFG.str=el.dataset.v;bandSheet(BANDCTX.u,BANDCTX.n,true)},
  'pick-trx'(el){trxSheet(el.dataset.i,+el.dataset.n)},
- 'tx-anc'(el){TX.anchor=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-anc'(el){TX.anchor=el.dataset.v;if(curAncKind()==='door'&&TX.st<0)TX.st=0;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-place'(el){TX.place=el.dataset.v;if(TX.place==='door'&&TX.st<0)TX.st=0;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-am'(el){TX.amode=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-sys'(el){TX.sys=el.dataset.v;if(TX.sys==='std'&&ancOf(TX.anchor))TX.sanchor=TX.anchor;if(TX.sys==='home'&&ancOf(TX.sanchor))TX.anchor=TX.sanchor;if(curAncKind()==='door'&&TX.st<0)TX.st=0;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-sanc'(el){TX.sanchor=el.dataset.v;if(curAncKind()==='door'&&TX.st<0)TX.st=0;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-len'(el){TX.len=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ trxam(el){S.settings.trx.amode=el.dataset.v;save();render()},
+ trxmode(el){S.settings.trx.mode=el.dataset.v;save();render()},
+ 'trx-recalc'(){let n=0;S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>(w.items||[]).forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;(it.sets||[]).forEach(st=>{if(st.pos&&!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl);n++}})}));save();toast(n?'Перераховано підходів: '+n:'Немає записів для перерахунку')},
  'tx-hh'(el){TX.hh=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-vert'(){TX.vert=!TX.vert;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
- 'tx-st'(el){TX.st=Math.max(-10,Math.min(12,(num(TX.st)||0)+ +el.dataset.d));TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
+ 'tx-st'(el){TX.st=Math.max(curAncKind()==='door'?0:-10,Math.min(12,(num(TX.st)||0)+ +el.dataset.d));TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-el'(){TX.el=!TX.el;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-lv'(el){TX.lvl=Math.max(1,Math.min(10,(TX.lvl||1)+ +el.dataset.d));TX.manual=true;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-as'(el){TX.assist=el.dataset.v;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
  'tx-pause'(){TX.pause=!TX.pause;TX.manual=false;trxSheet(TXCTX.u,TXCTX.n,true)},
- 'tx-apply'(){const it=itemBy(TXCTX.u);if(!it)return;if(TX.mode==='leg'){it.sets.forEach((s,k)=>{if(k===TXCTX.n||(k>TXCTX.n&&!(repsOf(it,s)||{}).tot)){s.w=String(TX.lvl);s.assist=TX.assist;s.pause=TX.pause;s.man=!!TX.manual;s.kgm=TX.kgm;delete s.pos;delete s.ang}});save();closeSheet();return}const pos=TX.angle?{anchor:TX.anchor,ah:(S.settings.trx.anchors.find(a=>a.id===TX.anchor)||{}).h,hh:TX.hh,st:TX.st,el:TX.el,dir:TX.dir,vert:TX.vert}:null;
+ 'tx-apply'(){const it=itemBy(TXCTX.u);if(!it)return;if(TX.mode==='leg'){it.sets.forEach((s,k)=>{if(k===TXCTX.n||(k>TXCTX.n&&!(repsOf(it,s)||{}).tot)){s.w=String(TX.lvl);s.assist=TX.assist;s.pause=TX.pause;s.man=!!TX.manual;s.kgm=TX.kgm;delete s.pos;delete s.ang}});save();closeSheet();return}const pos=TX.angle?txPos():null;if(pos){S.settings.trx.place=TX.place;if(TX.amode==='man'&&num(TX.ah))S.settings.trx.manH=num(TX.ah)}
   it.sets.forEach((s,k)=>{if(k===TXCTX.n||(k>TXCTX.n&&!(repsOf(it,s)||{}).tot)){s.w=String(TX.lvl);if(pos){s.pos={...pos};s.ang=TX.lastAng;s.man=!!TX.manual}else{delete s.pos;delete s.ang;delete s.man}}});save();closeSheet()},
- 'anc-add'(){S.settings.trx.anchors.push({id:'a'+uid(),name:'Нове кріплення',h:2.3});save();render()},
+ 'anc-add'(){S.settings.trx.anchors.push({id:'a'+uid(),name:'Нове кріплення',h:1.82,kind:'other'});save();render()},
  'anc-del'(el){const id=el.dataset.b;if(S.settings.trx.anchors.length<2){toast('Має лишитися хоча б одне кріплення');return}S.settings.trx.anchors=S.settings.trx.anchors.filter(a=>a.id!==id);save();render()},
  'band-add'(){S.settings.bands.push({id:'b'+uid(),name:'Нова гума',hex:'#8A8F98',min:'',max:''});save();if(SHEET==='band')bandSheet(BANDCTX.u,BANDCTX.n,true);else render()},
  'band-del'(el){const id=el.dataset.b;confirmSheet('Видалити цю гуму зі списку?','Видалити',()=>{S.settings.bands=S.settings.bands.filter(b=>b.id!==id);save()})},
@@ -1381,6 +1441,8 @@ document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)ret
  if(f==='bedex'){BED.ex[+el.dataset.n][k]=v;return}
  if(f==='vol'){S.settings.vol=(num(v)||100)/100;save();const o=document.getElementById('vol-v');if(o)o.textContent=v+'%';return}
  if(f==='trx'){S.settings.trx[k]=v;save();return}
+ if(f==='txah'){TX.ah=v;TX.manual=false;if(num(v))trxSheet(TXCTX.u,TXCTX.n,true);return}
+ if(f==='trxstd'){S.settings.trx.std[k]=v;save();return}
  if(f==='txkgm'){TX.kgm=v;const it=itemBy(TXCTX.u),bw=bwOf(S.draft||{});const t=document.getElementById('tx-kg');if(t&&it)t.innerHTML=legKgTxt(trxLegKg(it,{w:TX.lvl,assist:TX.assist,man:TX.manual,kgm:v},bw),bw,it);return}
  if(f==='anc'){const a=S.settings.trx.anchors.find(x=>x.id===el.dataset.b);if(a){a[k]=v;save()}return}
  if(f==='band'){const b=band(el.dataset.b);if(!b)return;b[k]=v;if(S.draft)S.draft.items.forEach(it=>(it.sets||[]).forEach(s=>{if(s.band&&s.band.id===b.id)s.band={...b};if(s.bands)s.bands=s.bands.map(x=>x.id===b.id?{...b}:x)}));save();const t=document.getElementById('band-total');if(t)t.innerHTML=bandTotalTxt();return}
@@ -1395,6 +1457,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(!c)re
  if(c==='duck'){S.settings.duck=el.checked;save();audioMode();return}
  if(c==='warmmeta'){S.settings.warmMeta=el.checked;save();render();return}
  if(c==='warmon'){S.settings.warmOn=el.checked;if(!el.checked)S.ui.scope='main';save();render();return}
+ if(c==='anc-kind'){const a=ancOf(el.dataset.b);if(a){a.kind=el.value;save();render()}return}
  if(c==='bres-done'){const b=itemBy(el.dataset.i);if(b){b.res=b.res||{};b.res.done=el.checked;save();render()}return}
  if(c==='bedex-load'){BED.ex[+el.dataset.n].load=el.value;renderBed();return}
  if(c==='bedex-band'){BED.ex[+el.dataset.n].band=el.value;return}
