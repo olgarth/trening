@@ -649,18 +649,20 @@ function vLog(){if(S.draft)return vDraft();
  if(S.settings.warmPos==='bottom')h+=warmCard();
  return h}
 function phImp(w,k,dg){const r=imputed(w,k);return r.v!=null?'≈ '+nf(r.v,dg):''}
-function vDraft(){const w=S.draft;
+function warmMeta(){return S.settings.warmMeta===true}
+function vDraft(){const w=S.draft;const meta=!isWarm(w)||warmMeta();
  let h=`<section class="card stack">
   <div class="wk-name">${esc(w.tplName)}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}
   <div class="metrics">
    <label class="field" style="grid-column:1/-1"><span>Дата тренування</span><input class="in" type="date" data-f="w" data-k="date" value="${esc(w.date)}" id="w-date"></label>
-   <label class="field"><span>Сон, год</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>
+   ${meta?`<label class="field"><span>Сон, год</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>
    <label class="field"><span>Самопочуття, 1-10</span><input class="in" inputmode="decimal" data-f="w" data-k="well" value="${esc(w.well)}" placeholder="${phImp(w,'well',1)}" id="w-well"></label>
    <label class="field"><span>Тривалість, хв</span><input class="in" inputmode="numeric" data-f="w" data-k="dur" value="${esc(w.dur)}" placeholder="${w._edit?phImp(w,'dur',0):'таймер'}" id="w-dur"></label>
    <label class="field"><span>Вага тіла, кг</span><input class="in" inputmode="decimal" data-f="w" data-k="bw" value="${esc(w.bw)}" placeholder="${phImp(w,'bw',1)||'≈ '+S.settings.bw}" id="w-bw"></label>
-   <label class="field" style="grid-column:1/-1"><span>Фаза харчування</span>${phaseSel(w.phase||'','w-phase','w-phase')}</label>
+   <label class="field" style="grid-column:1/-1"><span>Фаза харчування</span>${phaseSel(w.phase||'','w-phase','w-phase')}</label>`:''}
   </div>
-  <p class="muted small" style="margin:0">Порожні поля в аналітиці замінюються середнім попередніх тренувань (позначка ≈). Сірі цифри в підходах - результат минулого разу.</p>
+  ${meta?'':'<p class="muted small" style="margin:0">Сон, самопочуття, тривалість і вага для зарядки вимкнені (Налаштування → Зарядка).</p>'}
+  <p class="muted small" style="margin:0">${meta?'Порожні поля в аналітиці замінюються середнім попередніх тренувань (позначка ≈). ':''} замінюються середнім попередніх тренувань (позначка ≈). Сірі цифри в підходах - результат минулого разу.</p>
  </section>`;
  h+=w.items.map((it,i)=>itemHTML(it,i,w.items.length,w)).join('');
  if(!w.items.length)h+=`<p class="empty">Вправ немає. Додай першу.</p>`;
@@ -755,7 +757,7 @@ function vStats(){const sub=S.ui.stab||'ov';
  if(!sortedW().length)return h+`<p class="empty">${SCOPE==='warm'?'Записів зарядки ще немає.':'Аналітика з’явиться після першого збереженого тренування.'}</p>`;
  return h+({ov:stOverview,ex:stExercise,gr:stGroups,rep:stReport})[sub]()}
 function impStat(ws,k){let n=0;const v=ws.map(w=>{const r=imputed(w,k);if(r.imp&&r.v!=null)n++;return r.v}).filter(x=>x!=null);return{v:avg(v),n}}
-function stOverview(){const C=calc(),ws=sortedW().filter(w=>w.date>=periodStart());
+function stOverview(){const C=calc(),ws=sortedW().filter(w=>w.date>=periodStart());const noMeta=SCOPE==='warm'&&!warmMeta();
  if(!ws.length)return`<p class="empty">У цьому періоді тренувань немає.</p>`;
  const wk=weeksSpan(ws,periodStart());let vol=0,hard=0;ws.forEach(w=>{vol+=C.wst[w.id].vol;hard+=C.wst[w.id].hard});
  const dur=impStat(ws,'dur'),sl=impStat(ws,'sleep'),wl=impStat(ws,'well');
@@ -764,10 +766,10 @@ function stOverview(){const C=calc(),ws=sortedW().filter(w=>w.date>=periodStart(
   <div class="kpi"><div class="k">Тренувань</div><div class="v">${ws.length} <small>${f1(ws.length/wk)}/тиж</small></div></div>
   <div class="kpi"><div class="k">Робочих підходів</div><div class="v">${hard} <small>${f1(hard/wk)}/тиж</small></div></div>
   <div class="kpi"><div class="k">Обсяг, т</div><div class="v">${f1(vol/1000)}</div></div>
-  <div class="kpi"><div class="k">Сер. тривалість, хв</div><div class="v">${f0(dur.v)}${imp(dur.n)}</div></div>
+  ${noMeta?'':`<div class="kpi"><div class="k">Сер. тривалість, хв</div><div class="v">${f0(dur.v)}${imp(dur.n)}</div></div>
   <div class="kpi"><div class="k">Сон, год</div><div class="v">${f1(sl.v)}${imp(sl.n)}</div></div>
-  <div class="kpi"><div class="k">Самопочуття</div><div class="v">${f1(wl.v)}${imp(wl.n)}</div></div></div>`;
- if(dur.n||sl.n||wl.n)h+=`<p class="muted small" style="margin:-4px 0 0">≈N - стільки тренувань без запису, для них взято середнє попередніх.</p>`;
+  <div class="kpi"><div class="k">Самопочуття</div><div class="v">${f1(wl.v)}${imp(wl.n)}</div></div>`}</div>`;
+ if(!noMeta&&(dur.n||sl.n||wl.n))h+=`<p class="muted small" style="margin:-4px 0 0">≈N - стільки тренувань без запису, для них взято середнє попередніх.</p>`;
  h+=`<section class="card stack"><div class="lbl">Що потребує уваги</div>${signals(ws)}</section>`;
  const tpls=[...new Set(ws.map(w=>w.tplName))];const tf=S.ui.ovt&&tpls.includes(S.ui.ovt)?S.ui.ovt:'';const m=S.ui.ovm||'vol';
  const MET={vol:['Обсяг','кг',0],hard:['Робочі підходи','підх.',0],dur:['Тривалість','хв',0],dens:['Щільність','кг/хв',0],perf:['Індекс сили','%',1]};
@@ -780,7 +782,7 @@ function stOverview(){const C=calc(),ws=sortedW().filter(w=>w.date>=periodStart(
   ${m==='perf'?'<p class="muted small" style="margin:0">Індекс сили: 1ПМ кожної вправи відносно її медіани за весь час (100% = твій звичний рівень), усереднено по тренуванню. Працює між залом, гумою й турніком, бо кожна вправа порівнюється сама з собою.</p>':''}
   ${m==='dens'?'<p class="muted small" style="margin:0">Щільність = обсяг / тривалість. Зростає, коли робиш більше за той самий час.</p>':''}</section>`;
  const on=!!S.ui.corr;
- h+=`<section class="card stack"><label class="chk"><input type="checkbox" data-c="corr" id="corr" ${on?'checked':''}>Зв’язок із сном, самопочуттям і тривалістю</label>${on?corrBlock(ws):''}</section>`;
+ if(!noMeta)h+=`<section class="card stack"><label class="chk"><input type="checkbox" data-c="corr" id="corr" ${on?'checked':''}>Зв’язок із сном, самопочуттям і тривалістю</label>${on?corrBlock(ws):''}</section>`;
  return h}
 function corrBlock(ws){const C=calc();const rows=[['sleep','Сон','perf','індекс сили'],['well','Самопочуття','perf','індекс сили'],['sleep','Сон','vol','обсяг'],['well','Самопочуття','vol','обсяг'],['dur','Тривалість','vol','обсяг']];
  let h='';const n0=ws.length;
@@ -931,6 +933,7 @@ function vSet(){const t=S.settings.theme;
  <p class="muted small" style="margin:0">Сигнал не може бути гучнішим за загальну гучність iPhone. Тому він різкий і високий, щоб пробиватися крізь музику, а музика на мить притихає (Safari 16.4 і новіші). Гучність 100% - максимум без спотворень.</p></section>
  <section class="card stack"><div class="lbl">Статистика м’язів</div><div class="seg"><button class="${musFull()?'':'on'}" data-a="musmode" data-v="short">Коротка</button><button class="${musFull()?'on':''}" data-a="musmode" data-v="full">Розширена</button></div><p class="muted small" style="margin:0">Коротка: 13 основних груп, як раніше (груди, спина, дельти, біцепс, трицепс, ноги, ікри, прес). Розширена: групи по зонах плюс розгиначі, ротатори, передпліччя, привідні, і розкриття до окремих м’язів. Вибір м’язів у вправах детальний в обох режимах.</p></section>
  <section class="card stack"><div class="lbl">Зарядка</div><label class="chk"><input type="checkbox" data-c="warmon" id="set-warm" ${S.settings.warmOn!==false?'checked':''}>Показувати зарядку</label>
+ ${S.settings.warmOn!==false?`<label class="chk"><input type="checkbox" data-c="warmmeta" id="set-warmmeta" ${warmMeta()?'checked':''}>Вводити сон, самопочуття, тривалість, вагу і фазу харчування для зарядки</label>`:''}
  ${S.settings.warmOn!==false?`<div class="field"><span>Картка зарядки на екрані «Запис»</span><div class="seg"><button class="${S.settings.warmPos==='bottom'?'':'on'}" data-a="warmpos" data-v="top">Зверху</button><button class="${S.settings.warmPos==='bottom'?'on':''}" data-a="warmpos" data-v="bottom">Знизу</button></div></div>`:''}
  <p class="muted small" style="margin:0">Вимкнена зарядка ховається з «Запису», «Історії» та «Аналітики». Записи і шаблони зберігаються, повернути можна будь-коли.</p></section>
  <section class="card stack"><label class="field"><span>Поточна фаза харчування</span>${phaseSel(S.settings.phase||'','setphase','set-phase')}</label><p class="muted small" style="margin:0">Ставиться в кожне нове тренування, поки не зміниш. Змінити можна тут або в самому тренуванні.</p></section>
@@ -1375,6 +1378,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(!c)re
  if(c==='setphase'){S.settings.phase=el.value;save();return}
  if(c==='snd'){S.settings.sound=el.checked;save();if(el.checked){audioInit();beep(1400,.15)}return}
  if(c==='duck'){S.settings.duck=el.checked;save();audioMode();return}
+ if(c==='warmmeta'){S.settings.warmMeta=el.checked;save();render();return}
  if(c==='warmon'){S.settings.warmOn=el.checked;if(!el.checked)S.ui.scope='main';save();render();return}
  if(c==='bres-done'){const b=itemBy(el.dataset.i);if(b){b.res=b.res||{};b.res.done=el.checked;save();render()}return}
  if(c==='bedex-load'){BED.ex[+el.dataset.n].load=el.value;renderBed();return}
