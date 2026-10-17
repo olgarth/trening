@@ -48,6 +48,10 @@ button{cursor:pointer}
 button,a,input,select,textarea,label,summary{touch-action:manipulation}
 .sheet,.tm{overscroll-behavior:contain}
 body.sheetopen{overflow:hidden}
+body.kb nav.tabs{display:none}
+body.kb{padding-bottom:24px}
+body.kb .toast{bottom:calc(var(--kb,0px) + 12px)}
+body.kb .sheet{bottom:var(--kb,0px);max-height:calc(var(--vvh,100vh) * .92)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 10px;margin-inline:-2px}
@@ -1351,6 +1355,17 @@ Object.assign(ACT,{
  'bed-save'(){bedSave()},
  'iv-tog'(el){const b=itemBy(el.dataset.i);if(!b)return;b.res.iv=b.res.iv||{};const i=+el.dataset.n;const o=b.res.iv[i]||(b.res.iv[i]={});const ok=o.done!=null?o.done!==false:!!b.res.done;o.done=!ok;save();render()}
 });
+
+/* ---- on-screen keyboard: hide bottom menu, lift sheets ---- */
+const isTextField=el=>!!el&&((el.tagName==='INPUT'&&!['checkbox','radio','range','color','file','button','submit'].includes(el.type))||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+let KBT=null;
+function kbUpdate(){const vv=window.visualViewport;const focused=isTextField(document.activeElement);let kb=0,vvh=window.innerHeight;
+ if(vv){vvh=vv.height;kb=Math.max(0,window.innerHeight-vv.height-vv.offsetTop)}
+ const touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;const open=(touch&&focused)||kb>120;document.body.classList.toggle('kb',open);
+ document.documentElement.style.setProperty('--kb',(open?kb:0)+'px');document.documentElement.style.setProperty('--vvh',vvh+'px')}
+document.addEventListener('focusin',e=>{if(isTextField(e.target)){clearTimeout(KBT);kbUpdate()}});
+document.addEventListener('focusout',()=>{clearTimeout(KBT);KBT=setTimeout(kbUpdate,120)});
+if(window.visualViewport){visualViewport.addEventListener('resize',kbUpdate);visualViewport.addEventListener('scroll',kbUpdate)}
 
 /* ========== events ========== */
 document.addEventListener('click',e=>{const tb=e.target.closest('[data-tab]');if(tb){S.ui.tab=tb.dataset.tab;save();render();window.scrollTo(0,0);return}
