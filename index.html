@@ -45,6 +45,9 @@ body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--f-body);margin:0;
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
+button,a,input,select,textarea,label,summary{touch-action:manipulation}
+.sheet,.tm{overscroll-behavior:contain}
+body.sheetopen{overflow:hidden}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 10px;margin-inline:-2px}
@@ -282,6 +285,7 @@ input[type=range]{width:100%;accent-color:var(--accent);min-height:32px}
 .gdet[open]>summary .nm{color:var(--accent)}
 .gsub{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);padding:3px 4px 3px 14px}
 .gsub b{color:var(--fg);font-size:15px}
+.warnbox{border-color:var(--warn);background:var(--warn-soft)}
 .tm-big{font:700 40px var(--f-display);text-align:center}
 .tm-sum{display:flex;flex-direction:column;gap:10px}
 .tm-done .cell{background:var(--surface)}
@@ -290,7 +294,7 @@ details.how{border-top:1px solid var(--line);padding-top:10px}
 details.how:first-of-type{border-top:0;padding-top:0}
 details.how summary{min-height:32px;display:list-item}
 details.how li{margin-bottom:6px}
-@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
+@media (prefers-reduced-motion:no-preference){.sheet:not(.noanim){animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}}}
 </style>
 
 </head>
@@ -496,13 +500,27 @@ function mmss(sec){if(!sec)return '0:00';sec=Math.round(sec);return Math.floor(s
 let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
 function defaults(){return{v:1,seedV:5,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
-function load(){try{const r=localStorage.getItem(KEY);if(r){S=JSON.parse(r);fix();return}}catch(e){}S=defaults()}
+let PERSIST=null;
+const SNAP='trainlog.snap.',SNAPN=7;let LOADFAIL=false;
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+function snapKeys(){const a=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(SNAP))a.push(k)}}catch(e){}return a.sort().reverse()}
+function snapInfo(k){try{const o=JSON.parse(lsGet(k));return{k,date:k.slice(SNAP.length,SNAP.length+10),tag:k.slice(SNAP.length+11),n:(o.workouts||[]).length}}catch(e){return null}}
+function snapshot(raw,tag){if(!raw)return;try{const o=JSON.parse(raw);if(!(o.workouts||[]).length)return}catch(e){}const k=SNAP+todayStr()+(tag?'-'+tag:'');if(!tag&&lsGet(k))return;
+ if(!lsSet(k,raw)){const ks=snapKeys();for(const x of ks.slice(-3)){try{localStorage.removeItem(x)}catch(e){}}lsSet(k,raw)}
+ let tot=0;snapKeys().forEach((x,i)=>{const v=lsGet(x)||'';tot+=v.length;if(i>=SNAPN||(i>0&&tot>1500000)){try{localStorage.removeItem(x)}catch(e){}}})}
+function load(){const r=lsGet(KEY);if(!r){S=defaults();return}
+ let o;try{o=JSON.parse(r)}catch(e){LOADFAIL=true;lsSet(SNAP+todayStr()+'-broken',r);S=defaults();return}
+ snapshot(r,'');if((o.seedV||1)<(defaults().seedV))snapshot(r,'pre-v'+(o.seedV||1));
+ S=o;try{fix()}catch(e){console.error(e);LOADFAIL=true;S=o;try{const d=defaults();for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k]}catch(e2){}}}
 function fix(){const d=defaults(),sv=S.seedV||1;(S.catalog||[]).forEach(convEx);(S.workouts||[]).concat(S.draft?[S.draft]:[]).forEach(w=>(w.items||[]).forEach(it=>{if(it.type==='block'||it.prim)return;const e=(S.catalog||[]).find(x=>x.id===it.exId);if(e&&e.prim){it.prim=e.prim.slice();it.sec=(e.sec||[]).slice();delete it.group}else if(it.group||it.sec){const c=convEx({group:it.group,sec:it.sec});it.prim=c.prim;it.sec=c.sec;delete it.group}}));for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
  if(sv<5){if(S.morning){const M=S.morning;if(!S.templates.some(t=>t.tag===WARM)){const b=M.block||defMorning().block;S.templates.push({id:uid(),name:b.name,tag:WARM,note:M.note||'',items:[{kind:'block',name:b.name,fmt:b.fmt,cfg:b.cfg,ex:b.ex}]})}const tn=(S.templates.find(t=>t.tag===WARM)||{}).name||'Зарядка';Object.keys(M.days||{}).forEach(d=>{if(!S.workouts.some(w=>w.tag===WARM&&w.date===d))S.workouts.push({id:uid(),date:d,tplName:tn,tag:WARM,quick:true,items:[],startedAt:+new Date(d+'T07:00')})});delete S.morning}else if(sv<4&&!S.templates.some(t=>t.tag===WARM))S.templates.push(warmTpl());S.seedV=5}
  if(sv<4){seedCatalog().filter(e=>MR_IDS.includes(e.id)&&!S.catalog.some(c=>c.id===e.id)).forEach(e=>S.catalog.push(e));S.seedV=Math.max(S.seedV||1,4)}
  if(sv<3){const hs=hiitSeeds();S.templates=S.templates.map(t=>{const nt=hs.find(h=>h.name===t.name);if(nt&&(t.name==='HIIT. Гиря'||t.name==='HIIT. Власна вага')&&t.items.length&&t.items.every(i=>!i.kind&&(ex(i.exId)||{}).type==='hiit'))return Object.assign(nt,{id:t.id});return t});hs.forEach(h=>{if(!S.templates.some(t=>t.name===h.name))S.templates.push(h)});S.seedV=Math.max(S.seedV||1,3)}
  if(sv<2){if(!S.catalog.some(e=>e.id==='trx_pistol')){const e=seedCatalog().find(x=>x.id==='trx_pistol');if(e)S.catalog.push(e)}S.seedV=Math.max(S.seedV||1,2)}}
-function save(){CACHE=null;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
+function save(){CACHE=null;if(LOADFAIL)return;try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
+ if(prev){try{const po=JSON.parse(prev);if((po.workouts||[]).length>=3&&!(S.workouts||[]).length&&!S._allowEmpty){snapshot(prev,'before-empty')}}catch(e){}}
+ try{localStorage.setItem(KEY,nx)}catch(q){const ks=snapKeys();for(let i=ks.length-1;i>=1;i--){try{localStorage.removeItem(ks[i])}catch(e){}try{localStorage.setItem(KEY,nx);return}catch(e){}}throw q}}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
 const ex=id=>S.catalog.find(e=>e.id===id);
 const band=id=>S.settings.bands.find(b=>b.id===id);
 const wSort=(a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.startedAt||0)-(b.startedAt||0);
@@ -595,7 +613,13 @@ function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm
  let sub='';if(t==='log'&&S.draft)sub=S.draft._edit?'редагування':'триває '+Math.max(0,Math.round((Date.now()-S.draft.startedAt)/6e4))+' хв';$('#tsub').textContent=sub;
  for(const k in CH)delete CH[k];
  document.body.classList.toggle('wide',t!=='log'||!S.draft);
- $('#main').innerHTML=({log:vLog,hist:vHist,stats:vStats,tpl:vTpl,set:vSet})[t]();attachCharts()}
+ const keep=LASTVIEW===t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:''),y=window.scrollY;
+ const openD=keep?[...document.querySelectorAll('#main details[open] > summary')].map(x=>x.textContent):[];
+ $('#main').innerHTML=({log:vLog,hist:vHist,stats:vStats,tpl:vTpl,set:vSet})[t]();attachCharts();
+ if(openD.length)document.querySelectorAll('#main details > summary').forEach(x=>{if(openD.includes(x.textContent))x.parentElement.open=true});
+ LASTVIEW=t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:'');
+ if(keep&&Math.abs(window.scrollY-y)>1)window.scrollTo(0,y)}
+let LASTVIEW='';
 
 /* ========== LOG ========== */
 function tagOrder(a,b){const ia=TAGS.indexOf(a),ib=TAGS.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib)}
@@ -604,6 +628,10 @@ function plDays(n){const a=n%10,b=n%100;return a===1&&b!==11?'день':a>=2&&a<
 function mDone(d){return S.workouts.some(w=>isWarm(w)&&w.date===d)}
 function mStreak(){let d=todayStr();if(!mDone(d))d=addDays(d,-1);let n=0;while(mDone(d)){n++;d=addDays(d,-1)}return n}
 function mMonth(ym){const y=+ym.slice(0,4),m=+ym.slice(5);const dim=new Date(y,m,0).getDate();const cur=todayStr().startsWith(ym);const days=cur?+todayStr().slice(8):dim;let n=0,best=0,run=0;for(let i=1;i<=dim;i++){const d=ym+'-'+String(i).padStart(2,'0');if(mDone(d)){n++;run++;best=Math.max(best,run)}else run=0}return{n,days,best}}
+function dataBanner(){if(LOADFAIL)return`<section class="card stack warnbox"><b>Не вдалося прочитати збережені дані.</b><p class="small" style="margin:0">Нічого не перезаписано. Відкрий Налаштування → Дані → «Автокопії» або «Відновити» з файлу, або напиши розробнику.</p></section>`;
+ const ks=snapKeys().map(snapInfo).filter(x=>x&&x.n);if(!S.workouts.length&&ks.length)return`<section class="card stack warnbox"><b>Історія порожня, але є автокопія від ${dShort(ks[0].date)}.${ks[0].date.slice(0,4)} (${ks[0].n} тренувань).</b><button class="btn pri" data-a="snap-restore" data-k="${ks[0].k}">Відновити з автокопії</button></section>`;
+ if(S.workouts.length>=3){const lb=S.settings.lastBackup;const days=lb?Math.floor((new Date(todayStr()+'T12:00')-new Date(lb+'T12:00'))/864e5):null;if(days==null||days>=7)return`<section class="card stack warnbox"><b>${days==null?'Резервної копії ще не було.':'Остання резервна копія '+days+' дн. тому.'}</b><p class="small" style="margin:0">Браузер може стерти дані сайту. Збережи копію в iCloud.</p><button class="btn" data-a="exp-all">Зробити резервну копію</button></section>`}
+ return''}
 function warmOn(){return S.settings.warmOn!==false}
 function warmCard(){if(!warmOn())return'';const ts=S.templates.filter(t=>t.tag===WARM);const any=S.workouts.some(isWarm);if(!ts.length&&!any)return'';const t0=todayStr(),done=mDone(t0),mm=mMonth(t0.slice(0,7)),st=mStreak();
  return`<section class="card stack mcard ${done?'done':''}"><div class="row between"><div class="lbl">Зарядка</div><span class="pill ${done?'p-good':'p-mut'}">${done?'Сьогодні ✓':'Сьогодні ще ні'}</span></div>
@@ -614,7 +642,7 @@ function warmCard(){if(!warmOn())return'';const ts=S.templates.filter(t=>t.tag==
 function scopeChips(){if(!warmOn())return'';if(!S.workouts.some(isWarm)&&!S.templates.some(t=>t.tag===WARM))return'';const c=S.ui.scope==='warm'?'warm':'main';return`<div class="seg">${[['main','Тренування'],['warm','Зарядка']].map(([k,l])=>`<button class="${c===k?'on':''}" data-a="scope" data-v="${k}">${l}</button>`).join('')}</div>`}
 function vLog(){if(S.draft)return vDraft();
  const g={};S.templates.filter(t=>t.tag!==WARM).forEach(t=>{(g[t.tag||'Інше']=g[t.tag||'Інше']||[]).push(t)});
- let h=(S.settings.warmPos==='bottom'?'':warmCard())+`<p class="muted small" style="margin:0">Обери шаблон. Порядок і склад вправ можна міняти під час запису, шаблон від цього не змінюється.</p>
+ let h=dataBanner()+(S.settings.warmPos==='bottom'?'':warmCard())+`<p class="muted small" style="margin:0">Обери шаблон. Порядок і склад вправ можна міняти під час запису, шаблон від цього не змінюється.</p>
  <button class="tpl" data-a="start" data-t=""><span><b>Довільне тренування</b><small>Без шаблону, вправи додаси самостійно</small></span><span class="go">›</span></button>`;
  Object.keys(g).sort(tagOrder).forEach(tag=>{h+=`<div class="tgroup"><div class="gh">${esc(tag)}</div>`+g[tag].map(t=>{const ld=lastDone(t.name);return`<button class="tpl" data-a="start" data-t="${t.id}"><span><b>${esc(t.name)}</b><small>${t.items.length?t.items.length+' вправ':'Без вправ'}${ld?' · востаннє '+dShort(ld):''}</small></span><span class="go">›</span></button>`}).join('')+`</div>`});
  if(!S.templates.length)h+=`<p class="empty">Шаблонів немає. Створи їх у вкладці «Шаблони» або почни довільне тренування.</p>`;
@@ -689,7 +717,7 @@ function footTxt(it){const st=itemStats(it,bwOf(S.draft||{}));
 function vHist(){const ws=sortedW().reverse();const sc=scopeChips();if(!ws.length)return sc+`<p class="empty">${SCOPE==='warm'?'Записів зарядки ще немає.':'Ще немає збережених тренувань. Почни запис у вкладці «Запис».'}</p>`;
  const C=calc();let h='',cur='';
  ws.forEach(w=>{const m=w.date.slice(0,7);if(m!==cur){cur=m;h+=`<div class="gh">${MON[+m.slice(5)-1]} ${m.slice(0,4)}</div>`}
-  const st=C.wst[w.id];if(w.quick){h+=`<div class="hrow"><div class="t"><b>${esc(w.tplName)}</b><span>${dLong(w.date)}</span></div><div class="kv"><span>Відмічено без запису</span></div></div>`;return}h+=`<button class="hrow" data-a="open-w" data-w="${w.id}"><div class="t"><b>${esc(w.tplName)}</b><span>${dLong(w.date)}</span></div><div class="kv">
+  const st=C.wst[w.id];if(w.quick){h+=`<button class="hrow" data-a="open-w" data-w="${w.id}"><div class="t"><b>${esc(w.tplName)}</b><span>${dLong(w.date)}</span></div><div class="kv"><span>Відмічено без запису · натисни, щоб додати результат або видалити</span></div></button>`;return}h+=`<button class="hrow" data-a="open-w" data-w="${w.id}"><div class="t"><b>${esc(w.tplName)}</b><span>${dLong(w.date)}</span></div><div class="kv">
    <span>Підходів <b>${st.hard}</b></span><span>Обсяг <b>${f0(st.vol)}</b> кг</span>${w.dur?`<span>Час <b>${esc(w.dur)}</b> хв</span>`:''}${w.sleep?`<span>Сон <b>${esc(w.sleep)}</b></span>`:''}${w.phase?`<span class="pill p-mut">${PHASES[w.phase]}</span>`:''}${w.well?`<span>Самоп. <b>${esc(w.well)}</b></span>`:''}</div></button>`});
  return sc+`<div class="hist">${h}</div>`}
 
@@ -913,6 +941,8 @@ function vSet(){const t=S.settings.theme;
  ${S.settings.trx.anchors.map(a=>`<details class="how"><summary>Таблиця рівнів: ${esc(a.name)}</summary><p class="muted small">Рядки - ступні від кріплення (мінус = ноги з іншого боку кріплення, можливо на турніку), стовпці - де висять ручки: пояс, між поясом і коліном, коліно, нижче коліна. Ноги на підвищенні +1.</p><div class="lbl">Тяги</div>${trxGrid(a,'pull')}<div class="lbl" style="margin-top:10px">Жими і віджимання</div>${trxGrid(a,'push')}</details>`).join('')}
  <p class="muted small" style="margin:0">Типові висоти кріплень - заміряй свої. Кут перевіряється програмою iPhone «Рулетка» → «Рівень»: телефон на груди або спину в нижній точці.</p></section>
  <section class="card stack"><div class="lbl">Мої гуми</div><p class="muted small" style="margin:0">Діапазон - від слабкого до повного натягу гуми. Типові значення, зміни під свої. Нові діапазони діють для наступних записів, збережені тренування не перераховуються.</p><div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button></section>
+ <section class="card stack"><div class="lbl">Автокопії на цьому пристрої</div><p class="muted small" style="margin:0">Програма щодня сама зберігає копію даних (останні 7). Вони рятують від помилки програми, але не від очищення даних Safari - для цього потрібна копія в iCloud.${PERSIST===true?' Браузер підтвердив постійне зберігання.':''}</p>
+ ${snapKeys().map(snapInfo).filter(Boolean).map(x=>`<div class="row between"><span class="small">${dShort(x.date)}.${x.date.slice(0,4)}${x.tag?' <span class="muted">('+esc(x.tag)+')</span>':''} · ${x.n} трен.</span><button class="btn" data-a="snap-restore" data-k="${esc(x.k)}">Відновити</button></div>`).join('')||'<p class="muted small" style="margin:0">Автокопій ще немає.</p>'}</section>
  <section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.</p>
  <div class="g2"><button class="btn" data-a="exp-all">Резервна копія</button><button class="btn" data-a="imp" data-v="all">Відновити</button></div>
  <button class="btn danger full" data-a="wipe">Скинути все до початкового</button></section>
@@ -971,8 +1001,10 @@ function vSet(){const t=S.settings.theme;
 
 /* ========== SHEETS & TOAST ========== */
 let SHEET=null,PICK=null,EXED=null,EXP=null,IMPMODE='all',UNDO=null;
-function openSheet(html,kind){SHEET=kind||'x';$('#sheetHost').innerHTML=`<div class="scrim" data-a="close"></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`}
-function closeSheet(rerender=true){const k=SHEET;SHEET=null;$('#sheetHost').innerHTML='';if(rerender||k==='band')render()}
+function openSheet(html,kind){const same=SHEET===(kind||'x');const old=document.querySelector('#sheetHost .sheet');const st=same&&old?old.scrollTop:0;const ae=document.activeElement,aeId=same&&ae&&ae.id&&old&&old.contains(ae)?ae.id:null;
+ SHEET=kind||'x';document.body.classList.add('sheetopen');$('#sheetHost').innerHTML=`<div class="scrim" data-a="close"></div><div class="sheet${same&&old?' noanim':''}" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+ const nw=document.querySelector('#sheetHost .sheet');if(nw&&st)nw.scrollTop=st;if(aeId){const f=document.getElementById(aeId);if(f&&f.tagName==='INPUT')try{f.focus({preventScroll:true})}catch(e){}}}
+function closeSheet(rerender=true){const k=SHEET;SHEET=null;$('#sheetHost').innerHTML='';document.body.classList.remove('sheetopen');if(rerender||k==='band')render()}
 let toastT;function toast(msg,undoFn){clearTimeout(toastT);UNDO=undoFn||null;$('#toastHost').innerHTML=`<div class="toast" role="status"><span>${esc(msg)}</span>${undoFn?'<button data-a="undo">Повернути</button>':''}</div>`;toastT=setTimeout(()=>{$('#toastHost').innerHTML='';UNDO=null},undoFn?6000:3000)}
 function confirmSheet(text,ok,fn,danger=true){openSheet(`<h3>${esc(text)}</h3><div class="g2"><button class="btn" data-a="close">Скасувати</button><button class="btn ${danger?'danger':'pri'}" data-a="confirm-ok">${esc(ok)}</button></div>`,'confirm');CONFIRM=fn}
 let CONFIRM=null;
@@ -1039,7 +1071,7 @@ function importSheet(mode){IMPMODE=mode;openSheet(`<h3>${mode==='tpl'?'Імпо�
  <label class="field"><span>Або встав текст копії</span><textarea class="in" id="imp-ta" placeholder="{...}"></textarea></label>
  <button class="btn pri full" data-a="imp-go">${mode==='tpl'?'Додати шаблони':'Замінити всі дані'}</button><button class="btn ghost full" data-a="close">Скасувати</button>`,'imp')}
 function doImport(txt){let o;try{o=JSON.parse(txt)}catch(e){toast('Це не схоже на файл копії. Перевір, що текст скопійовано повністю');return}
- if(IMPMODE==='all'){if(!o||!Array.isArray(o.workouts)||!Array.isArray(o.catalog)){toast('У файлі немає повної копії. Для шаблонів скористайся «Імпорт шаблонів»');return}S=o;fix();save();closeSheet();toast('Дані відновлено');return}
+ if(IMPMODE==='all'){if(!o||!Array.isArray(o.workouts)||!Array.isArray(o.catalog)){toast('У файлі немає повної копії. Для шаблонів скористайся «Імпорт шаблонів»');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-import');S=o;LOADFAIL=false;fix();save();closeSheet();toast('Дані відновлено');return}
  const tpls=o&&(o.templates||[]);const cat=o&&(o.catalog||[]);if(!tpls.length){toast('У файлі немає шаблонів');return}
  const map={};cat.forEach(e=>{const byId=ex(e.id);if(byId&&byId.name===e.name){map[e.id]=e.id;return}const byName=S.catalog.find(x=>x.name.toLowerCase()===String(e.name).toLowerCase());if(byName){map[e.id]=byName.id;return}const ne=convEx(Object.assign({},e,{id:byId?'u_'+uid():e.id}));S.catalog.push(ne);map[e.id]=ne.id});
  tpls.forEach(t=>S.templates.push({id:uid(),name:t.name,tag:t.tag||'Інше',note:t.note||'',items:(t.items||[]).map(i=>i.kind==='block'?Object.assign({},i,{ex:(i.ex||[]).map(x=>Object.assign({},x,{exId:map[x.exId]||x.exId}))}):Object.assign({},i,{exId:map[i.exId]||i.exId})).filter(i=>i.kind==='block'||ex(i.exId))}));
@@ -1092,7 +1124,7 @@ const ACT={
  'nt-over'(){const t=S.templates.find(x=>x.id===S.draft.tplId);t.items=draftToItems(S.draft);t.tag=$('#nt-tag').value;save();closeSheet();toast('Шаблон оновлено')},
  'cancel-draft'(){confirmSheet(S.draft._edit?'Скасувати зміни?':'Скасувати тренування? Записане буде втрачено','Так, скасувати',()=>{S.draft=null;save()})},
  'del-w'(){const id=S.draft.id;confirmSheet('Видалити тренування з історії назавжди?','Видалити',()=>{S.workouts=S.workouts.filter(w=>w.id!==id);S.draft=null;S.ui.tab='hist';save()})},
- 'open-w'(el){const w=S.workouts.find(x=>x.id===el.dataset.w);const go=()=>{S.draft=JSON.parse(JSON.stringify(w));S.draft._edit=true;S.ui.tab='log';save();render();window.scrollTo(0,0)};if(S.draft&&!S.draft._edit&&S.draft.items.some(i=>(i.type==='block'&&blockStats(i).has)||(i.sets||[]).some(s=>Object.values(s).some(v=>v&&typeof v!=='object')))){confirmSheet('Зараз триває незбережене тренування. Відкрити інше і втратити його?','Відкрити',go)}else go()},
+ 'open-w'(el){const w=S.workouts.find(x=>x.id===el.dataset.w);const go=()=>{if(w.quick){const t=S.templates.find(x=>x.tag===WARM&&x.name===w.tplName)||S.templates.find(x=>x.tag===WARM);const d=newWorkout(t||null);Object.assign(d,{id:w.id,date:w.date,startedAt:w.startedAt,tag:WARM,tplName:w.tplName});d.items.forEach(i=>{if(i.type==='block')i.res={done:true}});S.draft=d}else S.draft=JSON.parse(JSON.stringify(w));S.draft._edit=true;S.ui.tab='log';save();render();window.scrollTo(0,0)};if(S.draft&&!S.draft._edit&&S.draft.items.some(i=>(i.type==='block'&&blockStats(i).has)||(i.sets||[]).some(s=>Object.values(s).some(v=>v&&typeof v!=='object')))){confirmSheet('Зараз триває незбережене тренування. Відкрити інше і втратити його?','Відкрити',go)}else go()},
  stab(el){S.ui.stab=el.dataset.v;save();render()},
  period(el){S.ui.period=+el.dataset.v;save();render()},
  view(el){S.ui['v_'+el.dataset.k]=el.dataset.v;save();render()},
@@ -1124,12 +1156,13 @@ const ACT={
   if(fromPick&&PICK){const cb=PICK;PICK=null;cb(e)}else closeSheet();toast(isNew?'Вправу додано в каталог':'Вправу збережено')},
  'exed-del'(){const id=EXED.id;confirmSheet('Видалити вправу з каталогу? З шаблонів вона теж зникне, історія залишиться','Видалити',()=>{S.catalog=S.catalog.filter(e=>e.id!==id);S.templates.forEach(t=>t.items=t.items.filter(i=>i.exId!==id));save()})},
  theme(el){S.settings.theme=el.dataset.v;save();render()},
- 'exp-all'(){const o=JSON.parse(JSON.stringify(S));exportSheet(o,'trenuvannia-kopiia-'+todayStr()+'.json','Резервна копія')},
+ 'snap-restore'(el){const raw=lsGet(el.dataset.k);if(!raw){toast('Автокопію не знайдено');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-restore');try{S=JSON.parse(raw);LOADFAIL=false;fix();save();render();toast('Відновлено з автокопії')}catch(e){toast('Автокопія пошкоджена')}},
+ 'exp-all'(){S.settings.lastBackup=todayStr();save();const o=JSON.parse(JSON.stringify(S));exportSheet(o,'trenuvannia-kopiia-'+todayStr()+'.json','Резервна копія')},
  async dl(){let dn=null;try{dn=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}
   if(dn){try{await dn.save({filename:EXP.fname,data:EXP.txt});toast('Файл збережено. На iPhone обери «Зберегти у Файли» → iCloud Drive')}catch(e){if(e&&e.code==='declined')toast('Збереження скасовано');else if(e&&e.code==='rate_limited')toast('Зачекай кілька секунд і спробуй ще раз');else toast('Тут файл зберегти не вдалося. Натисни «Скопіювати»')}return}
   try{const b=new Blob([EXP.txt],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=EXP.fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Якщо файл не з’явився, натисни «Скопіювати»')}catch(e){toast('Завантаження недоступне. Натисни «Скопіювати»')}},
  copy(){copyText(EXP.txt)},
- wipe(){confirmSheet('Скинути все? Історія, власні вправи й шаблони буде видалено','Скинути',()=>{S=defaults();save()})}
+ wipe(){confirmSheet('Скинути все? Історія, власні вправи й шаблони буде видалено','Скинути',()=>{const cur=lsGet(KEY);if(cur)snapshot(cur,'before-reset');S=defaults();save()})}
 };
 function copyText(t){const done=()=>toast('Скопійовано');const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Не вдалося скопіювати. Виділи текст вручну')};
  try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}}
@@ -1354,6 +1387,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(!c)re
 setInterval(()=>{if(S.ui.tab==='log'&&S.draft&&!S.draft._edit)$('#tsub').textContent='триває '+Math.max(0,Math.round((Date.now()-S.draft.startedAt)/6e4))+' хв'},30000);
 
 load();render();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().then(v=>{PERSIST=v}).catch(()=>{})}catch(e){}
 </script>
 
 </body>
