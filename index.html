@@ -279,7 +279,7 @@ body.tmopen{overflow:hidden}
 .tm-rdbig{min-width:180px;font-size:22px}
 .tm-miss.on{background:var(--bad-soft);color:var(--bad)}
 .tm-ctl{margin-top:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}
-.tm-ctl .btn{min-height:54px;font-size:17px}
+.tm-ctl .btn{min-height:54px;font-size:17px;padding:0 8px}
 .tm-snd{align-self:center;color:inherit}
 .tm-snd input{accent-color:currentColor}
 input[type=range]{width:100%;accent-color:var(--accent);min-height:32px}
@@ -300,6 +300,9 @@ details.how{border-top:1px solid var(--line);padding-top:10px}
 details.how:first-of-type{border-top:0;padding-top:0}
 details.how summary{min-height:32px;display:list-item}
 details.how li{margin-bottom:6px}
+.ic{width:.95em;height:.95em;fill:currentColor;flex:none;display:inline-block}
+.it.wu .btn,.tm .btn,.mcard .btn{white-space:nowrap}
+@media (max-width:360px){.seg button{padding:0 7px;font-size:13px}}
 .tm-warm,.tm-cool{background:var(--good-soft);color:var(--fg)}
 .tm-gap,.tm-gap2{background:var(--surface2);color:var(--fg)}
 .tm-desc{white-space:pre-line;font-size:19px;line-height:1.4;font-weight:600;text-align:left;max-width:520px;margin:0 auto;background:color-mix(in srgb,var(--surface) 70%,transparent);border-radius:12px;padding:10px 14px}
@@ -313,7 +316,6 @@ details.how li{margin-bottom:6px}
 .wu-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .wu-dig{font:700 34px/1 var(--f-display);font-variant-numeric:tabular-nums;min-width:96px}
 .wu-dig.run{color:var(--good)}
-.wu-row .btn{flex:1 1 120px}
 .wu-min{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .wu-min .cell{width:90px;flex:none}
 .cal{display:grid;grid-template-columns:24px repeat(12,minmax(0,1fr));gap:3px;align-items:center}
@@ -392,6 +394,8 @@ const CF={time:'Час, хв',dist:'Дистанція, км',kcal:'Ккал',hr
 const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набір'};
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
+const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
+const APPV='33 · 18.10.2026';
 const WARM='Зарядка';let SCOPE='main';
 const isWarm=w=>!!w&&w.tag===WARM;
 const inScope=w=>isWarm(w)===(SCOPE==='warm');
@@ -541,7 +545,7 @@ function mmss(sec){if(!sec)return '0:00';sec=Math.round(sec);return Math.floor(s
 /* ========== state ========== */
 let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
-function defaults(){return{v:1,seedV:8,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
+function defaults(){return{v:1,seedV:9,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 let PERSIST=null;
 const SNAP='trainlog.snap.',SNAPN=7;let LOADFAIL=false;
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -563,7 +567,8 @@ function fix(){const d=defaults(),sv=S.seedV||1;(S.catalog||[]).forEach(convEx);
  if(sv<3){const hs=hiitSeeds();S.templates=S.templates.map(t=>{const nt=hs.find(h=>h.name===t.name);if(nt&&(t.name==='HIIT. Гиря'||t.name==='HIIT. Власна вага')&&t.items.length&&t.items.every(i=>!i.kind&&(ex(i.exId)||{}).type==='hiit'))return Object.assign(nt,{id:t.id});return t});hs.forEach(h=>{if(!S.templates.some(t=>t.name===h.name))S.templates.push(h)});S.seedV=Math.max(S.seedV||1,3)}
  if(sv<2){if(!S.catalog.some(e=>e.id==='trx_pistol')){const e=seedCatalog().find(x=>x.id==='trx_pistol');if(e)S.catalog.push(e)}S.seedV=Math.max(S.seedV||1,2)}
  if(sv<7){S.templates.forEach(t=>{if(t.tag!==WARM||t.name!=='Ранкова зарядка V2')return;const b=t.items.find(i=>i.kind==='block');if(!b||!Array.isArray(b.ex)||b.ex.some(isWuEx))return;b.ex.unshift(wuBex('warmup',V2_WARM));b.ex.push(wuBex('cooldown',''));if(t.note===V2_OLDNOTE)t.note='1 коло, RPE 4-6/10'});S.seedV=7}
- if(sv<8){(S.settings.bands||[]).forEach(b=>{const o=OLD_BAND2[b.id],d=DEFAULT_BANDS.find(x=>x.id===b.id);if(o&&num(b.min)===o[0]&&num(b.max)===o[1]){b.min='';b.max=''}if(d)['k50','k100','k150'].forEach(k=>{if(b[k]==null||b[k]==='')b[k]=d[k]})});if(S.draft)(S.draft.items||[]).forEach(it=>(it.sets||[]).forEach(st=>{if(st.bands)st.bands=st.bands.map(x=>band(x.id)?{...band(x.id)}:x)}));S.seedV=8}}
+ if(sv<8){(S.settings.bands||[]).forEach(b=>{const o=OLD_BAND2[b.id],d=DEFAULT_BANDS.find(x=>x.id===b.id);if(o&&num(b.min)===o[0]&&num(b.max)===o[1]){b.min='';b.max=''}if(d)['k50','k100','k150'].forEach(k=>{if(b[k]==null||b[k]==='')b[k]=d[k]})});if(S.draft)(S.draft.items||[]).forEach(it=>(it.sets||[]).forEach(st=>{if(st.bands)st.bands=st.bands.map(x=>band(x.id)?{...band(x.id)}:x)}));S.seedV=8}
+ if(sv<9){S.templates.forEach(t=>{if(t.tag!==WARM)return;(t.items||[]).forEach(b=>{if(b.kind!=='block'||!Array.isArray(b.ex)||!b.ex.length)return;if(!b.ex.some(x=>roleOf(x)==='warm'))b.ex.unshift(wuBex('warmup',/V2/.test(t.name)?V2_WARM:''));if(!b.ex.some(x=>roleOf(x)==='cool'))b.ex.push(wuBex('cooldown',''))});if(t.note===V2_OLDNOTE)t.note='1 коло, RPE 4-6/10'});if(S.ui&&S.ui.tplEd&&S.ui.tplEd.t&&S.ui.tplEd.t.tag===WARM){S.ui.tplEd=null;S.ui.editTpl=null}S.seedV=9}}
 function save(){CACHE=null;if(LOADFAIL)return;try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
  if(prev){try{const po=JSON.parse(prev);if((po.workouts||[]).length>=3&&!(S.workouts||[]).length&&!S._allowEmpty){snapshot(prev,'before-empty')}}catch(e){}}
  try{localStorage.setItem(KEY,nx)}catch(q){const ks=snapKeys();for(let i=ks.length-1;i>=1;i--){try{localStorage.removeItem(ks[i])}catch(e){}try{localStorage.setItem(KEY,nx);return}catch(e){}}throw q}}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
@@ -682,9 +687,10 @@ function wuHTML(it,i,n,w){const d=wuDesc(it),run=!!it.t0,sec=wuSec(it);
   <button class="ib" data-a="mv" data-d="1" data-i="${it.uid}" ${i===n-1?'disabled':''} aria-label="Перемістити нижче">↓</button>
   <button class="ib del" data-a="del-item" data-i="${it.uid}" aria-label="Прибрати з сьогоднішнього тренування">✕</button></div></div>
   ${d?`<div class="wu-desc">${esc(d)}</div>`:`<div class="hint">Опис можна задати в «Каталог вправ» → «${esc(it.name)}» або в шаблоні.</div>`}
-  <div class="wu-row"><div class="wu-dig num ${run?'run':''}" data-wut="${it.uid}">${mmss(sec)}</div><button class="btn ${run?'':'pri'}" data-a="wu-go" data-i="${it.uid}">${run?'■ Стоп':sec?'▶ Продовжити':'▶ Старт'}</button>${!run&&sec?`<button class="btn ghost" data-a="wu-reset" data-i="${it.uid}" style="flex:0 0 auto">Скинути</button>`:''}</div>
+  <div class="wu-row"><div class="wu-dig num ${run?'run':''}" data-wut="${it.uid}">${mmss(sec)}</div><span class="muted small">${run?'іде відлік':sec?'на паузі':'ще не почато'}</span></div>
+  <div class="${!run&&sec?'g2':'stack'}"><button class="btn ${run?'':'pri'}" data-a="wu-go" data-i="${it.uid}">${run?IC.stop+' Стоп':sec?IC.play+' Продовжити':IC.play+' Старт'}</button>${!run&&sec?`<button class="btn" data-a="wu-reset" data-i="${it.uid}">Скинути</button>`:''}</div>
   ${run?'':`<label class="wu-min"><span>Або вручну, хв</span><input class="cell" inputmode="decimal" data-f="wu" data-i="${it.uid}" id="wu-min-${it.uid}" value="${sec?esc(nf(sec/60,1).replace(/\s/g,'')):''}" placeholder="${(()=>{const a=wuAvg(it.role);return a?'≈ '+nf(a/60,0):''})()}"></label>`}
-  <p class="muted small" style="margin:0">Час без обмеження: ▶ Старт і ■ Стоп. Секундомір іде, навіть якщо перейти на іншу вкладку чи заблокувати телефон. Без часу - в аналітиці підставиться середнє.</p></article>`}
+  <p class="muted small" style="margin:0">Час без обмеження: «Старт» і «Стоп». Секундомір іде, навіть якщо перейти на іншу вкладку чи заблокувати телефон. Без часу - в аналітиці підставиться середнє.</p></article>`}
 function wuInfo(w){const o={warm:null,cool:null,p:null,main:null,work:0,hasW:false,hasC:false,skipW:false,skipC:false,stopped:false,method:w.quick?'mark':'manual',start:null,timer:false};
  (w.items||[]).forEach(it=>{
   if(it.type==='wu'){const s=Math.round(wuSec(it));const r=it.role||WU[it.exId];if(r==='cool'){o.hasC=true;if(s)o.cool=(o.cool||0)+s}else{o.hasW=true;if(s)o.warm=(o.warm||0)+s}if(it.tm&&!it.man)o.timer=true;return}
@@ -731,7 +737,7 @@ function warmStatsOn(){return warmOn()&&S.settings.warmStats!==false}
 function warmCard(){if(!warmOn())return'';const ts=S.templates.filter(t=>t.tag===WARM);const any=S.workouts.some(isWarm);if(!ts.length&&!any)return'';const t0=todayStr(),done=mDone(t0),mm=mMonth(t0.slice(0,7)),st=mStreak();
  return`<section class="card stack mcard ${done?'done':''}"><div class="row between"><div class="lbl">Зарядка</div><span class="pill ${done?'p-good':'p-mut'}">${done?'Сьогодні ✓':'Сьогодні ще ні'}</span></div>
  ${warmStatsOn()?`<div class="kv"><span>Серія <b>${st}</b> ${plDays(st)}</span><span>Цей місяць <b>${mm.n}</b> з ${mm.days}</span></div>`:''}
- ${ts.map(t=>{const blk=t.items.find(i=>i.kind==='block');return`<div class="wrow"><b class="mname">${esc(t.name)}</b><div class="muted small">${blk?esc(blockSum(blk)):tplCount(t)}${t.note?' · '+esc(t.note):''}</div><div class="g2">${blk?`<button class="btn pri" data-a="w-timer" data-t="${t.id}">▶ Таймер</button>`:''}<button class="btn" data-a="start" data-t="${t.id}" ${blk?'':'style="grid-column:1/-1"'}>${blk?'Вручну':'Почати запис'}</button></div></div>`}).join('')}
+ ${ts.map(t=>{const blk=t.items.find(i=>i.kind==='block');return`<div class="wrow"><b class="mname">${esc(t.name)}</b><div class="muted small">${blk?esc(blockSum(blk)):tplCount(t)}${t.note?' · '+esc(t.note):''}</div><div class="g2">${blk?`<button class="btn pri" data-a="w-timer" data-t="${t.id}">${IC.play} Таймер</button>`:''}<button class="btn" data-a="start" data-t="${t.id}" ${blk?'':'style="grid-column:1/-1"'}>${blk?'Вручну':'Почати запис'}</button></div></div>`}).join('')}
  <p class="muted small" style="margin:0">«Таймер» - веде по вправах і сам зберігає зарядку. «Вручну» - відкриває запис, щоб вписати результат без таймера. «Відмітити» - просто зарахувати день.</p>
  ${(()=>{const real=S.workouts.some(w=>isWarm(w)&&w.date===t0&&!w.quick);return`<div class="${warmStatsOn()?'g2':'stack'}"><button class="btn" data-a="w-mark" ${real?'disabled':''}>${real?'Записано ✓':done?'Зняти відмітку':'Відмітити ✓'}</button>`})()}${warmStatsOn()?'<button class="btn ghost" data-a="w-stats">Статистика</button>':''}</div></section>`}
 function scopeChips(){if(!warmOn())return'';if(S.ui.tab==='stats'&&!warmStatsOn())return'';if(!S.workouts.some(isWarm)&&!S.templates.some(t=>t.tag===WARM))return'';const c=S.ui.scope==='warm'?'warm':'main';return`<div class="seg">${[['main','Тренування'],['warm','Зарядка']].map(([k,l])=>`<button class="${c===k?'on':''}" data-a="scope" data-v="${k}">${l}</button>`).join('')}</div>`}
@@ -979,7 +985,7 @@ function stExercise(){const C=calc(),ps=periodStart();
    <div class="kpi"><div class="k">Зміна обсягу</div><div class="v ${chg(s.map(x=>x.vol))>0?'up':chg(s.map(x=>x.vol))<0?'down':''}">${pct(chg(s.map(x=>x.vol)))}</div></div>
    <div class="kpi"><div class="k">Сесій</div><div class="v">${s.length}</div></div>
    <div class="kpi"><div class="k">Сер. відпочинок</div><div class="v">${s.some(x=>x.rest)?mmss(avg(s.map(x=>x.rest).filter(Boolean))):'—'}</div></div></div>`;
-  const opts={e1:['1ПМ',unitOf(o.type,o.exId),1],vol:['Обсяг','кг',0],hard:['Робочі підходи','підх.',0],rest:['Відпочинок','с',0]};
+  const opts={e1:['1ПМ',unitOf(o.type,o.exId),1],vol:['Обсяг','кг',0],hard:['Підходи','підх.',0],rest:['Відпоч.','с',0]};
   h+=`<section class="card stack"><div class="row between"><div class="seg" style="flex:1 1 auto">${Object.entries(opts).map(([k,v])=>`<button class="${M===k?'on':''}" data-a="exm" data-v="${k}">${v[0]}</button>`).join('')}</div>${viewToggle('ex')}</div>`;
   pts=s.map(x=>{const y=M==='e1'?x.score:M==='vol'?x.vol:M==='hard'?x.hard:x.rest;return y==null||(M==='rest'&&!y)?null:{d:x.d,y,lab:x.bestTxt}}).filter(Boolean);unit=opts[M][1];dg=opts[M][2]}
  else if(o.type==='hiit'){const opts={work:['Робота','хв',1],reps:['Повтори','повт.',0],ton:['Тоннаж','кг',0],rounds:['Раунди','',0]};M=opts[S.ui.exm]?S.ui.exm:'reps';
@@ -1075,7 +1081,7 @@ function vTplEdit(t){const ch=tplChanged(),cs=tplCanSave();let h=`<div class="ro
  <section class="card stack"><label class="field"><span>Назва</span><input class="in" data-f="tpl" data-k="name" id="tpl-name" value="${esc(t.name)}"></label>
  <div class="g2"><label class="field"><span>Місце / тип</span><select class="in" data-f="tpl" data-k="tag" id="tpl-tag">${TAGS.map(x=>`<option ${x===t.tag?'selected':''}>${x}</option>`).join('')}</select></label>
  <label class="field"><span>Примітка</span><input class="in" data-f="tpl" data-k="note" id="tpl-note" value="${esc(t.note)}" placeholder="Із собою: гуми"></label></div></section>`;
- h+=t.items.map((it,i)=>{if(it.kind==='block')return`<div class="ti blk"><div class="it-head"><button class="tn" data-a="tb-edit" data-n="${i}">${i+1}. ${esc(it.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div><div class="it-meta"><span class="pill p-acc">${FMT[it.fmt]}</span><span>${esc(blockSum(it))}</span></div><div class="small">${(it.ex||[]).map(x=>esc(x.name)+' <span class="muted">'+esc(bexTxt(x))+'</span>').join(', ')||'<span class="muted">Вправ немає</span>'}</div><button class="btn" data-a="tb-edit" data-n="${i}">Налаштувати блок</button></div>`;if(WU[it.exId]){const ce=ex(it.exId)||{name:wuRoleLbl(WU[it.exId])};return`<div class="ti" style="border-color:var(--good)"><div class="it-head"><button class="tn" data-a="ti-swap" data-n="${i}">${i+1}. ${esc(ce.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div><label class="field"><span>Опис (порожньо - з каталогу)</span><textarea class="in" data-f="ti" data-n="${i}" data-k="desc" id="ti-d-${i}" placeholder="${esc(ce.desc||'Що робиш: напр. суглобова мобілізація, легке кардіо')}">${esc(it.desc||'')}</textarea></label><span class="muted small">Без ліміту часу. Під час запису - секундомір ▶ Старт / ■ Стоп або хвилини вручну.</span></div>`}const e=ex(it.exId)||{name:'(вправу видалено)',type:'weight'};const type=it.type||e.type;const a=`data-f="ti" data-n="${i}"`;
+ h+=t.items.map((it,i)=>{if(it.kind==='block')return`<div class="ti blk"><div class="it-head"><button class="tn" data-a="tb-edit" data-n="${i}">${i+1}. ${esc(it.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div><div class="it-meta"><span class="pill p-acc">${FMT[it.fmt]}</span><span>${esc(blockSum(it))}</span></div><div class="small">${(it.ex||[]).map(x=>esc(x.name)+' <span class="muted">'+esc(bexTxt(x))+'</span>').join(', ')||'<span class="muted">Вправ немає</span>'}</div><button class="btn" data-a="tb-edit" data-n="${i}">Налаштувати блок</button></div>`;if(WU[it.exId]){const ce=ex(it.exId)||{name:wuRoleLbl(WU[it.exId])};return`<div class="ti" style="border-color:var(--good)"><div class="it-head"><button class="tn" data-a="ti-swap" data-n="${i}">${i+1}. ${esc(ce.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div><label class="field"><span>Опис (порожньо - з каталогу)</span><textarea class="in" data-f="ti" data-n="${i}" data-k="desc" id="ti-d-${i}" placeholder="${esc(ce.desc||'Що робиш: напр. суглобова мобілізація, легке кардіо')}">${esc(it.desc||'')}</textarea></label><span class="muted small">Без ліміту часу. Під час запису - секундомір «Старт» / «Стоп» або хвилини вручну.</span></div>`}const e=ex(it.exId)||{name:'(вправу видалено)',type:'weight'};const type=it.type||e.type;const a=`data-f="ti" data-n="${i}"`;
   let fields;if(type==='hiit')fields=`<div class="g3"><label class="field"><span>Раунди</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Робота, с</span><input class="in" inputmode="numeric" ${a} data-k="work" id="ti-w-${i}" value="${esc(it.work)}"></label><label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}"></label></div>`;
   else if(type==='cardio')fields='';
   else fields=`<div class="g3"><label class="field"><span>Підходи</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Повтори</span><input class="in" ${a} data-k="reps" id="ti-p-${i}" value="${esc(it.reps)}" placeholder="8-12"></label><label class="field"><span>RIR</span><input class="in" ${a} data-k="rir" id="ti-q-${i}" value="${esc(it.rir)}" placeholder="1-2"></label></div>`;
@@ -1188,7 +1194,7 @@ function vSet(){const t=S.settings.theme;
   <li><b>Відлік 10 с</b> перед основною частиною в усіх таймерах, сигнали на останніх 3 секундах.</li>
   <li><b>Розминка і заминка</b> - системні вправи в каталозі (не видаляються, назву й опис можна змінити). Додаються в будь-який шаблон, тренування чи HIIT-блок. Час не обмежений.</li>
   <li>У блоці з таймером: <b>Розминка</b> (опис на екрані) → «Завершити розминку» або «Пропустити» → <b>Пауза</b> на розкладання інвентарю → «До основної частини» → відлік 10 с → основна частина → <b>Пауза</b> → «Почати заминку» або «Без заминки» → <b>Заминка</b> → «Завершити». Час кожного етапу зберігається окремо.</li>
-  <li>У силовому тренуванні розминка і заминка - картки з секундоміром ▶ Старт / ■ Стоп. Без таймера час вписується вручну в хвилинах (і в історії теж).</li>
+  <li>У силовому тренуванні розминка і заминка - картки з секундоміром «Старт» / «Стоп». Без таймера час вписується вручну в хвилинах (і в історії теж).</li>
   <li><b>Зарядка</b> - окреме місце в шаблонах. Шаблони з ним показуються в картці «Зарядка» на екрані «Запис», а записи йдуть в окрему статистику й історію (перемикач «Тренування / Зарядка» в «Історії» та «Аналітиці»). В основні показники вони не потрапляють.</li>
   <li>На iPhone: увімкни звук (не беззвучний режим), вібрації немає. Екран тримається ввімкненим; якщо заблокувати телефон, сигнали не грають, але таймер після повернення покаже правильну фазу.</li></ul></details>
  <details class="how"><summary>Регулювання за стандартом TRX</summary><ul class="small">
@@ -1218,7 +1224,7 @@ function vSet(){const t=S.settings.theme;
   <li><b>Новий телефон:</b> відкрий ту саму адресу, додай іконку, потім «Відновити» з копії в iCloud.</li>
   <li><b>Іншій людині</b> дай адресу сайту або файл застосунку. Свої шаблони передай через «Шаблони» → «Експорт шаблонів»: там немає твоєї історії.</li></ul></details>
  </section>
- <p class="muted small" style="text-align:center;margin:0">Тренувань: ${S.workouts.length} · шаблонів: ${S.templates.length} · вправ у каталозі: ${S.catalog.length}</p>`}
+ <p class="muted small" style="text-align:center;margin:0">Версія застосунку ${APPV}<br>Тренувань: ${S.workouts.length} · шаблонів: ${S.templates.length} · вправ у каталозі: ${S.catalog.length}</p>`}
 
 /* ========== SHEETS & TOAST ========== */
 let SHEET=null,PICK=null,EXED=null,EXP=null,IMPMODE='all',UNDO=null;
@@ -1446,7 +1452,7 @@ function blockHTML(b,i,n,w){const pv=prevBlock(b.name,w);
   <div class="it-meta"><span class="pill p-acc">${FMT[b.fmt]}</span><span>${esc(blockSum(b))}</span></div>
   <ol class="bexl">${b.ex.map(x=>isWuEx(x)?`<li class="muted"><b>${esc(x.name)}</b> · без ліміту часу${wuDesc(x)?' · '+esc(wuDesc(x).split('\n')[0]):''}</li>`:`<li><b>${esc(x.name)}</b> <span class="muted">${esc(bexTxt(x))}</span></li>`).join('')||'<li class="muted">Вправ немає</li>'}</ol>
   ${pv?`<div class="prev">Минулого разу ${dShort(pv.w.date)}: <b>${esc(blockResTxt(pv.b))}</b></div>`:''}
-  <div class="g2"><button class="btn" data-a="blk-edit" data-i="${b.uid}">Налаштувати</button><button class="btn pri" data-a="tm-start" data-i="${b.uid}" ${mainEx(b).length?'':'disabled'}>▶ Таймер</button></div>
+  <div class="g2"><button class="btn" data-a="blk-edit" data-i="${b.uid}">Налаштувати</button><button class="btn pri" data-a="tm-start" data-i="${b.uid}" ${mainEx(b).length?'':'disabled'}>${IC.play} Таймер</button></div>
   <div class="lbl" style="margin-top:2px">Результат</div>${blockResHTML(b)}
   <div class="it-foot"><div class="stat" id="ft-${b.uid}">${blockFoot(b)}</div></div></article>`;
  return h}
@@ -1603,8 +1609,8 @@ Object.assign(ACT,{
  'tm-close'(){const auto=warmAuto();tmClose();if(auto){finish();S.ui.tab='log';save();render();window.scrollTo(0,0);toast('Зарядку збережено')}},
  'tm-round'(el){if(!TM)return;TM.rounds=Math.max(0,TM.rounds+ +el.dataset.d);const b=tmB();if(b){b.res.rounds=String(TM.rounds);save()}const rc=document.getElementById('tm-rc');if(rc)rc.textContent=TM.rounds;if(+el.dataset.d>0)beep(1500,.08)},
  'tm-miss'(){const b=tmB();const ph=TM&&TM.P[TM.i];if(!b||!ph||ph.iv==null)return;b.res.iv=b.res.iv||{};const o=b.res.iv[ph.iv]||(b.res.iv[ph.iv]={});o.done=o.done===false?true:false;save();tmRender()},
- 'blk-add'(){openBed({kind:'draft-new'})},
- 'wu-go'(el){const it=itemBy(el.dataset.i);if(!it)return;if(it.t0){it.sec=wuSec(it);it.t0=null}else{it.t0=Date.now();it.tm=true;it.man=false}save();render()},
+ 'blk-add'(){openBed({kind:'draft-new'},S.draft&&isWarm(S.draft)?{name:'Зарядка',fmt:'int',cfg:blockDefaults('int'),ex:[wuBex('warmup',''),wuBex('cooldown','')]}:null)},
+ 'wu-go'(el){const it=itemBy(el.dataset.i);if(!it)return;if(it.t0){it.sec=Math.round(wuSec(it));if(it.sec<1)it.sec=0;it.t0=null}else{it.t0=Date.now();it.tm=true;it.man=false}save();render()},
  'wu-reset'(el){const it=itemBy(el.dataset.i);if(!it)return;it.sec=0;it.t0=null;it.tm=false;it.man=false;save();render()},
  'w-timer'(el){const t=S.templates.find(x=>x.id===el.dataset.t);if(!t)return;const go=()=>{S.draft=newWorkout(t);save();render();const b=S.draft.items.find(i=>i.type==='block');if(b)tmStart(b.uid)};if(S.draft&&draftHasData())confirmSheet('Зараз триває незбережене тренування. Замінити його зарядкою?','Замінити',go);else go()},
  'w-mark'(){const d=todayStr();const q=S.workouts.filter(w=>isWarm(w)&&w.date===d);if(q.length){const quick=q.filter(w=>w.quick);if(!quick.length){toast('Сьогодні вже є записана зарядка. Видалити її можна в історії');return}S.workouts=S.workouts.filter(w=>!(w.quick&&isWarm(w)&&w.date===d))}else{const t=S.templates.find(x=>x.tag===WARM);S.workouts.push({id:uid(),date:d,tplName:t?t.name:'Зарядка',tag:WARM,quick:true,items:[],startedAt:Date.now()})}save();render()},
@@ -1614,7 +1620,7 @@ Object.assign(ACT,{
  warmpos(el){S.settings.warmPos=el.dataset.v;save();render()},
  scope(el){S.ui.scope=el.dataset.v;S.ui.exk='';save();render()},
  'blk-edit'(el){const it=itemBy(el.dataset.i);if(it)openBed({kind:'draft',uid:it.uid},it)},
- 'tb-add'(){openBed({kind:'tpl-new'})},
+ 'tb-add'(){const t=edT();openBed({kind:'tpl-new'},t&&t.tag===WARM?{name:'Зарядка',fmt:'int',cfg:blockDefaults('int'),ex:[wuBex('warmup',''),wuBex('cooldown','')]}:null)},
  'tb-edit'(el){const t=edT();if(t)openBed({kind:'tpl',n:+el.dataset.n},t.items[+el.dataset.n])},
  'bed-fmt'(el){BED.fmt=el.dataset.v;BED.cfg=Object.assign(blockDefaults(BED.fmt),{});renderBed()},
  'bed-preset'(el){const[w,r]=el.dataset.v.split('/');BED.cfg.work=+w;BED.cfg.rest=+r;renderBed()},
