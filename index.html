@@ -421,7 +421,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='41 · 19.10.2026';
+const APPV='42 · 19.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -661,10 +661,10 @@ const syJ=r=>{const o=Object.assign({},r);delete o.mt;return JSON.stringify(o)};
 function sySet(st){const o={};for(const k in (st||{}))if(!SY_LOCAL.includes(k))o[k]=st[k];return o}
 function syState(){if(!S.sync||typeof S.sync!=='object')S.sync={};if(!S.sync.del||typeof S.sync.del!=='object')S.sync.del={};if(!S.sync.sk||typeof S.sync.sk!=='object')S.sync.sk={};return S.sync}
 function syBaseline(){try{syState();const cur={};for(const k of SY_KINDS){cur[k]={};(S[k]||[]).forEach(r=>{if(r&&r.id!=null){if(r.mt==null)r.mt=0;cur[k][r.id]=syJ(r)}})}cur.set={};const ss=sySet(S.settings);for(const k in ss)cur.set[k]=JSON.stringify(ss[k]);SYPREV=cur}catch(e){SYPREV=null}}
-function syStamp(){if(!SYPREV){syBaseline();return}const sy=syState(),now=Date.now(),cur={};
- for(const k of SY_KINDS){cur[k]={};const P=SYPREV[k]||{};(S[k]||[]).forEach(r=>{if(!r||r.id==null)return;const j=syJ(r);cur[k][r.id]=j;if(P[r.id]!==j)r.mt=now;else if(r.mt==null)r.mt=0;const dk=k+':'+r.id;if(sy.del[dk]&&sy.del[dk]<=r.mt)delete sy.del[dk]});
-  for(const id in P)if(!(id in cur[k]))sy.del[k+':'+id]=now}
- cur.set={};const ss=sySet(S.settings),PS=SYPREV.set||{};for(const k in ss){cur.set[k]=JSON.stringify(ss[k]);if(PS[k]!==cur.set[k])sy.sk[k]=now}for(const k in PS)if(!(k in ss))sy.sk[k]=now;
+function syStamp(){if(!SYPREV){syBaseline();return}const sy=syState(),now=Date.now(),cur={};let ch=false;
+ for(const k of SY_KINDS){cur[k]={};const P=SYPREV[k]||{};(S[k]||[]).forEach(r=>{if(!r||r.id==null)return;const j=syJ(r);cur[k][r.id]=j;if(P[r.id]!==j){r.mt=now;ch=true}else if(r.mt==null)r.mt=0;const dk=k+':'+r.id;if(sy.del[dk]&&sy.del[dk]<=r.mt)delete sy.del[dk]});
+  for(const id in P)if(!(id in cur[k])){sy.del[k+':'+id]=now;ch=true}}
+ cur.set={};const ss=sySet(S.settings),PS=SYPREV.set||{};for(const k in ss){cur.set[k]=JSON.stringify(ss[k]);if(PS[k]!==cur.set[k]){sy.sk[k]=now;ch=true}}for(const k in PS)if(!(k in ss)){sy.sk[k]=now;ch=true}if(ch&&sy.acct)sy.dirty=true;
  const lim=now-SY_KEEP_DEL;for(const dk in sy.del)if(sy.del[dk]<lim)delete sy.del[dk];
  SYPREV=cur}
 function syPayload(){const sy=syState();return{app:'trening',v:1,seedV:S.seedV,at:Date.now(),workouts:S.workouts,templates:S.templates,catalog:S.catalog,settings:sySet(S.settings),sk:sy.sk,del:sy.del}}
@@ -890,7 +890,7 @@ function mStreak(){let d=todayStr();if(!mDone(d))d=addDays(d,-1);let n=0;while(m
 function mMonth(ym){const y=+ym.slice(0,4),m=+ym.slice(5);const dim=new Date(y,m,0).getDate();const cur=todayStr().startsWith(ym);const days=cur?+todayStr().slice(8):dim;let n=0,best=0,run=0;for(let i=1;i<=dim;i++){const d=ym+'-'+String(i).padStart(2,'0');if(mDone(d)){n++;run++;best=Math.max(best,run)}else run=0}return{n,days,best}}
 function dataBanner(){if(LOADFAIL)return`<section class="card stack warnbox"><b>Не вдалося прочитати збережені дані.</b><p class="small" style="margin:0">Нічого не перезаписано. Відкрий Налаштування → Дані → «Автокопії» або «Відновити» з файлу, або напиши розробнику.</p></section>`;
  const ks=snapKeys().map(snapInfo).filter(x=>x&&x.n);if(!S.workouts.length&&ks.length)return`<section class="card stack warnbox"><b>Історія порожня, але є автокопія від ${dShort(ks[0].date)}.${ks[0].date.slice(0,4)} (${ks[0].n} тренувань).</b><button class="btn pri" data-a="snap-restore" data-k="${ks[0].k}">Відновити з автокопії</button></section>`;
- if(S.workouts.length>=3){const alb=andLastBackupDay();const lb=[S.settings.lastBackup,alb].filter(Boolean).sort().pop()||null;const days=lb?Math.floor((new Date(todayStr()+'T12:00')-new Date(lb+'T12:00'))/864e5):null;if(days==null||days>=7)return`<section class="card stack warnbox"><b>${days==null?'Резервної копії ще не було.':'Остання резервна копія '+days+' дн. тому.'}</b><p class="small" style="margin:0">${AND?'Обери папку для автокопій у Налаштуваннях або збережи копію вручну.':'Браузер може стерти дані сайту. Збережи копію в iCloud.'}</p><button class="btn" data-a="exp-all">Зробити резервну копію</button></section>`}
+ if(S.workouts.length>=3){const alb=andLastBackupDay();const sy=S.sync||{};const glb=sy.acct&&sy.last?todayStrOf(new Date(sy.last)):null;const lb=[S.settings.lastBackup,alb,glb].filter(Boolean).sort().pop()||null;const days=lb?Math.floor((new Date(todayStr()+'T12:00')-new Date(lb+'T12:00'))/864e5):null;if(days==null||days>=7)return`<section class="card stack warnbox"><b>${days==null?'Резервної копії ще не було.':'Остання резервна копія '+days+' дн. тому.'}</b><p class="small" style="margin:0">${AND?'Обери папку для автокопій у Налаштуваннях або збережи копію вручну.':'Браузер може стерти дані сайту. Збережи копію в iCloud.'}</p><button class="btn" data-a="exp-all">Зробити резервну копію</button></section>`}
  return''}
 function andBackupCard(){if(!AND)return'';const st=andStatus()||{};const fo=st.folder;
  return`<section class="card stack" id="and-bk"><div class="lbl">Автокопії у файл (Android)</div>
@@ -912,7 +912,7 @@ function warmCard(){if(!warmOn())return'';const ts=S.templates.filter(t=>t.tag==
 function scopeChips(){if(!warmOn())return'';if(S.ui.tab==='stats'&&!warmStatsOn())return'';if(!S.workouts.some(isWarm)&&!S.templates.some(t=>t.tag===WARM))return'';const c=S.ui.scope==='warm'?'warm':'main';return`<div class="seg">${[['main','Тренування'],['warm','Зарядка']].map(([k,l])=>`<button class="${c===k?'on':''}" data-a="scope" data-v="${k}">${l}</button>`).join('')}</div>`}
 function vLog(){if(S.draft)return vDraft();
  const g={};S.templates.filter(t=>t.tag!==WARM).forEach(t=>{(g[t.tag||'Інше']=g[t.tag||'Інше']||[]).push(t)});
- let h=dataBanner()+(S.settings.warmPos==='bottom'?'':warmCard())+`<p class="muted small" style="margin:0">Обери шаблон. Порядок і склад вправ можна міняти під час запису, шаблон від цього не змінюється.</p>
+ let h=syBanner()+dataBanner()+(S.settings.warmPos==='bottom'?'':warmCard())+`<p class="muted small" style="margin:0">Обери шаблон. Порядок і склад вправ можна міняти під час запису, шаблон від цього не змінюється.</p>
  <button class="tpl" data-a="start" data-t=""><span><b>Довільне тренування</b><small>Без шаблону, вправи додаси самостійно</small></span><span class="go">›</span></button>`;
  Object.keys(g).sort(tagOrder).forEach(tag=>{h+=`<div class="tgroup"><div class="gh">${esc(tag)}</div>`+g[tag].map(t=>{const ld=lastDone(t.name);return`<button class="tpl" data-a="start" data-t="${t.id}"><span><b>${esc(t.name)}</b><small>${tplCount(t)}${ld?' · востаннє '+dShort(ld):''}</small></span><span class="go">›</span></button>`}).join('')+`</div>`});
  if(!S.templates.length)h+=`<p class="empty">Шаблонів немає. Створи їх у вкладці «Шаблони» або почни довільне тренування.</p>`;
@@ -1567,7 +1567,7 @@ function sumHTML(w){const st=wStats(w),bw=bwOf(w),o=wuInfo(w),warm=isWarm(w);con
 function sumSheet(id){const w=S.workouts.find(x=>x.id===id);if(!w)return;openSheet(sumHTML(w),'sum')}
 function finish(tab){const w=S.draft;wuStopAll(w);if(!w.dur&&!w._edit){const m=Math.round((Date.now()-w.startedAt)/6e4);if(m>=5&&m<=240)w.dur=String(m)}
  const o=cleanDraft(w);if(!o.items.some(i=>i.type!=='wu')){toast('Немає жодного заповненого підходу');return}
- const i=S.workouts.findIndex(x=>x.id===o.id);if(i>=0)S.workouts[i]=o;else S.workouts.push(o);S.draft=null;S.ui.tab=tab||'hist';save();render();window.scrollTo(0,0);if(i>=0)toast('Зміни збережено');else sumSheet(o.id);syKick(1500)}
+ const i=S.workouts.findIndex(x=>x.id===o.id);if(i>=0)S.workouts[i]=o;else S.workouts.push(o);S.draft=null;S.ui.tab=tab||'hist';save();render();window.scrollTo(0,0);if(i>=0)toast('Зміни збережено');else sumSheet(o.id);if(syOn()){if(AND||syTokGet())syKick(1500);else syncNow(true)}}
 const ACT={
  close(){if(SHEET==='pick'&&BEDPICK){BEDPICK=false;renderBed();return}closeSheet()},
  'confirm-ok'(){const f=CONFIRM;CONFIRM=null;closeSheet(false);f&&f();render()},
@@ -2001,9 +2001,9 @@ async function gdCreate(name,obj,i){const b='trb'+Date.now();const body=`--${b}\
 async function gdWrite(id,obj,i){await gd('PATCH',GDU+'/'+id+'?uploadType=media',JSON.stringify(obj),'application/json',i)}
 async function gdDel(id,i){await gd('DELETE',GDF+'/'+id,null,null,i)}
 async function gdEmail(i){try{const r=await gd('GET','https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)',null,null,i);return((await r.json()).user||{}).emailAddress||''}catch(e){return''}}
-function sySt(msg,err){const sy=syState();if(err){sy.err=msg;}else{sy.err='';sy.last=Date.now()}try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}syUi()}
-function syUi(){const el=document.getElementById('sy-card');if(el&&!SHEET)el.outerHTML=syCard()}
-function syStatusTxt(){const sy=syState();if(SYB)return'Синхронізація…';if(sy.err)return'Помилка: '+sy.err;if(sy.last)return'Синхронізовано '+andTime(new Date(sy.last).toISOString());return'Ще не синхронізовано'}
+function sySt(msg,err){const sy=syState();if(err==='need'){sy.need=true;sy.err=''}else if(err){sy.err=msg;}else{sy.err='';sy.need=false;sy.dirty=false;sy.last=Date.now()}try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}syUi()}
+function syUi(){const el=document.getElementById('sy-card');if(el&&!SHEET)el.outerHTML=syCard();const bar=document.querySelector('.sybar');const nb=syBanner();if(bar&&!nb)bar.remove();else if(!bar&&nb&&S.ui.tab==='log'&&!S.draft&&!SHEET)render()}
+function syStatusTxt(){const sy=syState();if(SYB)return'Синхронізація…';if(sy.err)return'Помилка: '+sy.err;if(sy.need)return'Натисни «Синхронізувати зараз», щоб оновити вхід Google'+(sy.dirty?' (є зміни, яких ще немає на Диску)':'')+'.';if(sy.last)return'Синхронізовано '+andTime(new Date(sy.last).toISOString());return'Ще не синхронізовано'}
 /* Головна процедура. interactive=true лише після натискання кнопки (вікно входу Google) */
 async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)return;SYB=true;syUi();
  try{save();const files=await gdFind(`name = '${SY_FILE}'`,interactive);const sy=syState();
@@ -2017,7 +2017,7 @@ async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)
   const L=syPayload();if(!sySame(M,L)){syApply(M);render()}
   if(!sySame(M,R))await gdWrite(fid,M,interactive);
   sy.init=true;await syBackup(M,interactive);SYB=false;sySt('ok');if(interactive)toast('Синхронізовано')}
- catch(e){SYB=false;if(e&&e.needLogin){sySt('потрібен вхід: натисни «Синхронізувати зараз»',true)}else sySt((e&&e.message)||'невідома помилка',true);if(interactive)toast('Синхронізація: '+((e&&e.message)||'помилка'))}}
+ catch(e){SYB=false;if(e&&e.needLogin){sySt('','need')}else sySt((e&&e.message)||'невідома помилка',true);if(interactive)toast('Синхронізація: '+((e&&e.message)||'помилка'))}}
 async function syBackup(M,i){const day=todayStr();const fs=await gdFind(`name contains '${SY_BK}'`,i);if(fs.some(f=>f.name===SY_BK+day+'.json'))return;await gdCreate(SY_BK+day+'.json',M,i);
  const old=fs.filter(f=>f.name.startsWith(SY_BK)).sort((a,b)=>a.name.localeCompare(b.name));for(let k=0;k<old.length+1-SY_BKN;k++)try{await gdDel(old[k].id,i)}catch(e){}}
 function syChoice(){openSheet(`<h3>У Google Диску вже є дані</h3><p class="muted small" style="margin:0">На цьому пристрої теж є записи. Що зробити?</p>
@@ -2030,11 +2030,12 @@ function syCard(){const sy=syState(),on=syOn();if(!AND&&GCID&&!(window.google&&g
  return`<section class="card stack" id="sy-card"><div class="lbl">Синхронізація через Google</div>
  ${on?`<p class="muted small" style="margin:0">Акаунт: <b>${esc(sy.acct)}</b>. Дані лежать у прихованій папці застосунку на твоєму Google Диску. Інших файлів на Диску застосунок не бачить.</p>
  <label class="chk"><input type="checkbox" data-c="sy-auto" ${sy.auto!==false?'checked':''}>Автосинхронізація (при відкритті, після тренування, при виході)</label>
- <p class="small" style="margin:0" id="sy-st">${esc(syStatusTxt())}</p>
+ <p class="small" style="margin:0;${sy.err?'color:var(--bad)':''}" id="sy-st">${esc(syStatusTxt())}</p>
  <div class="g2"><button class="btn pri" data-a="sy-now" ${SYB?'disabled':''}>Синхронізувати зараз</button><button class="btn" data-a="sy-bk">Копії на Диску</button></div>
  <button class="btn ghost full" data-a="sy-out">Вийти з Google</button>`
  :`<p class="muted small" style="margin:0">Однакові дані на iPhone, Android і після перевстановлення. Дані зберігаються в прихованій папці застосунку на твоєму Google Диску, а ще щодня там з’являється копія (останні ${SY_BKN}).</p>
  ${sy.err?`<p class="small" style="margin:0;color:var(--bad)">${esc(sy.err)}</p>`:''}<button class="btn pri full" data-a="sy-in" ${SYB?'disabled':''}>Увійти через Google</button>`}</section>`}
+function syBanner(){const sy=syState();if(!syOn()||!sy.need||SYB)return'';return`<section class="card row between sybar" style="flex-wrap:nowrap;gap:10px"><span class="small">${sy.dirty?'Є зміни, яких ще немає на Google Диску':'Онови дані з Google Диска'}</span><button class="btn pri" data-a="sy-now" style="white-space:nowrap;flex-shrink:0">Синхронізувати</button></section>`}
 function syKick(delay){if(!syAuto())return;clearTimeout(SYT);SYT=setTimeout(()=>syncNow(false),delay||1500)}
 document.addEventListener('visibilitychange',()=>{if(!syAuto())return;if(document.visibilityState==='hidden'){clearTimeout(SYT);syncNow(false)}else syKick(800)});
 
