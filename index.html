@@ -459,7 +459,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='49 · 19.10.2026';
+const APPV='50 · 19.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -674,7 +674,7 @@ function load(){const r=lsGet(KEY);if(!r){S=defaults();return}
  S=o;try{fix()}catch(e){console.error(e);LOADFAIL=true;S=o;try{const d=defaults();for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k]}catch(e2){}}}
 const wuOn=()=>S.settings.wuSets===true;
 const restMode=()=>S.settings.restMode==='off'?'off':'man';   // v49: «Секундомір» прибрано
-const restStd=()=>{const v=num(S.settings.restStd);return v&&v>0?Math.round(v):180};
+const restStd=()=>{const r=S.settings.restStd;if(r==null||String(r).trim()==='')return 180;const v=num(r);return v!=null&&v>=0?Math.round(v):180};   // порожньо - 180, 0 - без підказки
 const restTgt=it=>{const v=num(it&&it.tgt&&it.tgt.rest);return v&&v>0?Math.round(v):restStd()};
 const secW=()=>num(S.settings.secW)===0.5?0.5:1;
 const tempoS=()=>{const v=num(S.settings.tempo);return v&&v>0&&v<=20?v:4};   // темп, с на повтор: для оцінок «≈» і часу роботи
@@ -1061,7 +1061,7 @@ function strRows(it,prev){const ps=prev&&prev.item.type===it.type?prev.item.sets
   const load=nk?'<span></span>':isLv?(()=>{const lv=lvOf(it,s),kg=baseLoad(it,s,bwv);return`<button class="bandbtn lvb" data-a="pick-lv" data-i="${it.uid}" data-n="${n}" aria-label="Положення: ${esc(lv[1])}"><b>${esc(lv[2])}${s.par&&lvKind(it.exId)==='push'?'+П':''}${num(s.w)?'+'+esc(s.w):''}</b><span class="muted">≈${kg==null?'?':f0(kg)} кг</span></button>`})():it.type==='trx'?`<button class="bandbtn" data-a="pick-trx" data-i="${it.uid}" data-n="${n}" style="justify-content:center">${num(s.w)?`<b class="num" style="font-size:18px">р${esc(s.w)}</b>${s.pos?`<span class="muted" style="font-size:11px">${esc(posLbl(s.pos))} ${s.pos.vert?'в':nf(num(s.pos.st)||0,1)}</span>`:''}`:'<span class="muted">Рівень</span>'}</button>`:it.type==='band'?`<button class="bandbtn" data-a="pick-band" data-i="${it.uid}" data-n="${n}">${bandsOf(s).length?bandsOf(s).map(b=>`<i class="dot" style="background:${esc(b.hex)}"></i>`).join('')+`<span>${(k=>k==null?'?':'≈'+nf(k,k<10&&k%1?1:0))(lvList(it.exId)?baseLoad(it,s,bwv):bandKg(s,it))}</span>`:'<span class="muted">Обрати</span>'}</button>`:`<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??(it.type==='bw'?'0':''))}" aria-label="${LOADLBL[it.type]}">`;
   const lb=setLbl(it,n),ix=WU?`<button class="i" data-a="wu-tog" data-i="${it.uid}" data-n="${n}" aria-label="${s.wu?'Розминковий підхід. Зробити робочим':'Підхід '+lb+'. Зробити розминковим'}">${lb}</button>`:`<span class="i">${lb}</span>`;
   const rcell=(key,idp,ph,lbl)=>`<input class="cell" inputmode="numeric" ${a} data-k="${key}" id="${idp}-${id}" value="${esc(s[key]||'')}" placeholder="${esc(ph)}" aria-label="${lbl}">`;
-  const ph=p.rest||(n>0?restTgt(it):''),no0=first&&n===0;
+  const ph=p.rest||(n>0?(restTgt(it)||''):''),no0=first&&n===0;
   const rs=nr?'':it.uni?`<div class="lr">${no0?'<span></span>':rcell('rest','rs',ph||'Л',n?'Відпочинок перед лівою, секунд':'Перерва перед вправою, секунд')}${rcell('restR','rsr',p.restR||'П','Відпочинок між сторонами, секунд')}</div>`:no0?'<span></span>':rcell('rest','rs',ph,n?'Відпочинок перед підходом, секунд':'Перерва перед вправою, секунд');
   h+=`<div class="srow${nr}${ux}${s.wu?' wu':''}">${ix}${rs}${reps}${load}<input class="cell" inputmode="decimal" ${a} data-k="rir" id="rir-${id}" value="${esc(s.rir)}" placeholder="${esc(s.wu?'':p.rir??'')}" aria-label="RIR"></div>`});
  return h+`</div>`}
@@ -1358,7 +1358,7 @@ function vTplEdit(t){const ch=tplChanged(),cs=tplCanSave();let h=`<div class="ro
   else fields=`<div class="g3"><label class="field"><span>Підходи</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Повтори</span><input class="in" ${a} data-k="reps" id="ti-p-${i}" value="${esc(it.reps)}" placeholder="8-12"></label><label class="field"><span>RIR</span><input class="in" ${a} data-k="rir" id="ti-q-${i}" value="${esc(it.rir)}" placeholder="1-2"></label></div>`;
   const typeSel=STR.includes(e.type)?`<label class="field"><span>Режим</span><select class="in" ${a} data-k="type" id="ti-t-${i}">${STR.map(x=>`<option value="${x}" ${x===type?'selected':''}>${TYPES[x]}${x===e.type?' (осн.)':''}</option>`).join('')}</select></label>`:'';
   return`<div class="ti"><div class="it-head"><button class="tn" data-a="ti-swap" data-n="${i}">${i+1}. ${esc(e.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div>
-   ${fields}<div class="g2">${typeSel}<label class="field" ${typeSel?'':'style="grid-column:1/-1"'}><span>Примітка</span><input class="in" ${a} data-k="note" id="ti-n-${i}" value="${esc(it.note)}" placeholder="на ногу, кут лави..."></label>${STR.includes(type)&&restMode()!=='off'?`<label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}" placeholder="${restStd()}"></label>`:''}</div></div>`}).join('');
+   ${fields}<div class="g2">${typeSel}<label class="field" ${typeSel?'':'style="grid-column:1/-1"'}><span>Примітка</span><input class="in" ${a} data-k="note" id="ti-n-${i}" value="${esc(it.note)}" placeholder="на ногу, кут лави..."></label>${STR.includes(type)&&restMode()!=='off'?`<label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}" placeholder="${restStd()||''}"></label>`:''}</div></div>`}).join('');
  if(!t.items.length)h+=`<p class="empty">У шаблоні ще немає вправ.</p>`;
  return h+`<div class="g2"><button class="btn" data-a="ti-add">+ Додати вправу</button><button class="btn" data-a="tb-add">+ HIIT-блок</button></div><p class="muted small" style="margin:0">Зміни застосуються після «Зберегти шаблон». Натисни назву вправи, щоб замінити її іншою.</p>
  <div class="g2"><button class="btn" data-a="tpl-dup">Копія шаблону</button><button class="btn danger" data-a="tpl-del">Видалити шаблон</button></div>
@@ -1396,7 +1396,7 @@ function setStrHTML(){const rm=restMode();const D={off:'Колонки «Від�
  <p class="muted small" style="margin:0">Тап по номеру підходу позначає його розминковим (Р). Розминкові не входять в обсяг, робочі підходи, 1ПМ, рекорди і середній відпочинок. Підказки з минулого разу: розминка до розминки, робочі до робочих.</p>
  <div class="field"><span>Відпочинок</span><div class="seg">${[['off','Без'],['man','Вручну']].map(([k,l])=>`<button class="${rm===k?'on':''}" data-a="restm" data-v="${k}">${l}</button>`).join('')}</div></div>
  <p class="muted small" style="margin:0">${D[rm]}</p>
- ${rm!=='off'?`<label class="field"><span>Стандартний відпочинок, с</span><input class="in" inputmode="numeric" data-f="set" data-k="restStd" id="set-reststd" value="${esc(S.settings.restStd??'')}" placeholder="180"></label><p class="muted small" style="margin:0">Сіра підказка в порожньому полі. Свій відпочинок для вправи можна задати в шаблоні («Відпоч., с»).</p>`:''}
+ ${rm!=='off'?`<label class="field"><span>Стандартний відпочинок, с</span><input class="in" inputmode="numeric" data-f="set" data-k="restStd" id="set-reststd" value="${esc(S.settings.restStd??'')}" placeholder="180"></label><p class="muted small" style="margin:0">Сіра підказка в порожньому полі «Відп». Порожньо - 180, 0 - без підказки. Свій відпочинок для вправи можна задати в шаблоні («Відпоч., с»).</p>`:''}
  <label class="field"><span>Темп, с на повтор</span><input class="in" inputmode="decimal" data-f="set" data-k="tempo" id="set-tempo" value="${esc(S.settings.tempo??'')}" placeholder="4"></label>
  <p class="muted small" style="margin:0">Для оцінки з тривалості тренування: робота = повтори × темп, решта - відпочинок і переходи (у підсумку і в «Динаміці»). 4 с - звичайний темп; повільні повтори з паузами - 5-6 с.</p>
  </section>
@@ -2042,13 +2042,18 @@ Object.assign(ACT,{
 /* ---- on-screen keyboard: hide bottom menu, lift sheets ---- */
 const isTextField=el=>!!el&&((el.tagName==='INPUT'&&!['checkbox','radio','range','color','file','button','submit'].includes(el.type))||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
 let KBT=null;
+// v50: на Android клавіатуру ховають «Назад», стрілкою чи →|, а поле лишається активним - тому там клавіатура визначається за висотою екрана, а не за фокусом
+const IS_AND=!!AND||/Android/i.test(navigator.userAgent||'');let KBBASE={w:0,h:0};
 function kbUpdate(){const vv=window.visualViewport;const focused=isTextField(document.activeElement);let kb=0,vvh=window.innerHeight;
  if(vv){vvh=vv.height;kb=Math.max(0,window.innerHeight-vv.height-vv.offsetTop)}
- const touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;const open=(touch&&focused)||kb>120;document.body.classList.toggle('kb',open);
+ const touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;let open;
+ if(IS_AND){const cur=Math.min(window.innerHeight,vv?vv.height:window.innerHeight);if(Math.abs(window.innerWidth-KBBASE.w)>40)KBBASE={w:window.innerWidth,h:0};if(!focused||cur>KBBASE.h)KBBASE.h=Math.max(KBBASE.h,cur);open=focused&&KBBASE.h-cur>120}
+ else open=(touch&&focused)||kb>120;document.body.classList.toggle('kb',open);
  document.documentElement.style.setProperty('--kb',(open?kb:0)+'px');document.documentElement.style.setProperty('--vvh',vvh+'px')}
 document.addEventListener('focusin',e=>{if(isTextField(e.target)){clearTimeout(KBT);kbUpdate()}});
 document.addEventListener('focusout',()=>{clearTimeout(KBT);KBT=setTimeout(kbUpdate,120)});
 if(window.visualViewport){visualViewport.addEventListener('resize',kbUpdate);visualViewport.addEventListener('scroll',kbUpdate)}
+window.addEventListener('resize',kbUpdate);
 
 /* ========== events ========== */
 document.addEventListener('click',e=>{const tb=e.target.closest('[data-tab]');if(tb){S.ui.tab=tb.dataset.tab;save();render();window.scrollTo(0,0);return}
