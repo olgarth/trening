@@ -421,7 +421,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='42 · 19.10.2026';
+const APPV='43 · 19.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -686,7 +686,8 @@ function syApply(M){const loc={};SY_LOCAL.forEach(k=>{if(S.settings&&k in S.sett
  fix();CACHE=null;syBaseline();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function syReplace(R){const loc={};SY_LOCAL.forEach(k=>{if(S.settings&&k in S.settings)loc[k]=S.settings[k]});S.workouts=JSON.parse(JSON.stringify(R.workouts||[]));S.templates=JSON.parse(JSON.stringify(R.templates||[]));S.catalog=JSON.parse(JSON.stringify(R.catalog||[]));S.settings=Object.assign(JSON.parse(JSON.stringify(R.settings||{})),loc);fix();CACHE=null;save()}
 function syKeepAcct(osy){if(!osy||!osy.acct)return;const sy=syState();['acct','init','auto','last'].forEach(k=>{if(osy[k]!=null)sy[k]=osy[k]});sy.err=''}
-const sySame=(a,b)=>JSON.stringify(Object.assign({},a,{at:0}))===JSON.stringify(Object.assign({},b,{at:0}));
+function syFp(P){const o=[];for(const k of SY_KINDS)(P[k]||[]).forEach(r=>o.push(k+':'+r.id+':'+(r.mt||0)+':'+syJ(r).length));o.sort();const kv=m=>Object.keys(m||{}).sort().map(k=>k+'='+m[k]).join(',');const st=P.settings||{};return o.join('|')+'#'+kv(P.del)+'#'+kv(P.sk)+'#'+Object.keys(st).sort().map(k=>k+'='+JSON.stringify(st[k])).join(',')}
+const sySame=(a,b)=>syFp(a)===syFp(b);
 function save(){CACHE=null;if(LOADFAIL)return;try{syStamp()}catch(e){}try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
  if(prev){try{const po=JSON.parse(prev);if((po.workouts||[]).length>=3&&!(S.workouts||[]).length&&!S._allowEmpty){snapshot(prev,'before-empty')}}catch(e){}}
  try{localStorage.setItem(KEY,nx)}catch(q){const ks=snapKeys();for(let i=ks.length-1;i>=1;i--){try{localStorage.removeItem(ks[i])}catch(e){}try{localStorage.setItem(KEY,nx);return}catch(e){}}throw q}}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
@@ -2014,7 +2015,7 @@ async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)
   if((R.seedV||0)>(defaults().seedV))throw new Error('у хмарі дані новішої версії. Онови застосунок');
   if(!sy.init&&!mode){if(!(S.workouts||[]).length&&!(S.templates||[]).length)mode='cloud';else{SYB=false;syUi();syChoice();return}}
   let M;if(mode==='cloud')M=R;else if(mode==='device')M=syPayload();else M=syMerge(syPayload(),R);
-  const L=syPayload();if(!sySame(M,L)){syApply(M);render()}
+  const L=syPayload();if(!sySame(M,L)){syApply(M);syRender()}
   if(!sySame(M,R))await gdWrite(fid,M,interactive);
   sy.init=true;await syBackup(M,interactive);SYB=false;sySt('ok');if(interactive)toast('Синхронізовано')}
  catch(e){SYB=false;if(e&&e.needLogin){sySt('','need')}else sySt((e&&e.message)||'невідома помилка',true);if(interactive)toast('Синхронізація: '+((e&&e.message)||'помилка'))}}
@@ -2036,6 +2037,7 @@ function syCard(){const sy=syState(),on=syOn();if(!AND&&GCID&&!(window.google&&g
  :`<p class="muted small" style="margin:0">Однакові дані на iPhone, Android і після перевстановлення. Дані зберігаються в прихованій папці застосунку на твоєму Google Диску, а ще щодня там з’являється копія (останні ${SY_BKN}).</p>
  ${sy.err?`<p class="small" style="margin:0;color:var(--bad)">${esc(sy.err)}</p>`:''}<button class="btn pri full" data-a="sy-in" ${SYB?'disabled':''}>Увійти через Google</button>`}</section>`}
 function syBanner(){const sy=syState();if(!syOn()||!sy.need||SYB)return'';return`<section class="card row between sybar" style="flex-wrap:nowrap;gap:10px"><span class="small">${sy.dirty?'Є зміни, яких ще немає на Google Диску':'Онови дані з Google Диска'}</span><button class="btn pri" data-a="sy-now" style="white-space:nowrap;flex-shrink:0">Синхронізувати</button></section>`}
+function syRender(){const ae=document.activeElement;if(isTextField(ae)&&document.body.contains(ae)){if(!syRender.p){syRender.p=true;document.addEventListener('focusout',function h(){setTimeout(()=>{if(isTextField(document.activeElement))return;document.removeEventListener('focusout',h);syRender.p=false;render()},250)})}return}render()}
 function syKick(delay){if(!syAuto())return;clearTimeout(SYT);SYT=setTimeout(()=>syncNow(false),delay||1500)}
 document.addEventListener('visibilitychange',()=>{if(!syAuto())return;if(document.visibilityState==='hidden'){clearTimeout(SYT);syncNow(false)}else syKick(800)});
 
