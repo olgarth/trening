@@ -421,7 +421,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='40 · 19.10.2026';
+const APPV='41 · 19.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -620,7 +620,7 @@ function mmss(sec){if(!sec)return '0:00';sec=Math.round(sec);return Math.floor(s
 /* ========== state ========== */
 let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
-function defaults(){return{v:1,seedV:13,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:seedTemplates(),workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
+function defaults(){return{v:1,seedV:13,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:[],workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 let PERSIST=null;
 const SNAP='trainlog.snap.',SNAPN=7;let LOADFAIL=false;
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -652,7 +652,42 @@ function fix(){const d=defaults(),sv=S.seedV||1;(S.catalog||[]).forEach(convEx);
   (S.templates||[]).forEach(t=>(t.items||[]).forEach(i=>{if(i.kind==='block')(i.ex||[]).forEach(x=>{if(x.exId==='army_pushup'&&x.name===OLDN)x.name=NEWN})}));S.seedV=11}
  if(sv<12){const NEWIDS=['bench_bb','squat_bb','deadlift','rdl_bb','row_bb','ohp_bb','cable_row','face_pull','tri_pushdown','cable_curl','cable_lat_raise','cable_cross','pec_deck','hip_abd','hip_add','shoulder_press_m','tbar_row','hack_squat','smith_squat','db_bench','db_ohp','db_fly','db_pullover','db_row1','hammer_curl','db_skull','goblet','db_rev_lunge','db_stepup','hip_thrust_db','kb_rdl','band_face_pull','band_oh_ext','band_hip_abd'];const names=new Set((S.catalog||[]).map(e=>String(e.name).toLowerCase().trim()));seedCatalog().filter(e=>NEWIDS.includes(e.id)&&!S.catalog.some(c=>c.id===e.id)&&!names.has(e.name.toLowerCase())).forEach(e=>S.catalog.push(e));S.seedV=12}
  if(sv<13){const strip=b=>{if(!b||!Array.isArray(b.ex))return;b.ex=b.ex.filter(x=>!(x&&x.exId==='cooldown'&&!String(x.desc||'').trim()))};(S.templates||[]).forEach(t=>{if(t.tag!==WARM)return;(t.items||[]).forEach(i=>{if(i.kind==='block')strip(i)})});if(S.draft&&S.draft.tag===WARM)(S.draft.items||[]).forEach(i=>{if(i.type==='block'&&!(i.res&&i.res.done))strip(i)});S.seedV=13}}
-function save(){CACHE=null;if(LOADFAIL)return;try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
+/* ========== SYNC: позначки змін і злиття (спільне для веб і Android) ========== */
+const SY_KINDS=['workouts','templates','catalog'];
+const SY_LOCAL=['sound','vol','duck','theme','lastBackup'];   // налаштування цього пристрою, не синхронізуються
+const SY_KEEP_DEL=180*864e5;                                  // скільки пам'ятати видалення
+let SYPREV=null;
+const syJ=r=>{const o=Object.assign({},r);delete o.mt;return JSON.stringify(o)};
+function sySet(st){const o={};for(const k in (st||{}))if(!SY_LOCAL.includes(k))o[k]=st[k];return o}
+function syState(){if(!S.sync||typeof S.sync!=='object')S.sync={};if(!S.sync.del||typeof S.sync.del!=='object')S.sync.del={};if(!S.sync.sk||typeof S.sync.sk!=='object')S.sync.sk={};return S.sync}
+function syBaseline(){try{syState();const cur={};for(const k of SY_KINDS){cur[k]={};(S[k]||[]).forEach(r=>{if(r&&r.id!=null){if(r.mt==null)r.mt=0;cur[k][r.id]=syJ(r)}})}cur.set={};const ss=sySet(S.settings);for(const k in ss)cur.set[k]=JSON.stringify(ss[k]);SYPREV=cur}catch(e){SYPREV=null}}
+function syStamp(){if(!SYPREV){syBaseline();return}const sy=syState(),now=Date.now(),cur={};
+ for(const k of SY_KINDS){cur[k]={};const P=SYPREV[k]||{};(S[k]||[]).forEach(r=>{if(!r||r.id==null)return;const j=syJ(r);cur[k][r.id]=j;if(P[r.id]!==j)r.mt=now;else if(r.mt==null)r.mt=0;const dk=k+':'+r.id;if(sy.del[dk]&&sy.del[dk]<=r.mt)delete sy.del[dk]});
+  for(const id in P)if(!(id in cur[k]))sy.del[k+':'+id]=now}
+ cur.set={};const ss=sySet(S.settings),PS=SYPREV.set||{};for(const k in ss){cur.set[k]=JSON.stringify(ss[k]);if(PS[k]!==cur.set[k])sy.sk[k]=now}for(const k in PS)if(!(k in ss))sy.sk[k]=now;
+ const lim=now-SY_KEEP_DEL;for(const dk in sy.del)if(sy.del[dk]<lim)delete sy.del[dk];
+ SYPREV=cur}
+function syPayload(){const sy=syState();return{app:'trening',v:1,seedV:S.seedV,at:Date.now(),workouts:S.workouts,templates:S.templates,catalog:S.catalog,settings:sySet(S.settings),sk:sy.sk,del:sy.del}}
+function syMerge(L,R){const del=Object.assign({},L.del||{});for(const k in (R.del||{}))del[k]=Math.max(del[k]||0,R.del[k]);
+ const out={app:'trening',v:1,seedV:Math.max(L.seedV||0,R.seedV||0),at:Date.now(),del};
+ for(const k of SY_KINDS){const la=L[k]||[],ra=R[k]||[],rm=new Map(ra.map(r=>[r.id,r])),seen=new Set(),res=[];
+  const take=(a,b)=>{if(!a)return b;if(!b)return a;return(b.mt||0)>(a.mt||0)?b:a};
+  la.forEach(a=>{const b=rm.get(a.id);seen.add(a.id);const w=take(a,b);const d=del[k+':'+a.id];if(d&&d>=(w.mt||0))return;res.push(w)});
+  ra.forEach(b=>{if(seen.has(b.id))return;const d=del[k+':'+b.id];if(d&&d>=(b.mt||0))return;res.push(b)});
+  if(k==='workouts')res.sort((x,y)=>String(x.date).localeCompare(String(y.date))||((x.startedAt||0)-(y.startedAt||0))||String(x.id).localeCompare(String(y.id)));
+  out[k]=res}
+ const LS=L.settings||{},RS=R.settings||{},LK=L.sk||{},RK=R.sk||{};out.settings={};out.sk={};new Set(Object.keys(LS).concat(Object.keys(RS),Object.keys(LK),Object.keys(RK))).forEach(k=>{const r=(RK[k]||0)>(LK[k]||0);const src=r?RS:LS;out.sk[k]=Math.max(LK[k]||0,RK[k]||0);if(k in src)out.settings[k]=src[k]});
+ const lim=Date.now()-SY_KEEP_DEL;for(const dk in del)if(del[dk]<lim)delete del[dk];
+ return out}
+function syApply(M){const loc={};SY_LOCAL.forEach(k=>{if(S.settings&&k in S.settings)loc[k]=S.settings[k]});
+ S.workouts=JSON.parse(JSON.stringify(M.workouts||[]));S.templates=JSON.parse(JSON.stringify(M.templates||[]));S.catalog=JSON.parse(JSON.stringify(M.catalog||[]));
+ S.settings=Object.assign(JSON.parse(JSON.stringify(M.settings||{})),loc);const sy=syState();sy.del=Object.assign({},M.del||{});sy.sk=Object.assign({},M.sk||{});
+ if((M.seedV||0)>(S.seedV||0))S.seedV=M.seedV;
+ fix();CACHE=null;syBaseline();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function syReplace(R){const loc={};SY_LOCAL.forEach(k=>{if(S.settings&&k in S.settings)loc[k]=S.settings[k]});S.workouts=JSON.parse(JSON.stringify(R.workouts||[]));S.templates=JSON.parse(JSON.stringify(R.templates||[]));S.catalog=JSON.parse(JSON.stringify(R.catalog||[]));S.settings=Object.assign(JSON.parse(JSON.stringify(R.settings||{})),loc);fix();CACHE=null;save()}
+function syKeepAcct(osy){if(!osy||!osy.acct)return;const sy=syState();['acct','init','auto','last'].forEach(k=>{if(osy[k]!=null)sy[k]=osy[k]});sy.err=''}
+const sySame=(a,b)=>JSON.stringify(Object.assign({},a,{at:0}))===JSON.stringify(Object.assign({},b,{at:0}));
+function save(){CACHE=null;if(LOADFAIL)return;try{syStamp()}catch(e){}try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
  if(prev){try{const po=JSON.parse(prev);if((po.workouts||[]).length>=3&&!(S.workouts||[]).length&&!S._allowEmpty){snapshot(prev,'before-empty')}}catch(e){}}
  try{localStorage.setItem(KEY,nx)}catch(q){const ks=snapKeys();for(let i=ks.length-1;i>=1;i--){try{localStorage.removeItem(ks[i])}catch(e){}try{localStorage.setItem(KEY,nx);return}catch(e){}}throw q}}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
 const ex=id=>Array.isArray(S.catalog)?S.catalog.find(e=>e.id===id):undefined;
@@ -1287,7 +1322,7 @@ function vSet(){const t=S.settings.theme;
  <p class="muted small" style="margin:0">Зміни показників діють для нових записів. Збережені тренування зберігають гуми такими, якими вони були в день запису. Кнопка «Перерахувати» підставить поточні показники в збережені тренування за обраний період або за весь час, і обсяг та 1ПМ по гумах в історії зміняться.</p></section>
  <section class="card stack"><div class="lbl">Автокопії на цьому пристрої</div><p class="muted small" style="margin:0">Програма щодня сама зберігає копію даних (останні 7). Вони рятують від помилки програми, але не від очищення даних Safari - для цього потрібна копія в iCloud.${PERSIST===true?' Браузер підтвердив постійне зберігання.':''}</p>
  ${snapKeys().map(snapInfo).filter(Boolean).map(x=>`<div class="row between"><span class="small">${dShort(x.date)}.${x.date.slice(0,4)}${x.tag?' <span class="muted">('+esc(x.tag)+')</span>':''} · ${x.n} трен.</span><button class="btn" data-a="snap-restore" data-k="${esc(x.k)}">Відновити</button></div>`).join('')||'<p class="muted small" style="margin:0">Автокопій ще немає.</p>'}</section>
- ${andBackupCard()}<section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">${AND?'Усе зберігається в застосунку на цьому телефоні. Дані зникнуть, якщо видалити застосунок або очистити його дані, тому тримай автокопії в папці або роби резервну копію.':'Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.'}</p>
+ ${syCard()}${andBackupCard()}<section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">${AND?'Усе зберігається в застосунку на цьому телефоні. Дані зникнуть, якщо видалити застосунок або очистити його дані, тому тримай автокопії в папці або роби резервну копію.':'Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.'}</p>
  <div class="g2"><button class="btn" data-a="exp-all">Резервна копія</button><button class="btn" data-a="imp" data-v="all">Відновити</button></div>
  <button class="btn danger full" data-a="wipe">Скинути все до початкового</button></section>
  <section class="card stack"><div class="lbl">Довідка</div>
@@ -1500,7 +1535,7 @@ function importSheet(mode){IMPMODE=mode;openSheet(`<h3>${mode==='tpl'?'Імпо�
  <label class="field"><span>Або встав текст копії</span><textarea class="in" id="imp-ta" placeholder="{...}"></textarea></label>
  <button class="btn pri full" data-a="imp-go">${mode==='tpl'?'Додати шаблони':'Замінити всі дані'}</button><button class="btn ghost full" data-a="close">Скасувати</button>`,'imp')}
 function doImport(txt){let o;try{o=JSON.parse(txt)}catch(e){toast('Це не схоже на файл копії. Перевір, що текст скопійовано повністю');return}
- if(IMPMODE==='all'){if(!o||!Array.isArray(o.workouts)||!Array.isArray(o.catalog)){toast('У файлі немає повної копії. Для шаблонів скористайся «Імпорт шаблонів»');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-import');S=o;LOADFAIL=false;fix();save();closeSheet();toast('Дані відновлено');return}
+ if(IMPMODE==='all'){if(!o||!Array.isArray(o.workouts)||!Array.isArray(o.catalog)){toast('У файлі немає повної копії. Для шаблонів скористайся «Імпорт шаблонів»');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-import');const osy=S.sync;S=o;LOADFAIL=false;fix();syKeepAcct(osy);save();syKick(800);closeSheet();toast('Дані відновлено');return}
  const tpls=o&&(o.templates||[]);const cat=o&&(o.catalog||[]);if(!tpls.length){toast('У файлі немає шаблонів');return}
  const map={};cat.forEach(e=>{const byId=ex(e.id);if(byId&&byId.name===e.name){map[e.id]=e.id;return}const byName=S.catalog.find(x=>x.name.toLowerCase()===String(e.name).toLowerCase());if(byName){map[e.id]=byName.id;return}const ne=convEx(Object.assign({},e,{id:byId?'u_'+uid():e.id}));S.catalog.push(ne);map[e.id]=ne.id});
  tpls.forEach(t=>S.templates.push({id:uid(),name:t.name,tag:t.tag||'Інше',note:t.note||'',items:(t.items||[]).map(i=>i.kind==='block'?Object.assign({},i,{ex:(i.ex||[]).map(x=>Object.assign({},x,{exId:map[x.exId]||x.exId}))}):Object.assign({},i,{exId:map[i.exId]||i.exId})).filter(i=>i.kind==='block'||ex(i.exId))}));
@@ -1532,7 +1567,7 @@ function sumHTML(w){const st=wStats(w),bw=bwOf(w),o=wuInfo(w),warm=isWarm(w);con
 function sumSheet(id){const w=S.workouts.find(x=>x.id===id);if(!w)return;openSheet(sumHTML(w),'sum')}
 function finish(tab){const w=S.draft;wuStopAll(w);if(!w.dur&&!w._edit){const m=Math.round((Date.now()-w.startedAt)/6e4);if(m>=5&&m<=240)w.dur=String(m)}
  const o=cleanDraft(w);if(!o.items.some(i=>i.type!=='wu')){toast('Немає жодного заповненого підходу');return}
- const i=S.workouts.findIndex(x=>x.id===o.id);if(i>=0)S.workouts[i]=o;else S.workouts.push(o);S.draft=null;S.ui.tab=tab||'hist';save();render();window.scrollTo(0,0);if(i>=0)toast('Зміни збережено');else sumSheet(o.id)}
+ const i=S.workouts.findIndex(x=>x.id===o.id);if(i>=0)S.workouts[i]=o;else S.workouts.push(o);S.draft=null;S.ui.tab=tab||'hist';save();render();window.scrollTo(0,0);if(i>=0)toast('Зміни збережено');else sumSheet(o.id);syKick(1500)}
 const ACT={
  close(){if(SHEET==='pick'&&BEDPICK){BEDPICK=false;renderBed();return}closeSheet()},
  'confirm-ok'(){const f=CONFIRM;CONFIRM=null;closeSheet(false);f&&f();render()},
@@ -1630,16 +1665,23 @@ const ACT={
   if(fromPick&&PICK){const cb=PICK;PICK=null;cb(e)}else closeSheet();toast(isNew?'Вправу додано в каталог':'Вправу збережено')},
  'exed-del'(){const id=EXED.id;if(WU[id])return;confirmSheet('Видалити вправу з каталогу? З шаблонів вона теж зникне, історія залишиться','Видалити',()=>{S.catalog=S.catalog.filter(e=>e.id!==id);S.templates.forEach(t=>t.items=t.items.filter(i=>i.exId!==id));save()})},
  theme(el){S.settings.theme=el.dataset.v;save();render()},
- 'snap-restore'(el){const raw=lsGet(el.dataset.k);if(!raw){toast('Автокопію не знайдено');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-restore');try{S=JSON.parse(raw);LOADFAIL=false;fix();save();render();toast('Відновлено з автокопії')}catch(e){toast('Автокопія пошкоджена')}},
+ 'snap-restore'(el){const raw=lsGet(el.dataset.k);if(!raw){toast('Автокопію не знайдено');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-restore');try{const osy=S.sync;S=JSON.parse(raw);LOADFAIL=false;fix();syKeepAcct(osy);save();syKick(800);render();toast('Відновлено з автокопії')}catch(e){toast('Автокопія пошкоджена')}},
  'exp-all'(){S.settings.lastBackup=todayStr();save();const o=JSON.parse(JSON.stringify(S));exportSheet(o,'trenuvannia-kopiia-'+todayStr()+'.json','Резервна копія')},
  async dl(){if(AND){try{AND.saveFile(EXP.fname,EXP.txt)}catch(e){toast('Не вдалося відкрити збереження. Натисни «Поділитися» або «Скопіювати»')}return}let dn=null;try{dn=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}
   if(dn){try{await dn.save({filename:EXP.fname,data:EXP.txt});toast('Файл збережено. На iPhone обери «Зберегти у Файли» → iCloud Drive')}catch(e){if(e&&e.code==='declined')toast('Збереження скасовано');else if(e&&e.code==='rate_limited')toast('Зачекай кілька секунд і спробуй ще раз');else toast('Тут файл зберегти не вдалося. Натисни «Скопіювати»')}return}
   try{const b=new Blob([EXP.txt],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=EXP.fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Якщо файл не з’явився, натисни «Скопіювати»')}catch(e){toast('Завантаження недоступне. Натисни «Скопіювати»')}},
  copy(){copyText(EXP.txt)},
+ 'sy-in'(){syncNow(true)},
+ 'sy-now'(){syncNow(true)},
+ 'sy-mode'(el){const m=el.dataset.v;closeSheet(false);if(m==='cloud'){const cur=lsGet(KEY);if(cur)snapshot(cur,'before-cloud')}syncNow(true,m)},
+ 'sy-out'(){confirmSheet('Вийти з Google? Дані на цьому пристрої залишаться, синхронізація зупиниться.','Вийти',()=>{const sy=syState();delete sy.acct;delete sy.init;sy.err='';syTokClear();if(AND&&AND.gSignOut)try{AND.gSignOut()}catch(e){}try{if(window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke&&0}catch(e){}save()},false)},
+ 'sy-bk'(){openSheet('<h3>Копії на Google Диску</h3><p class="muted small" style="margin:0">Завантаження…</p><button class="btn ghost full" data-a="close">Закрити</button>','sybk');syBackups().then(fs=>{if(SHEET!=='sybk')return;openSheet(`<h3>Копії на Google Диску</h3><p class="muted small" style="margin:0">Одна копія на день, зберігаються останні ${SY_BKN}. Відновлення замінить дані на всіх пристроях після синхронізації.</p>${fs.map(f=>`<div class="row between"><span class="small">${esc(f.name.slice(SY_BK.length,SY_BK.length+10))}</span><button class="btn" data-a="sy-restore" data-v="${esc(f.id)}">Відновити</button></div>`).join('')||'<p class="muted small" style="margin:0">Копій ще немає.</p>'}<button class="btn ghost full" data-a="close">Закрити</button>`,'sybk')}).catch(e=>{if(SHEET==='sybk')openSheet(`<h3>Копії на Google Диску</h3><p class="small" style="margin:0;color:var(--bad)">${esc(e.message)}</p><button class="btn ghost full" data-a="close">Закрити</button>`,'sybk')})},
+ 'sy-restore'(el){const id=el.dataset.v;confirmSheet('Відновити дані з цієї копії? Поточні дані буде замінено (перед цим буде автокопія).','Відновити',async()=>{try{const R=await gdRead(id,true);if(!R||R.app!=='trening')throw new Error('копія пошкоджена');const cur=lsGet(KEY);if(cur)snapshot(cur,'before-cloud');syReplace(R);render();toast('Відновлено з копії на Диску');syncNow(true)}catch(e){toast('Не вдалося: '+e.message)}})},
+ 'sy-cancel'(){const sy=syState();if(!sy.init){delete sy.acct;save()}closeSheet()},
  'and-share'(){if(!AND)return;try{AND.shareFile(EXP.fname,EXP.txt)}catch(e){toast('Не вдалося поділитися. Натисни «Скопіювати»')}},
  'and-folder'(){if(AND)try{AND.pickFolder()}catch(e){toast('Не вдалося відкрити вибір папки')}},
  'and-backup'(){if(AND)try{AND.backupNow()}catch(e){toast('Не вдалося зробити копію')}},
- wipe(){confirmSheet('Скинути все? Історія, власні вправи й шаблони буде видалено','Скинути',()=>{const cur=lsGet(KEY);if(cur)snapshot(cur,'before-reset');S=defaults();save()})}
+ wipe(){confirmSheet('Скинути все? Історія, власні вправи й шаблони буде видалено','Скинути',()=>{const cur=lsGet(KEY);if(cur)snapshot(cur,'before-reset');S=defaults();syBaseline();save();syTokClear()})}
 };
 function copyText(t){const done=()=>toast('Скопійовано');const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();ok?done():toast('Не вдалося скопіювати. Виділи текст вручну')};
  try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}}
@@ -1908,6 +1950,7 @@ document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)ret
  if(f==='pickq'){$('#picklist').innerHTML=catalogList(v.toLowerCase(),'pick');return}
  if(f==='catq'){S.ui.catq=v;$('#catlist').innerHTML=catalogList(v.toLowerCase(),'ex-edit');return}});
 document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(el.dataset.f==='wu'||el.dataset.f==='bwu'){setTimeout(()=>{if(document.body.contains(el))wuCardRefresh(el)},350);return}if(!c)return;
+ if(c==='sy-auto'){syState().auto=el.checked;save();if(el.checked)syKick(300);return}
  if(c==='it-type'){const it=itemBy(el.dataset.i);it.type=el.value;if(it.type==='weight'&&!it.mach)it.mach=machDefault(it.exId);if(it.type==='band'){const b=lastBandFor(it.exId);it.sets.forEach(s=>{if(!bandsOf(s).length&&b){s.bands=b.map(x=>({...x}));if(b.bmode)s.bmode=b.bmode;if(b.bstr)s.bstr=b.bstr}})}save();render();return}
  if(c==='w-phase'){S.draft.phase=el.value;if(!S.draft._edit)S.settings.phase=el.value;save();return}
  if(c==='setphase'){S.settings.phase=el.value;save();return}
@@ -1931,7 +1974,71 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(el.da
 setInterval(()=>{document.querySelectorAll('[data-wut]').forEach(d=>{const w=d.dataset.wut;if(w.startsWith('b:')){const[,u,k]=w.split(':');const b=itemBy(u);if(b&&((b.res||{}).tm||{})[k+'T0'])d.textContent=mmss(blkWuSec(b,k));return}const it=itemBy(w);if(it&&it.t0)d.textContent=mmss(wuSec(it))})},1000);
 setInterval(()=>{if(S.ui.tab==='log'&&S.draft&&!S.draft._edit)$('#tsub').textContent='триває '+Math.max(0,Math.round((Date.now()-S.draft.startedAt)/6e4))+' хв'},30000);
 
-load();render();
+/* ========== SYNC: Google Диск (прихована папка застосунку) ========== */
+const GCID='48099908235-h73vimltvukejvsnf5ru1lbuoss464la.apps.googleusercontent.com';   // Web Client ID з Google Cloud (вписується після налаштування)
+const GSCOPE='https://www.googleapis.com/auth/drive.appdata';
+const SY_FILE='trening-sync.json',SY_BK='trening-backup-',SY_BKN=14,SYTOK='trainlog.gtok';
+let SYB=false,SYTC=null,SYT=null;   // SYB: синхронізація йде; SYTC: токен-клієнт Google; SYT: таймер автосинхронізації
+function syOn(){const sy=syState();return!!sy.acct}
+function syAuto(){const sy=syState();return syOn()&&sy.auto!==false}
+function syTokGet(){try{const o=JSON.parse(lsGet(SYTOK)||'null');if(o&&o.t&&o.exp>Date.now()+60000)return o.t}catch(e){}return null}
+function syTokSet(t,sec){lsSet(SYTOK,JSON.stringify({t,exp:Date.now()+((sec||3500)*1000)}))}
+function syTokClear(){try{localStorage.removeItem(SYTOK)}catch(e){}}
+function syLoadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.onload=()=>res();sc.onerror=()=>rej(new Error('Немає зв’язку з Google'));document.head.appendChild(sc)})}
+/* Токен доступу: на Android від системи (без вікна, коли доступ уже дано), у браузері через вікно Google */
+function syToken(interactive){const t=syTokGet();if(t)return Promise.resolve(t);
+ if(AND&&AND.gToken)return new Promise((res,rej)=>{window.__andTok=(tok,err,sec)=>{window.__andTok=null;if(tok){syTokSet(tok,sec);res(tok)}else rej(new Error(err||'Вхід у Google не виконано'))};try{AND.gToken(!!interactive)}catch(e){rej(e)}});
+ if(!interactive)return Promise.reject(Object.assign(new Error('Потрібен вхід'),{needLogin:true}));
+ if(!GCID)return Promise.reject(new Error('Синхронізацію ще не налаштовано (немає Client ID)'));
+ return syLoadGis().then(()=>new Promise((res,rej)=>{SYTC=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:GSCOPE,callback:r=>{if(r&&r.access_token){syTokSet(r.access_token,r.expires_in);res(r.access_token)}else rej(new Error((r&&r.error)||'Вхід скасовано'))},error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'Вікно входу закрито':'Вхід не вдався'))});SYTC.requestAccessToken({prompt:''})}))}
+async function gd(method,url,body,ctype,interactive){let tok=await syToken(interactive);const go=t=>fetch(url,{method,headers:Object.assign({Authorization:'Bearer '+t},ctype?{'Content-Type':ctype}:{}),body});
+ let r=await go(tok);if(r.status===401){syTokClear();if(AND&&AND.gTokenClear)try{AND.gTokenClear(tok)}catch(e){}tok=await syToken(interactive);r=await go(tok)}
+ if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}throw new Error('Google Диск: '+r.status+(m?' '+m:''))}return r}
+const GDF='https://www.googleapis.com/drive/v3/files',GDU='https://www.googleapis.com/upload/drive/v3/files';
+async function gdFind(q,i){const r=await gd('GET',GDF+'?spaces=appDataFolder&pageSize=100&orderBy=name&fields=files(id,name,modifiedTime,size)&q='+encodeURIComponent(q),null,null,i);return(await r.json()).files||[]}
+async function gdRead(id,i){const r=await gd('GET',GDF+'/'+id+'?alt=media',null,null,i);return r.json()}
+async function gdCreate(name,obj,i){const b='trb'+Date.now();const body=`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({name,parents:['appDataFolder']})}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(obj)}\r\n--${b}--`;const r=await gd('POST',GDU+'?uploadType=multipart&fields=id',body,'multipart/related; boundary='+b,i);return(await r.json()).id}
+async function gdWrite(id,obj,i){await gd('PATCH',GDU+'/'+id+'?uploadType=media',JSON.stringify(obj),'application/json',i)}
+async function gdDel(id,i){await gd('DELETE',GDF+'/'+id,null,null,i)}
+async function gdEmail(i){try{const r=await gd('GET','https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)',null,null,i);return((await r.json()).user||{}).emailAddress||''}catch(e){return''}}
+function sySt(msg,err){const sy=syState();if(err){sy.err=msg;}else{sy.err='';sy.last=Date.now()}try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}syUi()}
+function syUi(){const el=document.getElementById('sy-card');if(el&&!SHEET)el.outerHTML=syCard()}
+function syStatusTxt(){const sy=syState();if(SYB)return'Синхронізація…';if(sy.err)return'Помилка: '+sy.err;if(sy.last)return'Синхронізовано '+andTime(new Date(sy.last).toISOString());return'Ще не синхронізовано'}
+/* Головна процедура. interactive=true лише після натискання кнопки (вікно входу Google) */
+async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)return;SYB=true;syUi();
+ try{save();const files=await gdFind(`name = '${SY_FILE}'`,interactive);const sy=syState();
+  if(!sy.acct){sy.acct=(await gdEmail(interactive))||'Google';sy.auto=sy.auto!==false}
+  if(!files.length){await gdCreate(SY_FILE,syPayload(),interactive);sy.init=true;await syBackup(syPayload(),interactive);SYB=false;sySt('ok');if(interactive)toast('Дані збережено в Google Диск');return}
+  const fid=files[0].id;const R=await gdRead(fid,interactive);
+  if(!R||R.app!=='trening')throw new Error('файл синхронізації пошкоджений');
+  if((R.seedV||0)>(defaults().seedV))throw new Error('у хмарі дані новішої версії. Онови застосунок');
+  if(!sy.init&&!mode){if(!(S.workouts||[]).length&&!(S.templates||[]).length)mode='cloud';else{SYB=false;syUi();syChoice();return}}
+  let M;if(mode==='cloud')M=R;else if(mode==='device')M=syPayload();else M=syMerge(syPayload(),R);
+  const L=syPayload();if(!sySame(M,L)){syApply(M);render()}
+  if(!sySame(M,R))await gdWrite(fid,M,interactive);
+  sy.init=true;await syBackup(M,interactive);SYB=false;sySt('ok');if(interactive)toast('Синхронізовано')}
+ catch(e){SYB=false;if(e&&e.needLogin){sySt('потрібен вхід: натисни «Синхронізувати зараз»',true)}else sySt((e&&e.message)||'невідома помилка',true);if(interactive)toast('Синхронізація: '+((e&&e.message)||'помилка'))}}
+async function syBackup(M,i){const day=todayStr();const fs=await gdFind(`name contains '${SY_BK}'`,i);if(fs.some(f=>f.name===SY_BK+day+'.json'))return;await gdCreate(SY_BK+day+'.json',M,i);
+ const old=fs.filter(f=>f.name.startsWith(SY_BK)).sort((a,b)=>a.name.localeCompare(b.name));for(let k=0;k<old.length+1-SY_BKN;k++)try{await gdDel(old[k].id,i)}catch(e){}}
+function syChoice(){openSheet(`<h3>У Google Диску вже є дані</h3><p class="muted small" style="margin:0">На цьому пристрої теж є записи. Що зробити?</p>
+ <button class="btn pri full" data-a="sy-mode" data-v="merge">Об’єднати</button><p class="muted small" style="margin:0">Тренування з обох місць залишаться. Шаблони можуть задвоїтися, якщо вони однакові на обох пристроях.</p>
+ <button class="btn full" data-a="sy-mode" data-v="cloud">Взяти дані з Диска</button><p class="muted small" style="margin:0">Записи цього пристрою буде замінено даними з Диска. Перед цим програма зробить автокопію.</p>
+ <button class="btn full" data-a="sy-mode" data-v="device">Записати на Диск дані цього пристрою</button><p class="muted small" style="margin:0">Дані на Диску буде замінено. Копії на Диску за попередні дні збережуться.</p>
+ <button class="btn ghost full" data-a="sy-cancel">Скасувати</button>`,'sychoice')}
+async function syBackups(){const fs=await gdFind(`name contains '${SY_BK}'`,true);return fs.filter(f=>f.name.startsWith(SY_BK)).sort((a,b)=>b.name.localeCompare(a.name))}
+function syCard(){const sy=syState(),on=syOn();if(!AND&&GCID&&!(window.google&&google.accounts))setTimeout(()=>syLoadGis().catch(()=>{}),0);/* вікно входу має відкритися одразу після натискання, тому бібліотеку Google вантажимо заздалегідь */
+ return`<section class="card stack" id="sy-card"><div class="lbl">Синхронізація через Google</div>
+ ${on?`<p class="muted small" style="margin:0">Акаунт: <b>${esc(sy.acct)}</b>. Дані лежать у прихованій папці застосунку на твоєму Google Диску. Інших файлів на Диску застосунок не бачить.</p>
+ <label class="chk"><input type="checkbox" data-c="sy-auto" ${sy.auto!==false?'checked':''}>Автосинхронізація (при відкритті, після тренування, при виході)</label>
+ <p class="small" style="margin:0" id="sy-st">${esc(syStatusTxt())}</p>
+ <div class="g2"><button class="btn pri" data-a="sy-now" ${SYB?'disabled':''}>Синхронізувати зараз</button><button class="btn" data-a="sy-bk">Копії на Диску</button></div>
+ <button class="btn ghost full" data-a="sy-out">Вийти з Google</button>`
+ :`<p class="muted small" style="margin:0">Однакові дані на iPhone, Android і після перевстановлення. Дані зберігаються в прихованій папці застосунку на твоєму Google Диску, а ще щодня там з’являється копія (останні ${SY_BKN}).</p>
+ ${sy.err?`<p class="small" style="margin:0;color:var(--bad)">${esc(sy.err)}</p>`:''}<button class="btn pri full" data-a="sy-in" ${SYB?'disabled':''}>Увійти через Google</button>`}</section>`}
+function syKick(delay){if(!syAuto())return;clearTimeout(SYT);SYT=setTimeout(()=>syncNow(false),delay||1500)}
+document.addEventListener('visibilitychange',()=>{if(!syAuto())return;if(document.visibilityState==='hidden'){clearTimeout(SYT);syncNow(false)}else syKick(800)});
+
+load();syBaseline();render();syKick(1200);
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().then(v=>{PERSIST=v}).catch(()=>{})}catch(e){}
 </script>
 
