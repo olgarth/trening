@@ -109,7 +109,7 @@ textarea.in{min-height:64px;resize:vertical}
 input.in[type=date]{-webkit-appearance:none;appearance:none;display:block;max-width:100%;text-align:left}
 input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .in::placeholder{color:var(--faint)}
-.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}.field input[type=range]{width:100%;margin:0;box-sizing:border-box}
 .field>span{font-size:12px;color:var(--muted);font-weight:600}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -139,9 +139,16 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 /* exercise card */
 .it{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:10px}
 .it-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
-.it-name{font-family:var(--f-display);font-size:21px;font-weight:600;line-height:1.1;min-width:0}
+.it-name{font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.15;min-width:0}
+button.it-name{border:0;background:none;padding:2px 0;margin:0;text-align:left;color:inherit;display:flex;align-items:baseline;gap:0;cursor:pointer;flex:1}
+.it-name .chev{display:inline-block;width:14px;color:var(--faint);font-size:18px;transition:transform .15s;transform:rotate(90deg);flex:none;margin-right:2px}button.it-name[aria-expanded=false] .chev{transform:none}
+.it.col{gap:6px;padding-block:10px}.it-sum{display:flex;flex-direction:column;gap:2px;padding-left:16px}.it-sum .pill{margin-left:6px}
+.chipb{border:1px solid var(--line);background:var(--surface2);border-radius:8px;font-size:14px;padding:4px 8px;color:var(--fg);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ibi{border:0;background:none;color:var(--accent);font-size:17px;padding:2px 4px;min-height:28px}
+.sechd{border:0;background:none;padding:0;display:flex;align-items:center;gap:2px;color:inherit;text-align:left;min-height:28px}.sechd .chev{display:inline-block;width:14px;color:var(--faint);font-size:16px;transition:transform .15s;transform:rotate(90deg)}.sechd[aria-expanded=false] .chev{transform:none}
+.colall{display:flex;justify-content:flex-end;margin:-6px 0 -8px}
 .it-name .n{color:var(--faint);margin-right:6px}
-.it-tools{display:flex;gap:6px;flex:none}
+.it-tools{display:flex;gap:6px;flex:none}.it-tools .ib{width:34px;height:34px}
 .it-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;color:var(--muted)}
 .it-meta select{border:1px solid var(--line);background:var(--surface2);border-radius:8px;font-size:16px;padding:4px 6px;max-width:100%}
 .chk{display:inline-flex;gap:6px;align-items:center;font-size:14px;font-weight:600;color:var(--fg)}
@@ -160,8 +167,11 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .dseg .sug{outline:2px dashed var(--accent);outline-offset:-4px}
 .glv{font-weight:700;font-size:13px;min-height:16px}
 .rvrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvrow>span:first-child{min-width:0}.rvrow>:last-child{white-space:nowrap;flex-shrink:0;text-align:right}
-.recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:2px 0 6px}.recb .rtx{font-family:var(--f-display);font-size:17px}.recb .rbtns{margin-left:auto;display:inline-flex;align-items:center;gap:8px}.recb .btn{min-height:34px;padding:4px 12px}.sndrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.sndrow .btn{min-height:36px;width:44px;padding:0;flex:none}.sndrow .chk{flex:1;min-width:0}
-.clr{width:30px;height:30px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--bad) 55%,transparent);background:transparent;color:var(--bad);font-size:13px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0}.recb .rwhy{flex-basis:100%;order:3}
+.recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0}.recb .rmain{flex:1;min-width:0;line-height:1.25}.recb .rlab{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin-bottom:1px}.recb .rtx{font-family:var(--f-display);font-size:17px}
+.nw{white-space:nowrap}.recb .rbtns{display:inline-flex;align-items:center;gap:6px;flex:none}.rb{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:transparent;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:15px;font-weight:700;line-height:1}
+.rb.ok{border-color:color-mix(in srgb,var(--good) 60%,transparent);color:var(--good)}.rb.info{color:var(--accent);border-color:transparent;font-size:17px;width:28px}
+.recb .rwhy{flex-basis:100%;display:none;background:var(--surface2);border-radius:8px;padding:6px 9px;color:var(--muted)}.recb.open .rwhy{display:block}.sndrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.sndrow .btn{min-height:36px;width:44px;padding:0;flex:none}.sndrow .chk{flex:1;min-width:0}
+.rb.clr{border-color:color-mix(in srgb,var(--bad) 55%,transparent);color:var(--bad);font-size:13px}.recb .rwhy{flex-basis:100%;order:3}
 .negw{position:relative;min-width:0}.negw .cell{width:100%;padding-left:14px}.negw i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-style:normal;font-weight:700;font-size:18px;color:var(--accent);pointer-events:none}.negm{color:var(--accent);margin-right:1px}
 .negb{border:1px dashed var(--line);background:transparent;color:var(--accent);font:inherit;border-radius:8px;padding:2px 4px;min-height:28px}
 .ssb{margin-right:6px;font-size:12px;padding:1px 7px}
@@ -497,7 +507,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='54.3 · 23.10.2026';
+const APPV='55 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -870,10 +880,10 @@ function recFor(it,w){if(!recOn()||!STR.includes(it.type)||!w)return null;let pr
  else{ns=Math.max(1,Math.round(W.length*2/3));why.unshift('легкий день: та сама вага, RIR 3-4, ≈ на третину менше підходів (розвантаження: Bell et al., 2023; третина - оцінка)')}
  why.push(base);if(sg.why.some(x=>x.startsWith('≈')))why.push('≈ - не вписано сьогодні, взято типове з останніх тренувань');
  const rTxt=(()=>{const a=Math.min(...rr),b=Math.max(...rr);return a===b?String(a):a+'-'+b})();
- const wTxt=other?'':LN&&wt!=null?(it.neg?'−':'')+nf(wt,1)+(it.type==='db2'?' кг ×2':' кг'):verb||(it.type==='band'?'та сама гума':it.type==='trx'?'той самий рівень':lvList(it.exId)?'те саме положення':'');
+ const wTxt=other?'':LN&&wt!=null?(it.neg?'−':'')+nf(wt,1)+' кг':verb||(it.type==='band'?'та сама гума':it.type==='trx'?'той самий рівень':lvList(it.exId)?'те саме положення':'');
  if(other)why.push(`вага не пропонується: минулого разу був режим «${TYPES[prev.item.type]}», сьогодні «${TYPES[it.type]}»`);
  return{kind,wt:LN?wt:null,rr,ns,why,txt:`${wTxt?wTxt+' × ':''}${rTxt}${noKg(it.exId)&&it.type==='bw'?' повт.':''} · RIR ${kind==='light'?'3-4':ra+(rb!==ra?'-'+rb:'')}${kind==='light'?' · '+ns+' підх.':''}`}}
-function recHTML(it,R){return`<div class="recb"><span class="pill p-acc">${R.kind==='up'?'↑ ':''}Рекомендація</span><b class="rtx">${esc(R.txt)}</b><details class="hlp rwhy"><summary>ⓘ чому</summary><div>${R.why.map(esc).join('<br>')}</div></details><span class="rbtns"><button class="btn" data-a="rec-fill" data-i="${it.uid}">Заповнити</button><button class="clr" data-a="rec-clear" data-i="${it.uid}" aria-label="Очистити вписане: повтори, вагу і RIR">✕</button></span></div>`}
+function recHTML(it,R){return`<div class="recb"><div class="rmain"><span class="rlab">${R.kind==='up'?'↑ ':''}Рекомендація</span> <b class="rtx">${R.txt.split(' · ').map(x=>`<span class="nw">${esc(x)}</span>`).join(' · ')}</b></div><span class="rbtns"><button class="rb info" data-a="rec-why" aria-label="Чому така рекомендація">ⓘ</button><button class="rb ok" data-a="rec-fill" data-i="${it.uid}" aria-label="Заповнити рекомендацію в порожні клітинки">✓</button><button class="rb clr" data-a="rec-clear" data-i="${it.uid}" aria-label="Очистити вписане: повтори, вагу і RIR">✕</button></span><div class="rwhy small">${R.why.map(esc).join('<br>')}</div></div>`}
 function orderNote(it,w){const its=w.items||[],i=its.indexOf(it);if(i<1)return'';const mine=new Set(primOf(it).map(musGrp).filter(Boolean));const before=its.slice(0,i).filter(x=>x.type==='hiit'||x.type==='block');if(!before.length)return'';
  const hg=new Set();before.forEach(x=>{const L=x.type==='block'?mainEx(x).map(e=>ex(e.exId)||{}):[x];L.forEach(e=>primOf(e).forEach(m=>{const g=musGrp(m);if(g)hg.add(g)}))});const ov=[...mine].filter(g=>hg.has(g));if(!ov.length)return'';
  if(its.slice(0,i).some(x=>STR.includes(x.type)&&primOf(x).some(m=>ov.includes(musGrp(m)))))return'';
@@ -1161,10 +1171,7 @@ function wuSec(it){return(num(it.sec)||0)+(it.t0?Math.max(0,(Date.now()-it.t0)/1
 function wuStopAll(w){(w&&w.items||[]).forEach(i=>{if(i.type==='wu'&&i.t0){i.sec=Math.round(wuSec(i));i.t0=null}if(i.type==='block'){const t=(i.res||{}).tm;if(t)['warm','cool'].forEach(k=>{if(t[k+'T0']){t[k]=Math.round(blkWuSec(i,k));delete t[k+'T0']}})}})}
 function wuRoleLbl(r){return r==='cool'?'Заминка':'Розминка'}
 function wuHTML(it,i,n,w){const d=wuDesc(it),run=!!it.t0,sec=wuSec(it);
- return`<article class="it wu" id="it-${it.uid}"><div class="it-head"><div class="it-name"><span class="n">${i+1}</span>${esc(it.name)}</div><div class="it-tools">
-  <button class="ib" data-a="mv" data-d="-1" data-i="${it.uid}" ${i===0?'disabled':''} aria-label="Перемістити вище">↑</button>
-  <button class="ib" data-a="mv" data-d="1" data-i="${it.uid}" ${i===n-1?'disabled':''} aria-label="Перемістити нижче">↓</button>
-  <button class="ib del" data-a="del-item" data-i="${it.uid}" aria-label="Прибрати з сьогоднішнього тренування">✕</button></div></div>
+ return`<article class="it wu" id="it-${it.uid}">${itHead(it,i,it.name,'')}
   ${d?`<div class="wu-desc">${esc(d)}</div>`:`<div class="hint">Опис можна задати в «Каталог вправ» → «${esc(it.name)}» або в шаблоні.</div>`}
   <div class="wu-row"><div class="wu-dig num ${run?'run':''}" data-wut="${it.uid}">${mmss(sec)}</div><span class="muted small">${run?'іде відлік':sec?'на паузі':'ще не почато'}</span></div>
   <div class="${!run&&sec?'g2':'stack'}"><button class="btn ${run?'':'pri'}" data-a="wu-go" data-i="${it.uid}">${run?IC.stop+' Стоп':sec?IC.play+' Продовжити':IC.play+' Старт'}</button>${!run&&sec?`<button class="btn" data-a="wu-reset" data-i="${it.uid}">Скинути</button>`:''}</div>
@@ -1268,12 +1275,13 @@ function vLog(){if(S.draft)return vDraft();
  return h}
 function phImp(w,k,dg){const r=imputed(w,k);return r.v!=null?'≈ '+nf(r.v,dg):''}
 function warmMeta(){return S.settings.warmMeta===true}
+function preSum(w){const a=[dShort(w.date)];if(num(w.sleep)!=null)a.push('сон '+nf(num(w.sleep),1));if(num(w.well)!=null)a.push('самопоч. '+nf(num(w.well),1));{const b=bwOf(w);if(b)a.push(nf(b,1)+' кг'+(num(w.bw)==null?' ≈':''))}if(w.phase)a.push((PHASES[w.phase]||'').toLowerCase());if(num(w.gReady)!=null)a.push('готовність '+f0(num(w.gReady)));const d=w.diff||(diffOn()?diffSuggest(w).v:'');if(diffOn()&&d)a.push(DIFF[d]+(w.diff?'':' (пропозиція)'));return esc(a.join(' · '))}
 function vDraft(){const w=S.draft;ssMark(w);const mo=k=>mfW(w,k),meta=MF.some(([k])=>mo(k));
  // v51: три зони - перед тренуванням / вправи / після тренування
- let h=`<section class="card stack">
+ let h=`<section class="card stack" id="pre-card">
   <div class="wk-name">${esc(w.tplName)}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}
-  <div class="lbl">Перед тренуванням</div>
-  <div class="metrics">
+  <button class="sechd" data-a="pre-col" aria-expanded="${!w._pc}"><span class="chev" aria-hidden="true">›</span><span class="lbl">Перед тренуванням</span></button>
+  ${w._pc?`<div class="small muted" id="pre-sum">${preSum(w)}</div>`:`<div class="metrics">
    <label class="field" style="grid-column:1/-1"><span>Дата тренування</span><input class="in" type="date" data-f="w" data-k="date" value="${esc(w.date)}" id="w-date"></label>
    ${mo('sleep')?`<label class="field"><span>Сон, год</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>`:''}
    ${mo('well')?`<label class="field"><span>Самопочуття, 1-10</span><input class="in" inputmode="decimal" data-f="w" data-k="well" value="${esc(w.well)}" placeholder="${phImp(w,'well',1)}" id="w-well"></label>`:''}
@@ -1283,8 +1291,9 @@ function vDraft(){const w=S.draft;ssMark(w);const mo=k=>mfW(w,k),meta=MF.some(([
   ${gZone(w,'pre')}
   ${diffOn()?`<div class="stack" id="diff-box" style="gap:6px">${diffBox(w)}</div>`:''}
   ${meta?'':'<p class="muted small" style="margin:0">Сон, самопочуття та інші дані тренування вимкнені (Налаштування → Дані тренування).</p>'}
-  <p class="muted small" style="margin:0">${meta?'Порожні поля в аналітиці замінюються середнім попередніх тренувань, вага тіла - останньою відомою (позначка ≈). ':''}Сірі цифри в підходах - результат минулого разу.${restMode()!=='off'?' «Відп» - відпочинок перед підходом, у підході 1 - перерва між вправами.':''}${myoOn()||dropOn()?' Тап по номеру підходу - тип підходу (розминковий, Myo, дроп).':wuOn()?' Тап по номеру підходу - розминковий (Р).':''}${lpOn()?' Довгий тап - заповнити з минулого разу.':''}</p>
+  ${hlp(`${meta?'Порожні поля в аналітиці замінюються середнім попередніх тренувань, вага тіла - останньою відомою (позначка ≈). ':''}Сірі цифри в підходах - результат минулого разу.${restMode()!=='off'?' «Відп» - відпочинок перед підходом, у підході 1 - перерва між вправами.':''}${myoOn()||dropOn()?' Тап по номеру підходу - тип підходу (розминковий, Myo, дроп).':wuOn()?' Тап по номеру підходу - розминковий (Р).':''}${lpOn()?' Довгий тап - заповнити з минулого разу.':''}`)}`}
  </section>`;
+ {const C=w.items.filter(x=>x.type!=='wu');if(C.length>=2){const all=C.every(x=>x._c);h+=`<div class="colall"><button class="lnk" data-a="col-all" data-v="${all?0:1}">${all?'Розгорнути всі':'Згорнути всі'}</button></div>`}}
  h+=w.items.map((it,i)=>itemHTML(it,i,w.items.length,w)).join('');
  if(!w.items.length)h+=`<p class="empty">Вправ немає. Додай першу.</p>`;
  h+=`<div class="g2"><button class="btn" data-a="add-item">+ Додати вправу</button><button class="btn" data-a="blk-add">+ HIIT-блок</button></div>
@@ -1301,20 +1310,32 @@ function vDraft(){const w=S.draft;ssMark(w);const mo=k=>mfW(w,k),meta=MF.some(([
  <div class="g2"><button class="btn" data-a="save-tpl">Зберегти як шаблон</button><button class="btn danger" data-a="cancel-draft">${w._edit?'Скасувати зміни':'Скасувати'}</button></div>
  ${w._edit?'<button class="btn danger ghost full" data-a="del-w">Видалити це тренування з історії</button>':''}`;
  return h}
+/* v55: заголовок картки - тап по назві згортає; ⋯ - переміщення */
+function itHead(it,i,name,extra){const col=it.type!=='wu',c=!!it._c;return`<div class="it-head">${col?`<button class="it-name tg" data-a="it-col" data-i="${it.uid}" aria-expanded="${!c}"><span class="chev" aria-hidden="true">›</span>`:`<div class="it-name">`}<span class="n">${i+1}</span>${extra||''}<span class="nm">${esc(name)}</span>${col?'</button>':'</div>'}<div class="it-tools"><button class="ib" data-a="it-menu" data-i="${it.uid}" aria-label="Перемістити вправу">⋯</button><button class="ib del" data-a="del-item" data-i="${it.uid}" aria-label="Прибрати з сьогоднішнього тренування">✕</button></div></div>`}
+function itSum(it,RC,tg){let a='',b='';const L=[];
+ if(STR.includes(it.type)){a=[TYPES[it.type],it.uni?'Л/П':'',it.neg&&negType(it)?'допомога':''].filter(Boolean).join(' · ');const W=it.sets.filter(s=>!s.wu),D=W.filter(s=>(repsOf(it,s)||{}).tot);const st=itemStats(it,bwOf(S.draft||{}));
+  b=D.length?`<b>${D.length}/${W.length}</b> підх. · ${esc(D.map(s=>setTxt(it,s)).join(', '))}${st.has&&st.score&&!(it.type==='bw'&&noKg(it.exId))?` · 1ПМ ≈ <b>${f1(st.score)}</b>`:''}`:RC?`ціль: <b>${esc(RC.txt)}</b>`:esc(tg||'ще не почато');
+  if(recovOn()&&S.draft){const r=recovery(S.draft.id);if([...new Set((it.prim||[]).map(musGrp))].some(g=>g&&!MINOR.includes(g)&&r[g]&&r[g].st==='early'))L.push('<span class="pill p-warn">⚠ відновлення</span>')}}
+ else if(it.type==='block'){a=FMT[it.fmt]+' · '+esc(blockSum(it));b=blockFoot(it)}
+ else{a=TYPES[it.type];b=footTxt(it)}
+ return`<div class="it-sum"><div class="muted small">${a}${L.join('')}</div><div class="small">${b}</div></div>`}
+function itMenu(u){const w=S.draft;if(!w)return;const i=w.items.findIndex(x=>x.uid===u);if(i<0)return;const it=w.items[i],n=w.items.length;
+ openSheet(`<h3>${esc(it.name)}</h3><p class="muted small" style="margin:0">Позиція ${i+1} з ${n}</p><div class="g2"><button class="btn" data-a="mv" data-d="-1" data-i="${u}" ${i===0?'disabled':''}>↑ Вище</button><button class="btn" data-a="mv" data-d="1" data-i="${u}" ${i===n-1?'disabled':''}>↓ Нижче</button></div>${it.type!=='wu'?`<button class="btn full" data-a="it-col" data-i="${u}">${it._c?'Розгорнути':'Згорнути'}</button>`:''}<button class="btn pri full" data-a="close">Готово</button>`,'itmenu')}
+function colKeep(id,fn){const el=document.getElementById(id);const y0=el?el.getBoundingClientRect().top:null;fn();if(y0==null)return;const e2=document.getElementById(id);if(!e2)return;const d=e2.getBoundingClientRect().top-y0;if(Math.abs(d)>1){padKeep(window.scrollY+d);window.scrollTo(0,window.scrollY+d)}}
 function itemHTML(it,i,n,w){if(it.type==='block')return blockHTML(it,i,n,w);if(it.type==='wu')return wuHTML(it,i,n,w);const prev=prevSession(it.exId,w);const SSL=ssOn()?ssLabels(w)[it.uid]:'';
  const tg=[it.tgt.sets&&(it.tgt.reps||it.tgt.work)?(it.type==='hiit'?`${it.tgt.sets} раунд. ${it.tgt.work||'?'}/${it.tgt.rest||'?'} с`:`${it.tgt.sets}×${it.tgt.reps}`):'',it.tgt.rir?'RIR '+it.tgt.rir:'',techTxt(it.tgt),it.tgt.note].filter(Boolean).join(' · ');
- let h=`<article class="it" id="it-${it.uid}"><div class="it-head"><div class="it-name"><span class="n">${i+1}</span>${SSL?`<span class="pill p-acc ssb">${SSL}</span>`:''}${esc(it.name)}</div><div class="it-tools">
-  <button class="ib" data-a="mv" data-d="-1" data-i="${it.uid}" ${i===0?'disabled':''} aria-label="Перемістити вище">↑</button>
-  <button class="ib" data-a="mv" data-d="1" data-i="${it.uid}" ${i===n-1?'disabled':''} aria-label="Перемістити нижче">↓</button>
-  <button class="ib del" data-a="del-item" data-i="${it.uid}" aria-label="Прибрати з сьогоднішнього тренування">✕</button></div></div>`;
+ const RC=STR.includes(it.type)?recFor(it,w):null;
+ let h=`<article class="it${it._c?' col':''}" id="it-${it.uid}">${itHead(it,i,it.name,SSL?`<span class="pill p-acc ssb">${SSL}</span>`:'')}`;
+ if(it._c)return h+itSum(it,RC,tg)+`</article>`;
  h+=`<div class="it-meta">${tg?`<span>${esc(tg)}</span>`:''}`;
  if(STR.includes(it.type)){h+=`<select data-c="it-type" data-i="${it.uid}" aria-label="Режим навантаження">${STR.map(t=>`<option value="${t}" ${t===it.type?'selected':''}>${TYPES[t]}</option>`).join('')}</select>${it.uni||(ex(it.exId)||{}).uni||it.type==='db1'?`<label class="chk"><input type="checkbox" data-c="it-uni" data-i="${it.uid}" ${it.uni?'checked':''}>Л/П окремо</label>`:''}${ssOn()&&ssNextOk(w,it)?`<label class="chk"><input type="checkbox" data-c="it-ss" data-i="${it.uid}" id="ss-${it.uid}" ${it.ssN?'checked':''}>Суперсет з наступною</label>`:''}`}
  else h+=`<span class="pill p-mut">${TYPES[it.type]}</span>`;
- h+=`</div>`;
- if(it.type==='weight'){const m=it.mach||{k:'free'};h+=`<button class="btn mbtn" data-a="pick-mach" data-i="${it.uid}"><span class="muted small">Тренажер:</span> <b>${esc(machLbl(m))}</b></button>${m.k!=='free'?`<div class="hint">Вписуй вагу, як на тренажері: ${esc(machFormula(m))}</div>`:''}`}
- {const mh=modeHint(it);if(mh)h+=`<div class="hint">${mh}</div>`}
- if(SSL&&it.ssIn&&restMode()!=='off')h+=`<div class="hint">Суперсет: «Відп» тут - пауза після попередньої вправи суперсету${ssRestStd()?' (підказка '+ssRestStd()+' с)':''}. Рахується окремо.</div>`;
- const RC=STR.includes(it.type)?recFor(it,w):null;if(prev)h+=prevLine(it,prev,!!RC);if(RC)h+=recHTML(it,RC);if(STR.includes(it.type))h+=recovNote(it)+orderNote(it,w);
+ const HI=[];if(it.type==='weight'){const m=it.mach||{k:'free'};h+=`<button class="chipb" data-a="pick-mach" data-i="${it.uid}" aria-label="Тренажер: ${esc(machLbl(m))}">⚙ ${esc(machLbl(m))}</button>`;if(m.k!=='free')HI.push('Вписуй вагу, як на тренажері: '+esc(machFormula(m)))}
+ {const mh=modeHint(it);if(mh)HI.push(mh)}
+ if(SSL&&it.ssIn&&restMode()!=='off')HI.push(`Суперсет: «Відп» тут - пауза після попередньої вправи суперсету${ssRestStd()?' (підказка '+ssRestStd()+' с)':''}. Рахується окремо.`);
+ if(HI.length)h+=`<button class="ibi" data-a="mh-tog" aria-label="Пояснення до режиму">ⓘ</button>`;
+ h+=`</div>`;if(HI.length)h+=`<div class="hint mh" hidden>${HI.join('<br>')}</div>`;
+ if(prev)h+=prevLine(it,prev,!!RC);if(RC)h+=recHTML(it,RC);if(STR.includes(it.type))h+=recovNote(it)+orderNote(it,w);
  if(STR.includes(it.type))h+=strRows(it,prev);else if(it.type==='hiit')h+=hiitRows(it,prev);else h+=cardioForm(it,prev);
  h+=`<div class="it-foot"><div class="stat" id="ft-${it.uid}">${footTxt(it)}</div><div class="minibtns">${it.type==='cardio'?'':`<button class="btn" data-a="del-set" data-i="${it.uid}" ${it.sets.length<2?'disabled':''} aria-label="Прибрати останній підхід">−</button><button class="btn" data-a="add-set" data-i="${it.uid}">+ ${it.type==='hiit'?'Раунд':'Підхід'}</button>`}</div></div></article>`;
  return h}
@@ -1391,7 +1412,7 @@ function hiitRows(it,prev){const ps=prev&&prev.item.type==='hiit'?prev.item.sets
 function cardioForm(it,prev){const s=it.sets[0]||(it.sets[0]={});const p=prev&&prev.item.sets[0]||{};const f=(it.cf&&it.cf.length?it.cf:['time','dist','kcal','hr']).concat(['rpe']);
  return`<div class="cf">${f.map(k=>`<label class="field"><span>${k==='rpe'?'Важкість, 1-10':CF[k]}</span><input class="cell" inputmode="decimal" data-f="s" data-i="${it.uid}" data-n="0" data-k="${k}" id="cf-${it.uid}-${k}" value="${esc(s[k]??'')}" placeholder="${esc(p[k]??'')}"></label>`).join('')}</div>`}
 function footTxt(it){const st=itemStats(it,bwOf(S.draft||{}));
- if(STR.includes(it.type)){if(!st.has)return'Впиши повтори, щоб порахувати';if(it.type==='bw'&&noKg(it.exId))return`Найкращий підхід <b>${f0(st.score)}</b> повт. · робочих <b>${fH(st.hard)}</b>`;return`1ПМ ≈ <b>${f1(st.score)}</b> ${unitOf(it.type,it.exId)}${it.type!=='trx'||trxModeOf(it.exId)!=='manual'?` · обсяг <b>${f0(st.vol)}</b> кг`:''} · робочих <b>${fH(st.hard)}</b>`}
+ if(STR.includes(it.type)){if(!st.has)return'';if(it.type==='bw'&&noKg(it.exId))return`Найкращий підхід <b>${f0(st.score)}</b> повт. · робочих <b>${fH(st.hard)}</b>`;return`1ПМ ≈ <b>${f1(st.score)}</b> ${unitOf(it.type,it.exId)}${it.type!=='trx'||trxModeOf(it.exId)!=='manual'?` · обсяг <b>${f0(st.vol)}</b> кг`:''} · робочих <b>${fH(st.hard)}</b>`}
  if(it.type==='hiit'){if(!st.has)return'Раунди ще не записані';return`Раунд. <b>${st.rounds}</b> · робота <b>${mmss(st.work)}</b> · повт. <b>${st.reps}</b>${st.ton?` · <b>${f0(st.ton)}</b> кг`:''}`}
  if(!st.has)return'Впиши час або дистанцію';const pace=st.pace?(it.exId==='rower'?`${mmss(st.pace*60/2)} /500 м`:`${mmss(st.pace*60)} /км`):'';return[st.time?`<b>${st.time}</b> хв`:'',st.dist?`<b>${f1(st.dist)}</b> км`:'',pace?`темп <b>${pace}</b>`:''].filter(Boolean).join(' · ')}
 
@@ -1672,17 +1693,24 @@ function vTplEdit(t){const ch=tplChanged(),cs=tplCanSave();let h=`<div class="ro
  <section class="card stack"><label class="field"><span>Назва</span><input class="in" data-f="tpl" data-k="name" id="tpl-name" value="${esc(t.name)}"></label>
  <div class="g2"><label class="field"><span>Місце / тип</span><select class="in" data-f="tpl" data-k="tag" id="tpl-tag">${TAGS.map(x=>`<option ${x===t.tag?'selected':''}>${x}</option>`).join('')}</select></label>
  <label class="field"><span>Примітка</span><input class="in" data-f="tpl" data-k="note" id="tpl-note" value="${esc(t.note)}" placeholder="Із собою: гуми"></label></div></section>`;
- h+=t.items.map((it,i)=>{if(it.kind==='block')return`<div class="ti blk"><div class="it-head"><button class="tn" data-a="tb-edit" data-n="${i}">${i+1}. ${esc(it.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div><div class="it-meta"><span class="pill p-acc">${FMT[it.fmt]}</span><span>${esc(blockSum(it))}</span></div><div class="small">${(it.ex||[]).map(x=>esc(x.name)+' <span class="muted">'+esc(bexTxt(x))+'</span>').join(', ')||'<span class="muted">Вправ немає</span>'}</div><button class="btn" data-a="tb-edit" data-n="${i}">Налаштувати блок</button></div>`;if(WU[it.exId]){const ce=ex(it.exId)||{name:wuRoleLbl(WU[it.exId])};return`<div class="ti" style="border-color:var(--good)"><div class="it-head"><button class="tn" data-a="ti-swap" data-n="${i}">${i+1}. ${esc(ce.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div><label class="field"><span>Опис (порожньо - з каталогу)</span><textarea class="in" data-f="ti" data-n="${i}" data-k="desc" id="ti-d-${i}" placeholder="${esc(ce.desc||'Що робиш: напр. суглобова мобілізація, легке кардіо')}">${esc(it.desc||'')}</textarea></label><span class="muted small">Без ліміту часу. Під час запису - секундомір «Старт» / «Стоп» або хвилини вручну.</span></div>`}const e=ex(it.exId)||{name:'(вправу видалено)',type:'weight'};const type=it.type||e.type;const a=`data-f="ti" data-n="${i}"`;
+ h+=t.items.map((it,i)=>{if(TCOL.has(it))return tiCollapsed(t,it,i);if(it.kind==='block')return`<div class="ti blk">${tiHead(i,it.name,true)}<div class="it-meta"><span class="pill p-acc">${FMT[it.fmt]}</span><span>${esc(blockSum(it))}</span></div><div class="small">${(it.ex||[]).map(x=>esc(x.name)+' <span class="muted">'+esc(bexTxt(x))+'</span>').join(', ')||'<span class="muted">Вправ немає</span>'}</div><button class="btn" data-a="tb-edit" data-n="${i}">Налаштувати блок</button></div>`;if(WU[it.exId]){const ce=ex(it.exId)||{name:wuRoleLbl(WU[it.exId])};return`<div class="ti" style="border-color:var(--good)">${tiHead(i,ce.name,false)}<label class="field"><span>Опис (порожньо - з каталогу)</span><textarea class="in" data-f="ti" data-n="${i}" data-k="desc" id="ti-d-${i}" placeholder="${esc(ce.desc||'Що робиш: напр. суглобова мобілізація, легке кардіо')}">${esc(it.desc||'')}</textarea></label><span class="muted small">Без ліміту часу. Під час запису - секундомір «Старт» / «Стоп» або хвилини вручну.</span></div>`}const e=ex(it.exId)||{name:'(вправу видалено)',type:'weight'};const type=it.type||e.type;const a=`data-f="ti" data-n="${i}"`;
   let fields;if(type==='hiit')fields=`<div class="g3"><label class="field"><span>Раунди</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Робота, с</span><input class="in" inputmode="numeric" ${a} data-k="work" id="ti-w-${i}" value="${esc(it.work)}"></label><label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}"></label></div>`;
   else if(type==='cardio')fields='';
   else fields=`<div class="g3"><label class="field"><span>Підходи</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Повтори</span><input class="in" ${a} data-k="reps" id="ti-p-${i}" value="${esc(it.reps)}" placeholder="8-12"></label><label class="field"><span>RIR</span><input class="in" ${a} data-k="rir" id="ti-q-${i}" value="${esc(it.rir)}" placeholder="1-2"></label></div>`;
   const typeSel=STR.includes(e.type)?`<label class="field"><span>Режим</span><select class="in" ${a} data-k="type" id="ti-t-${i}">${STR.map(x=>`<option value="${x}" ${x===type?'selected':''}>${TYPES[x]}${x===e.type?' (осн.)':''}</option>`).join('')}</select></label>`:'';
-  return`<div class="ti"><div class="it-head"><button class="tn" data-a="ti-swap" data-n="${i}">${i+1}. ${esc(e.name)}</button><div class="it-tools"><button class="ib" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="ti-mv" data-d="1" data-n="${i}" ${i===t.items.length-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div>
+  return`<div class="ti">${tiHead(i,e.name,true)}
    ${fields}<div class="g2">${typeSel}<label class="field" ${typeSel?'':'style="grid-column:1/-1"'}><span>Примітка</span><input class="in" ${a} data-k="note" id="ti-n-${i}" value="${esc(it.note)}" placeholder="на ногу, кут лави..."></label>${STR.includes(type)&&restMode()!=='off'?`<label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}" placeholder="${restStd()||''}"></label>`:''}</div>${STR.includes(type)?tiTech(it,i,type,e):''}${ssOn()&&STR.includes(type)&&(()=>{const nx=t.items.slice(i+1).find(x=>!WU[x.exId]);if(!nx||nx.kind==='block')return false;const ne=ex(nx.exId)||{};return STR.includes(nx.type||ne.type)})()?`<label class="chk"><input type="checkbox" data-c="ti-ss" data-n="${i}" id="ti-ss-${i}" ${it.ssN?'checked':''}>Суперсет з наступною</label>`:''}</div>`}).join('');
  if(!t.items.length)h+=`<p class="empty">У шаблоні ще немає вправ.</p>`;
  return h+`<div class="g2"><button class="btn" data-a="ti-add">+ Додати вправу</button><button class="btn" data-a="tb-add">+ HIIT-блок</button></div><p class="muted small" style="margin:0">Зміни застосуються після «Зберегти шаблон». Натисни назву вправи, щоб замінити її іншою.</p>
  <div class="g2"><button class="btn" data-a="tpl-dup">Копія шаблону</button><button class="btn danger" data-a="tpl-del">Видалити шаблон</button></div>
  <div class="savebar"><button class="btn pri full" data-a="tpl-save" id="tpl-save" ${cs?'':'disabled'}>${cs?'Зберегти шаблон':'Змін немає'}</button></div>`}
+/* v55: шаблон - згортання вправ, ⋯ меню (вище, нижче, замінити) */
+const TCOL=new WeakSet();
+function tiHead(i,name,col){const it=edT().items[i],c=TCOL.has(it);return`<div class="it-head">${col?`<button class="it-name tg" data-a="ti-col" data-n="${i}" aria-expanded="${!c}"><span class="chev" aria-hidden="true">›</span>`:`<div class="it-name">`}<span class="n">${i+1}</span><span class="nm">${esc(name)}</span>${col?'</button>':'</div>'}<div class="it-tools"><button class="ib" data-a="ti-menu" data-n="${i}" aria-label="Перемістити або замінити">⋯</button><button class="ib del" data-a="ti-del" data-n="${i}" aria-label="Видалити">✕</button></div></div>`}
+function tiCollapsed(t,it,i){let a='';if(it.kind==='block')a=FMT[it.fmt]+' · '+blockSum(it);else{const e=ex(it.exId)||{name:'(вправу видалено)',type:'weight'};const type=it.type||e.type;a=[type==='cardio'?'':(it.sets||'?')+' × '+(it.reps||'?'),it.rir?'RIR '+it.rir:'',type!==e.type?TYPES[type]:'',num(it.wu)?'розм. '+it.wu:'',techTxt(it),it.ssN?'суперсет з наступною':'',it.note].filter(Boolean).join(' · ')}
+ const nm=it.kind==='block'?it.name:(ex(it.exId)||{name:'(вправу видалено)'}).name;return`<div class="ti col${it.kind==='block'?' blk':''}">${tiHead(i,nm,true)}<div class="it-sum small muted">${esc(a)||'—'}</div></div>`}
+function tiMenu(i){const t=edT();if(!t)return;const it=t.items[i],n=t.items.length;const nm=it.kind==='block'?it.name:(ex(it.exId)||{name:'?'}).name;
+ openSheet(`<h3>${esc(nm)}</h3><p class="muted small" style="margin:0">Позиція ${i+1} з ${n}</p><div class="g2"><button class="btn" data-a="ti-mv" data-d="-1" data-n="${i}" ${i===0?'disabled':''}>↑ Вище</button><button class="btn" data-a="ti-mv" data-d="1" data-n="${i}" ${i===n-1?'disabled':''}>↓ Нижче</button></div>${it.kind==='block'?`<button class="btn full" data-a="tb-edit" data-n="${i}">Налаштувати блок</button>`:`<button class="btn full" data-a="ti-swap" data-n="${i}">Замінити вправу</button>`}${WU[it.exId]?'':`<button class="btn full" data-a="ti-col" data-n="${i}">${TCOL.has(it)?'Розгорнути':'Згорнути'}</button>`}<button class="btn pri full" data-a="close">Готово</button>`,'timenu')}
 function vCatalog(){const q=(S.ui.catq||'').toLowerCase();
  let h=`<button class="btn pri full" data-a="ex-new">+ Нова вправа</button><input class="in" data-f="catq" id="catq" value="${esc(S.ui.catq||'')}" placeholder="Пошук вправи" type="search">`;
  h+=`<div class="card" id="catlist">${catalogList(q,'ex-edit')}</div>`;return h}
@@ -2048,7 +2076,7 @@ function draftToItems(w){return w.items.map(it=>it.type==='wu'?{exId:it.exId,set
 function tplOf(it){const o={},W=it.sets.filter(s=>!s.wu),wn=it.sets.length-W.length;if(wn){o.wu=String(wn);o.sets=W.length||1}const my=W.filter(s=>s.st==='myo'),dr=W.filter(s=>s.st==='drop');if(my.length){o.tech='myo';o.techN=String(Math.max(...my.map(s=>(s.mini||[]).length))||3)}else if(dr.length){o.tech='drop';o.techN=String(Math.max(...dr.map(s=>(s.drops||[]).length))||2)}if(o.tech==='drop'&&it.tgt.dropPct)o.dropPct=it.tgt.dropPct;return o}
 
 /* ========== actions ========== */
-function cleanDraft(w){const o=JSON.parse(JSON.stringify(w));delete o._edit;ssMark(o);delete o.diffAuto;
+function cleanDraft(w){const o=JSON.parse(JSON.stringify(w));delete o._edit;delete o._pc;(o.items||[]).forEach(it=>delete it._c);ssMark(o);delete o.diffAuto;
  o.items=o.items.map(it=>{if(it.type==='cardio'||it.type==='block'||it.type==='wu')return it;it.sets=it.sets.filter(s=>{if(it.type==='hiit')return !!(num(s.work)||num(s.r));const R=repsOf(it,s);return R&&R.tot});it.sets.forEach(s=>{if(s.st!=='myo')delete s.mini;else{s.mini=(s.mini||[]).filter(x=>xr(it,x)>0);if(!s.mini.length){delete s.mini;delete s.st}}if(s.st!=='drop')delete s.drops;else{s.drops=(s.drops||[]).filter(d=>xr(it,d)>0);if(!s.drops.length){delete s.drops;delete s.st}}if(s.wu)delete s.rir});return it}).filter(it=>it.type==='wu'||(it.type==='cardio'||it.type==='block'?itemStats(it,0).has:it.sets.length));if(diffOn()&&!o.diff){const a=diffAutoOf(o);if(a)o.diffAuto=a}return o}
 function sumHTML(w){const st=wStats(w),bw=bwOf(w),o=wuInfo(w),warm=isWarm(w);const L=[];
  const row=(l,v)=>`<span>${l}</span><b>${v}</b>`;
@@ -2074,7 +2102,7 @@ const ACT={
  'confirm-ok'(){const f=CONFIRM;CONFIRM=null;closeSheet(false);f&&f();render()},
  undo(){if(UNDO){UNDO();UNDO=null;$('#toastHost').innerHTML='';save();render()}},
  start(el){const t=S.templates.find(x=>x.id===el.dataset.t);S.draft=newWorkout(t||null);save();render();window.scrollTo(0,0)},
- mv(el){const w=S.draft,i=w.items.findIndex(x=>x.uid===el.dataset.i),j=i+ +el.dataset.d;if(j<0||j>=w.items.length)return;[w.items[i],w.items[j]]=[w.items[j],w.items[i]];save();render();const c=document.getElementById('it-'+el.dataset.i);c&&c.scrollIntoView({block:'center'})},
+ mv(el){const w=S.draft,u=el.dataset.i,i=w.items.findIndex(x=>x.uid===u),j=i+ +el.dataset.d;if(j<0||j>=w.items.length)return;[w.items[i],w.items[j]]=[w.items[j],w.items[i]];save();render();const c=document.getElementById('it-'+u);c&&c.scrollIntoView({block:'start'});if(SHEET==='itmenu')itMenu(u)},
  'del-item'(el){const w=S.draft,i=w.items.findIndex(x=>x.uid===el.dataset.i);const [rm]=w.items.splice(i,1);save();render();toast('Вправу прибрано з сьогоднішнього тренування',()=>{S.draft&&S.draft.items.splice(i,0,rm)})},
  'add-set'(el){const it=itemBy(el.dataset.i);const last=it.sets[it.sets.length-1]||{};const s=blankSet(it,{},it.type==='trx'?{w:last.w,pos:last.pos,assist:last.assist,kgm:last.kgm,ang:last.ang,man:last.man}:(()=>{const r=bandsOf(last).slice();r.bmode=last.bmode;r.bstr=last.bstr;return r})());if(it.type==='hiit'){s.work=last.work||'';s.rest=last.rest||'';s.w=last.w||''}if(last.lv)s.lv=last.lv;if(last.par)s.par=true;it.sets.push(s);
   save();render()},
@@ -2150,7 +2178,9 @@ const ACT={
  'tpl-dup'(){const e=S.ui.tplEd;if(!e)return;if(tplCanSave()){toast('Спершу збережи шаблон або вийди без збереження');return}const src=S.templates.find(x=>x.id===e.id)||e.t;const c=JSON.parse(JSON.stringify(src));c.id=uid();c.name+=' (копія)';S.templates.push(c);tplOpen(c,false);save();render();window.scrollTo(0,0);toast('Створено копію, вона вже збережена')},
  'tpl-del'(){const e=S.ui.tplEd;if(!e)return;if(e.isNew){confirmSheet('Скасувати створення шаблону?','Так',()=>{tplClose();save()});return}const id=e.id;confirmSheet('Видалити шаблон? Історія тренувань залишиться','Видалити',()=>{S.templates=S.templates.filter(t=>t.id!==id);tplClose();save()})},
  'tpl-delall'(){confirmSheet('Видалити всі шаблони? Каталог вправ та історія залишаться','Видалити всі',()=>{S.templates=[];save()})},
- 'ti-mv'(el){const t=edT(),i=+el.dataset.n,j=i+ +el.dataset.d;[t.items[i],t.items[j]]=[t.items[j],t.items[i]];save();render()},
+ 'ti-mv'(el){const t=edT(),i=+el.dataset.n,j=i+ +el.dataset.d;if(j<0||j>=t.items.length)return;[t.items[i],t.items[j]]=[t.items[j],t.items[i]];save();render();if(SHEET==='timenu')tiMenu(j)},
+ 'ti-menu'(el){tiMenu(+el.dataset.n)},
+ 'ti-col'(el){const t=edT();if(!t)return;const it=t.items[+el.dataset.n];if(!it)return;if(SHEET==='timenu')closeSheet(false);const idx=+el.dataset.n;const host=[...document.querySelectorAll('.ti')][idx];if(host)host.id='ti-host';colKeep('ti-host',()=>{if(TCOL.has(it))TCOL.delete(it);else TCOL.add(it);render();const h2=[...document.querySelectorAll('.ti')][idx];if(h2)h2.id='ti-host'})},
  'ti-del'(el){const t=edT(),i=+el.dataset.n;const [rm]=t.items.splice(i,1);save();render();toast('Вправу видалено з шаблону',()=>t.items.splice(i,0,rm))},
  'ti-add'(){pickerSheet(e=>{const t=edT();if(WU[e.id]){t.items.push({exId:e.id,sets:1,reps:'',rir:'',note:'',type:'',work:'',rest:'',desc:''});save();closeSheet();return}t.items.push({exId:e.id,sets:e.type==='cardio'?1:e.type==='hiit'?4:2,reps:STR.includes(e.type)?'8-12':'',rir:'',note:'',type:'',work:e.type==='hiit'?'30':'',rest:e.type==='hiit'?'30':''});save();closeSheet()},'Додати до шаблону')},
  'ti-swap'(el){const i=+el.dataset.n;pickerSheet(e=>{const t=edT();t.items[i].exId=e.id;t.items[i].type='';if(WU[e.id])t.items[i].sets=1;else if(!num(t.items[i].sets))t.items[i].sets=2;save();closeSheet()},'Замінити вправу')},
@@ -2185,6 +2215,12 @@ const ACT={
   if(!k){toast('Клітинки вже заповнені');return}save();render();toast('Рекомендацію вписано',()=>{it.sets=JSON.parse(old);save();render()})},
  'rec-clear'(el){const it=itemBy(el.dataset.i);if(!it)return;const old=JSON.stringify(it.sets);let k=0;const LN=loadNumT(it);it.sets.forEach(s=>{if(s.wu)return;['r','rl','rr','rir'].concat(LN?['w']:[]).forEach(x=>{if(s[x]!=null&&s[x]!==''){s[x]='';k++}})});
   if(!k){toast('Нема що очищати');return}save();render();toast('Вписане очищено',()=>{it.sets=JSON.parse(old);save();render()})},
+ 'it-col'(el){const it=itemBy(el.dataset.i);if(!it)return;if(SHEET==='itmenu')closeSheet(false);colKeep('it-'+it.uid,()=>{if(it._c)delete it._c;else it._c=true;save();render()})},
+ 'it-menu'(el){itMenu(el.dataset.i)},
+ 'col-all'(el){const w=S.draft;if(!w)return;const on=el.dataset.v==='1';w.items.forEach(it=>{if(it.type==='wu')return;if(on)it._c=true;else delete it._c});save();render()},
+ 'mh-tog'(el){const m=el.closest('.it').querySelector('.mh');if(m)m.hidden=!m.hidden},
+ 'rec-why'(el){el.closest('.recb').classList.toggle('open')},
+ 'pre-col'(){const w=S.draft;if(!w)return;colKeep('pre-card',()=>{if(w._pc)delete w._pc;else w._pc=true;save();render()})},
  kset(el){S.settings[el.dataset.k]=+el.dataset.v;save();render()},
  'wu-tog'(el){if(Date.now()-LPSKIP<800)return;const it=itemBy(el.dataset.i);const s=it&&it.sets[+el.dataset.n];if(!s)return;if(s.wu)delete s.wu;else s.wu=true;save();render()},
  restdir(el){S.settings.restDir=el.dataset.v;save();render()},
@@ -2239,8 +2275,7 @@ function blockResTxt(b){const s=blockStats(b);if(!s.has)return'—';switch(b.fmt
 function prevBlock(name,w){const ws=sortedW();for(let i=ws.length-1;i>=0;i--){const x=ws[i];if(x.id===w.id||x.date>w.date)continue;const b=x.items.find(it=>it.type==='block'&&it.name===name);if(b&&blockStats(b).has)return{w:x,b}}return null}
 function blockHTML(b,i,n,w){return wuBlkCard(b,'warm')+blockHTML0(b,i,n,w)+wuBlkCard(b,'cool')}
 function blockHTML0(b,i,n,w){const pv=prevBlock(b.name,w);
- let h=`<article class="it blk" id="it-${b.uid}"><div class="it-head"><div class="it-name"><span class="n">${i+1}</span>${esc(b.name)}</div><div class="it-tools">
-  <button class="ib" data-a="mv" data-d="-1" data-i="${b.uid}" ${i===0?'disabled':''} aria-label="Вище">↑</button><button class="ib" data-a="mv" data-d="1" data-i="${b.uid}" ${i===n-1?'disabled':''} aria-label="Нижче">↓</button><button class="ib del" data-a="del-item" data-i="${b.uid}" aria-label="Прибрати">✕</button></div></div>
+ let h=`<article class="it blk${b._c?' col':''}" id="it-${b.uid}">${itHead(b,i,b.name,'')}`;if(b._c)return h+itSum(b,null,'')+`</article>`;h+=`
   <div class="it-meta"><span class="pill p-acc">${FMT[b.fmt]}</span><span>${esc(blockSum(b))}</span></div>
   <ol class="bexl">${mainEx(b).map(x=>`<li><b>${esc(x.name)}</b> <span class="muted">${esc(bexTxt(x))}</span></li>`).join('')||'<li class="muted">Вправ немає</li>'}</ol>
   ${pv?`<div class="prev">Минулого разу ${dShort(pv.w.date)}: <b>${esc(blockResTxt(pv.b))}</b></div>`:''}
