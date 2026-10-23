@@ -264,7 +264,7 @@ body.rton:not(.kb):not(.sheetopen):not(.tmopen) .toast{bottom:calc(150px + env(s
 .sig .pill{flex:none;margin-top:1px}
 .chart{position:relative;user-select:none;-webkit-user-select:none;touch-action:pan-y}
 .chart svg{display:block;width:100%;height:auto;overflow:visible}
-.chart .tip{position:absolute;top:0;pointer-events:none;background:var(--fg);color:var(--bg);border-radius:8px;padding:4px 8px;font-size:12px;font-weight:600;white-space:nowrap;transform:translateX(-50%)}
+.chart{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.chart .tip.pin{outline:2px solid var(--accent);outline-offset:1px}.kx{font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}.kx.up,.kx .up{color:var(--good)}.kx.down,.kx .down{color:var(--bad)}.hlp2{margin-top:6px}.chart .tip{max-width:100%;white-space:normal!important;text-align:center;position:absolute;top:0;pointer-events:none;background:var(--fg);color:var(--bg);border-radius:8px;padding:4px 8px;font-size:12px;font-weight:600;white-space:nowrap;transform:translateX(-50%)}
 .ax{fill:var(--muted);font:500 11px var(--f-body)}
 .gl{stroke:var(--line);stroke-width:1}
 .cl-area{fill:var(--accent);opacity:.1}.cl-line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.cl-dot{fill:var(--accent);stroke:var(--surface);stroke-width:2}.chart .hl{stroke:var(--muted);stroke-dasharray:3 3}.chart .hp{fill:none;stroke:var(--fg);stroke-width:2}
@@ -508,7 +508,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='55.7 · 23.10.2026';
+const APPV='55.8 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -872,7 +872,7 @@ function grpDet(ws,gr,wk){const A={};ws.forEach(w=>(w.items||[]).forEach(it=>{if
   it.sets.forEach(s=>{if(s.wu||!isHard(it,s))return;n++;h+=hardW(it,s);const q=num(s.rir);if(q!=null&&q>=3&&q<=4)r34++;mi+=miniOf(it,s).length;dr+=dropsOf(it,s).length});if(!n)return;
   const k=keyOf(it);const a=A[k]=A[k]||{nm:it.name,d:!!c.gD[gr],k:c.g[gr],n:0,h:0,r34:0,mi:0,dr:0,w:new Set()};a.n+=n;a.h+=h;a.r34+=r34;a.mi+=mi;a.dr+=dr;a.w.add(w.id)}));
  const L=Object.values(A).sort((a,b)=>b.h*b.k-a.h*a.k);if(!L.length)return'<div class="xbox muted small">Робочих підходів на цю групу за період немає.</div>';const c1=v=>nf(v/wk,1);let sD=0,sI=0,sT=0;
- const rows=L.map(a=>{const t=a.h*a.k;sT+=t;if(a.d)sD+=a.h;else sI+=a.h;const f=[`${a.n} підх. за період`,`${a.w.size} трен.`];if(a.r34)f.push(`${a.r34}× RIR 3-4 ×${nf(kRir(),2)}`);if(a.mi)f.push(`+${a.mi} міні ×${nf(kMyo(),2)}`);if(a.dr)f.push(`+${a.dr} дроп ×${nf(kDrop(),2)}`);
+ const rows=L.map(a=>{const t=a.h*a.k;sT+=t;if(a.d)sD+=a.h;else sI+=a.h;const f=[`${a.n} підх. у ${a.w.size} трен. за період`];if(a.r34)f.push(`${a.r34}× RIR 3-4 ×${nf(kRir(),2)}`);if(a.mi)f.push(`+${a.mi} міні ×${nf(kMyo(),2)}`);if(a.dr)f.push(`+${a.dr} дроп ×${nf(kDrop(),2)}`);
   return`<div class="gsub di xg"><span class="xn">${esc(a.nm)}<span class="muted">${f.join(' · ')}</span></span><span class="c">${a.d?c1(a.h):''}</span><span class="c">${a.d?'':c1(a.h)}</span><b class="c num">${c1(t)}</b></div>`}).join('');
  return`<div class="xbox"><div class="muted xh">Вправи, підходів на тиждень</div>${rows}<div class="gsub di xg xt"><span>Разом${secW()!==1&&sI?` <span class="muted">непрямі ×${nf(secW(),2)}</span>`:''}</span><span class="c">${c1(sD)}</span><span class="c">${c1(sI)}</span><b class="c num">${c1(sT)}</b></div></div>`}
 function recovBlock(){const r=recovery(S.draft&&S.draft.id);const gs=(musFull()?GROUPS:SHORT_GROUPS).filter(g=>!MINOR.includes(g)&&r[g]&&r[g].el<14*24);
@@ -1257,7 +1257,7 @@ function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm
  document.body.classList.toggle('wide',t!=='log'||!S.draft);
  const keep=LASTVIEW===t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:''),y=window.scrollY;
  const openD=keep?[...document.querySelectorAll('#main details[open] > summary')].map(x=>x.textContent):[];
- $('#main').innerHTML=({log:vLog,hist:vHist,stats:vStats,tpl:vTpl,set:vSet})[t]();attachCharts();
+ $('#main').innerHTML=t==='stats'?HLa(vStats()):({log:vLog,hist:vHist,stats:vStats,tpl:vTpl,set:vSet})[t]();attachCharts();
  if(openD.length)document.querySelectorAll('#main details > summary').forEach(x=>{if(openD.includes(x.textContent))x.parentElement.open=true});
  LASTVIEW=t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:'');
  const pad=document.getElementById('scrollPad');if(pad){if(keep)padKeep(y);else pad.style.height='0px'}
@@ -1504,8 +1504,16 @@ function chart(pts,unit,dg=0){if(!pts.length)return`<p class="empty">Немає 
 function attachCharts(){for(const id in CH){const el=document.getElementById(id);if(!el)continue;const c=CH[id],svg=el.querySelector('svg'),tip=el.querySelector('.tip'),hl=el.querySelector('.hl'),hp=el.querySelector('.hp');
  const show=e=>{const r=svg.getBoundingClientRect();const sx=(e.clientX-r.left)/r.width*c.W;let best=c.P[0];c.P.forEach(p=>{if(Math.abs(p.x-sx)<Math.abs(best.x-sx))best=p});
   hl.setAttribute('x1',best.x);hl.setAttribute('x2',best.x);hl.setAttribute('visibility','visible');hp.setAttribute('cx',best.x);hp.setAttribute('cy',best.y);hp.setAttribute('visibility','visible');
-  tip.hidden=false;tip.textContent=`${dShort(best.d)} · ${nf(best.v,c.dg)} ${c.unit}${best.lab?' · '+best.lab:''}`;const px=best.x/c.W*r.width;tip.style.left=Math.min(Math.max(px,60),r.width-60)+'px';tip.style.top=(best.y/c.W*r.width-36)+'px'};
- el.addEventListener('pointerdown',show);el.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons)show(e)});el.addEventListener('pointerleave',()=>{tip.hidden=true;hl.setAttribute('visibility','hidden');hp.setAttribute('visibility','hidden')})}}
+  tip.hidden=false;tip.textContent=`${dShort(best.d)} · ${nf(best.v,c.dg)} ${c.unit}${best.lab?' · '+best.lab:''}`;tip.style.width='auto';tip.style.left='0px';const ww=Math.min(tip.offsetWidth+1,r.width);tip.style.width=ww+'px';const px=best.x/c.W*r.width,tw=ww/2;tip.style.left=Math.min(Math.max(px,tw),r.width-tw)+'px';tip.style.top=(best.y/c.W*r.width-36)+'px'};
+ const hide=()=>{tip.hidden=true;tip.classList.remove('pin');el._pin=false;hl.setAttribute('visibility','hidden');hp.setAttribute('visibility','hidden')};el._hide=hide;let lpT=null,p0=null;
+ el.addEventListener('pointerdown',e=>{el._pin=false;tip.classList.remove('pin');show(e);p0=[e.clientX,e.clientY];clearTimeout(lpT);lpT=setTimeout(()=>{el._pin=true;tip.classList.add('pin');if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}},450)});
+ el.addEventListener('pointermove',e=>{if(p0&&Math.hypot(e.clientX-p0[0],e.clientY-p0[1])>8&&!el._pin)clearTimeout(lpT);if(e.pointerType==='mouse'||e.buttons)show(e)});
+ const up=()=>{clearTimeout(lpT);p0=null};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',()=>{up();if(!el._pin)hide()});
+ el.addEventListener('pointerleave',()=>{if(!el._pin)hide()});el.addEventListener('contextmenu',e=>e.preventDefault())}}
+/* закріплена підказка знімається тапом в іншому місці або прокруткою */
+const unpinCharts=x=>document.querySelectorAll('.chart').forEach(c=>{if(c._pin&&c!==x&&c._hide)c._hide()});
+document.addEventListener('pointerdown',e=>unpinCharts(e.target.closest&&e.target.closest('.chart')),true);
+addEventListener('scroll',()=>unpinCharts(null),{passive:true});
 function viewToggle(key){const v=S.ui['v_'+key]||'chart';return`<div class="seg" style="flex:none"><button class="${v==='chart'?'on':''}" data-a="view" data-k="${key}" data-v="chart">Графік</button><button class="${v==='num'?'on':''}" data-a="view" data-k="${key}" data-v="num">Цифри</button></div>`}
 function numTable(pts,unit,dg){if(!pts.length)return`<p class="empty">Немає даних за цей період</p>`;const byK=pts.some(p=>p.k)&&new Set(pts.map(p=>p.k)).size>1;
  return`<div class="tblw"><table class="tbl"><thead><tr><th>Дата</th><th class="r">${esc(unit)}</th><th class="r">Δ</th></tr></thead><tbody>${pts.slice().reverse().map((p,i,a)=>{const prev=byK?a.slice(i+1).find(x=>x.k===p.k):a[i+1];const d=prev&&prev.y?p.y/prev.y-1:null;return`<tr><td>${dShort(p.d)}${p.lab?` <span class="muted small">${p.col?`<i class="cdot" style="background:${p.col}"></i>`:''}${esc(p.lab)}</span>`:''}</td><td class="r num">${nf(p.y,dg)}</td><td class="r ${d>0?'up':d<0?'down':''}">${d==null?'':pct(d)}${d!=null&&byK?`<div class="muted dto">до ${dShort(prev.d)}</div>`:''}</td></tr>`}).join('')}</tbody></table></div>`}
@@ -1527,7 +1535,7 @@ function stOverview(){const C=calc(),ws=sortedW().filter(w=>w.date>=periodStart(
  let h=`<div class="kpis">
   ${anOn('kpi_n')?`<div class="kpi"><div class="k">Тренувань</div><div class="v">${ws.length} <small>${f1(ws.length/wk)}/тиж</small></div></div>`:''}
   ${anOn('kpi_hard')?`<div class="kpi"><div class="k">Робочих підходів</div><div class="v">${fH(hard)} <small>${f1(hard/wk)}/тиж</small></div></div>`:''}
-  ${anOn('kpi_vol')?`<div class="kpi"><div class="k">Обсяг, т</div><div class="v">${f1(vol/1000)}</div></div>`:''}
+  ${anOn('kpi_vol')?`<div class="kpi"><div class="k">Обсяг, т</div><div class="v">${f1(vol/1000)} <small>${f1(vol/1000/wk)}/тиж</small></div></div>`:''}
   ${anOn('kpi_dur')&&mo('dur')?`<div class="kpi"><div class="k">Сер. тривалість, хв</div><div class="v">${f0(dur.v)}${imp(dur.n)}</div></div>`:''}
   ${anOn('kpi_sleep')&&mo('sleep')?`<div class="kpi"><div class="k">Сон, год</div><div class="v">${f1(sl.v)}${imp(sl.n)}</div></div>`:''}
   ${anOn('kpi_well')&&mo('well')?`<div class="kpi"><div class="k">Самопочуття</div><div class="v">${f1(wl.v)}${imp(wl.n)}</div></div>`:''}
@@ -1636,7 +1644,7 @@ function corrBlock(ws){const C=calc();const rv=(w,k)=>k==='rest'?C.wst[w.id].res
 function signals(ws){const C=calc(),out=[],t=todayStr();
  Object.values(C.ses).forEach(o=>{if(!STR.includes(o.type))return;const s=o.ses.filter(x=>x.score);if(s.length<2)return;const last=s[s.length-1];if(last.d<periodStart())return;const before=s.slice(0,-1);const best=Math.max(...before.map(x=>x.score));
   if(last.score>best*1.005&&last.d>=addDays(t,-14)){if(anOn('sig_pr'))out.push([1,'p-good','Рекорд',o.type==='bw'&&noKg(o.exId)?`${o.label}: ${f0(last.score)} повт. (${pct(last.score/best-1)})`:`${o.label}: 1ПМ ≈ ${f1(last.score)} (${pct(last.score/best-1)})`])}
-  else if(last.score<best*.95){if(anOn('sig_drop'))out.push([0,'p-bad','Спад',`${o.label}: ${pct(last.score/best-1)} від найкращого. Перевір сон, відновлення, техніку${last.phase==='deficit'?' Фаза: дефіцит, невеликий спад тут очікуваний':''}`])}
+  else if(last.score<best*.95){if(anOn('sig_drop'))out.push([0,'p-bad','Спад',`${o.label}: ${pct(last.score/best-1)} від найкращого. Перевір сон, відновлення, техніку.${last.phase==='deficit'?' Фаза: дефіцит, невеликий спад тут очікуваний':''}`])}
   else if(s.length>=5&&anOn('sig_stall')){const l4=s.slice(-4),pre=s.slice(0,-4);if(pre.length&&Math.max(...l4.map(x=>x.score))<=Math.max(...pre.map(x=>x.score))*1.005)out.push([2,'p-warn','Застій',`${o.label}: 4 сесії без нового максимуму. Зміни діапазон повторень, додай підхід або зроби легкий тиждень`])}});
  const gs=groupSets(ws),wk=weeksSpan(ws,periodStart());if(ws.length>=3){if(anOn('sig_low')){const low=GROUPS.filter(g=>!MINOR.includes(g)&&gs[g]&&gs[g]/wk<6).map(g=>`${g} ${f1(gs[g]/wk)}`);if(low.length)out.push([3,'p-warn','Мало',`Підходів на тиждень менше 6: ${low.join(', ')}`]);const zero=GROUPS.filter(g=>!MINOR.includes(g)&&!gs[g]);if(zero.length)out.push([4,'p-mut','Не тренуються',zero.join(', ')])}
   const hi=GROUPS.filter(g=>(gs[g]||0)/wk>30).map(g=>`${g} ${f1(gs[g]/wk)}`);if(hi.length&&anOn('sig_high'))out.push([3,'p-warn','Багато',`Понад 30 підходів на тиждень: ${hi.join(', ')}. Віддача від кожного наступного підходу вже мала, слідкуй за відновленням`])}
@@ -1651,13 +1659,15 @@ function stExercise(){const C=calc(),ps=periodStart();
  const chg=arr=>{const v=arr.filter(x=>x!=null);if(v.length<2)return null;const a=v.length>=4?avg(v.slice(0,2)):v[0],b=v.length>=4?avg(v.slice(-2)):v[v.length-1];return a?b/a-1:null};
  let h=`<select class="in" data-c="exk" id="exk" aria-label="Вправа">${list.map(x=>`<option value="${esc(x.o.k)}" ${x.o.k===o.k?'selected':''}>${esc(x.o.label)} (${x.s.length})</option>`).join('')}</select>`;
  let pts,unit,dg=0,M;
- if(STR.includes(o.type)){const NK=o.type==='bw'&&noKg(o.exId);const ok=NK?['e1','hard','rest']:['e1','vol','hard','rest'];M=ok.includes(S.ui.exm)?S.ui.exm:'e1';const sc=s.map(x=>x.score);const last=s[s.length-1];
+ if(STR.includes(o.type)){const NK=o.type==='bw'&&noKg(o.exId);const ok=NK?['e1','hard','rest']:['e1','vol','hard','rest'];M=ok.includes(S.ui.exm)?S.ui.exm:'e1';const sc=s.map(x=>x.score);const last=s.filter(x=>x.score!=null).pop()||s[s.length-1];
   h+=`<div class="kpis"><div class="kpi"><div class="k">${NK?'Найкращий підхід':'Розрахунковий 1ПМ'}</div><div class="v">${f1(last.score)} <small>${unitOf(o.type,o.exId)}</small></div></div>
    <div class="kpi"><div class="k">Найкращий за період</div><div class="v">${f1(Math.max(...sc.filter(x=>x!=null)))}</div></div>
-   <div class="kpi"><div class="k">${NK?'Зміна повторів':'Зміна 1ПМ'}</div><div class="v ${chg(sc)>0?'up':chg(sc)<0?'down':''}">${pct(chg(sc))}</div></div>
-   ${NK?'':`<div class="kpi"><div class="k">Зміна обсягу</div><div class="v ${chg(s.map(x=>x.vol))>0?'up':chg(s.map(x=>x.vol))<0?'down':''}">${pct(chg(s.map(x=>x.vol)))}</div></div>`}
+   ${(()=>{const cl=v=>v>0?'up':v<0?'down':'';const vs=s.filter(x=>x.score!=null).map(x=>x.vol);const a=chg(sc),av=NK?null:chg(vs);const li=o.ses.indexOf(last),pv=li>0?o.ses.slice(0,li).filter(x=>x.score!=null).pop()||null:null;const b=pv&&pv.score&&last.score!=null?last.score/pv.score-1:null,bv=!NK&&pv&&pv.vol?last.vol/pv.vol-1:null;const nm=NK?'повтори':'1ПМ';
+    return`<div class="kpi"><div class="k">Зміна за період</div><div class="v ${cl(a)}">${pct(a)} <small>${nm}</small></div>${NK?'':`<div class="kx ${cl(av)}">обсяг ${pct(av)}</div>`}</div>
+    <div class="kpi"><div class="k">До минулого разу</div><div class="v ${cl(b)}">${pct(b)} <small>${nm}</small></div><div class="kx">${NK?'':`<span class="${cl(bv)}">обсяг ${pct(bv)}</span> · `}${pv?'до '+dShort(pv.d):'перша сесія'}</div></div>`})()}
    <div class="kpi"><div class="k">Сесій</div><div class="v">${s.length}</div></div>
-   <div class="kpi"><div class="k">Сер. відпочинок</div><div class="v">${s.some(x=>x.rest)?mmss(avg(s.map(x=>x.rest).filter(Boolean))):'—'}</div></div></div>`;
+   <div class="kpi"><div class="k">Сер. відпочинок</div><div class="v">${s.some(x=>x.rest)?mmss(avg(s.map(x=>x.rest).filter(Boolean))):'—'}</div></div></div>
+   <p class="muted small" style="margin:0">«Зміна за період» - тренд: середнє 2 останніх сесій періоду до 2 перших (якщо сесій менше 4 - остання до першої). «До минулого разу» - остання сесія до попередньої, навіть якщо та була раніше за період. Легкі тренування в 1ПМ і обсяг тут не беруться.</p>`;
   const opts=NK?{e1:['Повтори','повт.',0],hard:['Підходи','підх.',0],rest:['Відпоч.','с',0]}:{e1:['1ПМ',unitOf(o.type,o.exId),1],vol:['Обсяг','кг',0],hard:['Підходи','підх.',0],rest:['Відпоч.','с',0]};
   h+=`<section class="card stack"><div class="row between"><div class="seg" style="flex:1 1 auto">${Object.entries(opts).map(([k,v])=>`<button class="${M===k?'on':''}" data-a="exm" data-v="${k}">${v[0]}</button>`).join('')}</div>${viewToggle('ex')}</div>`;
   pts=s.map(x=>{const y=M==='e1'?x.score:M==='vol'?x.vol:M==='hard'?x.hard:x.rest;return y==null||(M==='rest'&&!y)?null:{d:x.d,y,lab:x.bestTxt}}).filter(Boolean);unit=opts[M][1];dg=opts[M][2]}
@@ -1673,7 +1683,7 @@ function stExercise(){const C=calc(),ps=periodStart();
  h+=(S.ui.v_ex==='num'?numTable(pts,unit,dg):chart(pts,unit,dg));
  if(STR.includes(o.type)&&M==='e1')h+=o.type==='bw'&&noKg(o.exId)?`<p class="muted small" style="margin:0">Вправа без кг: показано найкращий підхід за повторами.</p>`:`<p class="muted small" style="margin:0">1ПМ за формулою Еплі з урахуванням RIR: вага × (1 + (повтори + RIR) / 30). Для гантелей - на одну гантель. Для власної ваги - частка ваги тіла (за вправою або положенням) плюс додаткова вага.</p>`;
  h+=`</section>`;
- h+=`<section class="card stack"><div class="lbl">Усі вправи за період</div><div class="tblw"><table class="tbl"><thead><tr><th>Вправа</th><th class="r">Сес.</th><th class="r">1ПМ</th><th class="r">Δ</th></tr></thead><tbody>${list.map(x=>{const st=STR.includes(x.o.type);const c=st?chg(x.s.map(y=>y.score)):null;const l=x.s[x.s.length-1];return`<tr data-a="sel-ex" data-v="${esc(x.o.k)}" class="${x.o.k===o.k?'sel':''}"><td>${esc(x.o.label)}</td><td class="r">${x.s.length}</td><td class="r num">${st?(x.o.type==='bw'&&noKg(x.o.exId)?f0(l.score)+' п.':f1(l.score)):'—'}</td><td class="r ${c>0?'up':c<0?'down':''}">${st?pct(c):''}</td></tr>`}).join('')}</tbody></table></div><p class="muted small" style="margin:0">Δ - зміна 1ПМ від початку до кінця періоду (середнє перших двох сесій проти останніх двох).</p></section>`;
+ h+=`<section class="card stack"><div class="lbl">Усі вправи за період</div><div class="tblw"><table class="tbl"><thead><tr><th>Вправа</th><th class="r">Сес.</th><th class="r">1ПМ</th><th class="r">Δ</th></tr></thead><tbody>${list.map(x=>{const st=STR.includes(x.o.type);const c=st?chg(x.s.map(y=>y.score)):null;const l=x.s.filter(y=>y.score!=null).pop()||x.s[x.s.length-1];return`<tr data-a="sel-ex" data-v="${esc(x.o.k)}" class="${x.o.k===o.k?'sel':''}"><td>${esc(x.o.label)}</td><td class="r">${x.s.length}</td><td class="r num">${st?(x.o.type==='bw'&&noKg(x.o.exId)?f0(l.score)+' п.':f1(l.score)):'—'}</td><td class="r ${c>0?'up':c<0?'down':''}">${st?pct(c):''}</td></tr>`}).join('')}</tbody></table></div><p class="muted small" style="margin:0">Δ - зміна 1ПМ від початку до кінця періоду (середнє перших двох сесій проти останніх двох). 1ПМ - остання повноцінна сесія: легкі тренування в 1ПМ і прогрес не беруться.</p></section>`;
  return h}
 const SHORT_GROUPS=['Груди','Спина','Передня дельта','Середня дельта','Задня дельта','Трапеції','Біцепс','Трицепс','Квадрицепс','Сідниці','Біцепс стегна','Ікри','Прес'];
 const musFull=()=>S.settings.musMode!=='short';
@@ -1681,7 +1691,7 @@ function groupBars(g,wk,m,di,ws){m=m||{};const max=35;let cur='';const full=musF
  const head=D?`<div class="gbar di dih"><span></span><span>Прямі</span><span>Непрямі</span><span>Разом</span></div>`:'';
  return head+(full?GROUPS:SHORT_GROUPS).map(gr=>{const v=(g[gr]||0)/wk;const minor=MINOR.includes(gr);const st=minor?['','доп.']:v<6?['p-warn','мало']:v<10?['p-mut','помірно']:v<=20?['p-good','норма']:v<=30?['p-mut','високий']:['p-warn','багато'];
   const reg=GRP_REG[gr];const hd=full&&reg!==cur?`<div class="gh">${reg}</div>`:'';cur=reg;
-  const subs=!full||GRP_MUS(gr).length<2?'':Object.keys(m).filter(k=>musGrp(k)===gr).map(k=>D?`<div class="gsub di"><span>${esc(MUS[k]?MUS[k].name:k+' (без деталізації)')}</span><span class="c">${c1(D.mD[k]||0)}</span><span class="c">${c1(D.mI[k]||0)}</span><b class="c num">${c1(m[k])}</b></div>`:`<div class="gsub"><span>${esc(MUS[k]?MUS[k].name:k+' (без деталізації)')}</span><b class="num">${nf(m[k]/wk,1)}</b></div>`).join('');
+  const subs=!full||GRP_MUS(gr).length<2?'':GRP_MUS(gr).filter(k=>m[k]!=null).concat(Object.keys(m).filter(k=>musGrp(k)===gr&&!GRP_MUS(gr).includes(k))).map(k=>D?`<div class="gsub di"><span>${esc(MUS[k]?MUS[k].name:k+' (без деталізації)')}</span><span class="c">${c1(D.mD[k]||0)}</span><span class="c">${c1(D.mI[k]||0)}</span><b class="c num">${c1(m[k])}</b></div>`:`<div class="gsub"><span>${esc(MUS[k]?MUS[k].name:k+' (без деталізації)')}</span><b class="num">${nf(m[k]/wk,1)}</b></div>`).join('');
   const track=`<div class="track">${minor?'':`<span class="tz" style="left:${10/max*100}%;width:${10/max*100}%"></span><span class="tz hi" style="left:${20/max*100}%;width:${10/max*100}%"></span>`}<span class="fill" style="width:${Math.min(100,v/max*100)}%"></span></div>`;
   const bar=D?`<span class="nm">${gr}</span><span class="c">${c1(D.gD[gr]||0)}</span><span class="c">${c1(D.gI[gr]||0)}</span><span class="vv">${nf(v,1)}<small>${st[1]}</small></span>${track}`:`<span class="nm">${gr}</span>${track}<span class="vv">${nf(v,1)}<small>${st[1]}</small></span>`;
   const cls=D?'gbar di':'gbar';
@@ -1713,7 +1723,7 @@ function stReport(){const ms=monthsList();const ym=ms.includes(S.ui.month)?S.ui.
  <div class="kpis"><div class="kpi"><div class="k">Тренувань</div><div class="v">${R.ws.length} <small>${f1(R.ws.length/R.wk)}/тиж</small></div></div>
  <div class="kpi"><div class="k">Загальна прогресія</div><div class="v ${R.idx>0?'up':R.idx<0?'down':''}">${pct(R.idx)}</div></div>
  <div class="kpi"><div class="k">Робочих підходів</div><div class="v">${fH(R.hard)}</div></div>
- <div class="kpi"><div class="k">Обсяг, т</div><div class="v">${f1(R.vol/1000)}</div></div>
+ <div class="kpi"><div class="k">Обсяг, т</div><div class="v">${f1(R.vol/1000)} <small>${f1(R.vol/1000/R.wk)}/тиж</small></div></div>
  ${mfOn('str','sleep')||mfOn('str','well')?`<div class="kpi"><div class="k">Сон / самопоч.</div><div class="v">${f1(R.sl.v)} <small>/ ${f1(R.wl.v)}</small></div></div>`:''}
  <div class="kpi"><div class="k">Сер. тривалість</div><div class="v">${f0(R.dur.v)} <small>хв</small></div></div></div>
  <p class="muted small" style="margin:0">Загальна прогресія - медіана зміни найкращого 1ПМ кожної вправи цього місяця проти її найкращого за попередні 60 днів. Кожна вправа порівнюється сама з собою, тому зал, гума й турніки не змішуються. Вправ у розрахунку: ${R.prog.length}.</p>
@@ -1808,9 +1818,14 @@ function bandRows(selectable,sel){sel=sel||{};const t=bandTab();const ids={min:'
  <div class="${t==='2'?'g2':'g3'}">${t==='2'?cell(b,'min','Від, кг')+cell(b,'max','До, кг'):cell(b,'k50','50 см, кг')+cell(b,'k100','100 см, кг')+cell(b,'k150','150 см, кг')}</div>
  <div class="small ${bandMethod(b)?'muted':''}" id="bst-${b.id}" style="${bandMethod(b)?'':'color:var(--bad)'}">${bandMethTxt(b)}</div></div>`).join('')}
 /* v51: Налаштування - блоки-гармошки. Пояснення сховані в «ⓘ Як це працює» */
-const AN_DEF=[['Огляд: картки',[['kpi_n','Тренувань'],['kpi_hard','Робочих підходів'],['kpi_vol','Обсяг'],['kpi_dur','Сер. тривалість'],['kpi_sleep','Сон'],['kpi_well','Самопочуття'],['kpi_load','Навантаження']]],['Що потребує уваги',[['sig_pr','Рекорди'],['sig_drop','Спад'],['sig_stall','Застій'],['sig_low','Мало підходів, не тренуються'],['sig_high','Багато підходів'],['sig_fat','Втома']]],['Блоки й вкладки',[['blk_dyn','Динаміка тренувань'],['blk_wu','Розминка і заминка'],['blk_corr','Кореляції'],['blk_fac','Твої фактори'],['blk_recov','Відновлення груп м’язів'],['tab_gr','Вкладка «Групи м’язів»'],['tab_rep','Вкладка «Звіт»'],['det','Деталі по тапу: групи й відновлення']]]];
+const AN_DEF=[['Огляд: картки',[['kpi_n','Тренувань'],['kpi_hard','Робочих підходів'],['kpi_vol','Обсяг'],['kpi_dur','Сер. тривалість'],['kpi_sleep','Сон'],['kpi_well','Самопочуття'],['kpi_load','Навантаження']]],['Що потребує уваги',[['sig_pr','Рекорди'],['sig_drop','Спад'],['sig_stall','Застій'],['sig_low','Мало підходів, не тренуються'],['sig_high','Багато підходів'],['sig_fat','Втома']]],['Блоки й вкладки',[['blk_dyn','Динаміка тренувань'],['blk_wu','Розминка і заминка'],['blk_corr','Кореляції'],['blk_fac','Твої фактори'],['blk_recov','Відновлення груп м’язів'],['tab_gr','Вкладка «Групи м’язів»'],['tab_rep','Вкладка «Звіт»'],['det','Деталі по тапу: групи й відновлення'],['hints','Пояснення ховати під ⓘ']]]];
 function acc(key,title,sub,body){const open=window.__accAll||(S.ui.acc||[]).includes(key);return`<details class="card acc" data-acc="${key}" ${open?'open':''}><summary><span class="acc-t">${title}</span><span class="acc-s">${sub||''}</span></summary><div class="acc-b stack">${body}</div></details>`}
 function hlp(x){return`<details class="hlp" ${window.__accAll?'open':''}><summary>ⓘ Як це працює</summary><div>${x}</div></details>`}
+/* v55.8: пояснення в Аналітиці - під ⓘ (сусідні зливаються в одне), статусні рядки лишаються видимими */
+const HKEEP=['Період:','Додай «Розминка»','Потрібно ','Нічого тривожного','Поля для кореляцій','На графіку перші','За останні','Половина зарядок','Час початку','Копій ще','Остання автокопія'];
+const hsh=t=>{let h=0;for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return(h>>>0).toString(36)};
+function HLa(t){if(!anOn('hints'))return t;return t.replace(/<p class="muted small" style="margin:0">([\s\S]*?)<\/p>/g,(m0,x)=>{const plain=x.replace(/<[^>]+>/g,'');if(HKEEP.some(k=>plain.startsWith(k)))return m0;const k='h-'+hsh(plain.slice(0,60));return`<details class="hlp" data-xd="${k}" ${window.__accAll||XOPEN.has(k)?'open':''}><summary>ⓘ Як це працює</summary><div>${x}</div></details><!--h-->`})
+ .replace(/<\/div><\/details><!--h-->\s*<details class="hlp" data-xd="[^"]*" [^>]*><summary>ⓘ Як це працює<\/summary><div>/g,'</div><div class="hlp2">')}
 const HL=t=>t.replace(/<p class="muted small" style="margin:0">([\s\S]*?)<\/p>/g,(m,x)=>hlp(x));
 function kSeg(k,cur,opt){return`<div class="seg">${(opt||[[0,'0'],[.5,'0,5'],[1,'1']]).map(([v,l])=>`<button class="${cur===v?'on':''}" data-a="kset" data-k="${k}" data-v="${v}">×${l}</button>`).join('')}</div>`}
 function setTypHTML(){const ck=(k,on,l,id)=>`<label class="chk"><input type="checkbox" data-c="sett" data-k="${k}" id="${id}" ${on?'checked':''}>${l}</label>`;
