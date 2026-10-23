@@ -51,7 +51,6 @@ button,a,input,select,textarea,label,summary{touch-action:manipulation}
 .sheet,.tm{overscroll-behavior:contain}
 body.sheetopen{overflow:hidden}
 body.kb nav.tabs{display:none}
-body.kb{padding-bottom:24px}
 body.kb .toast{bottom:calc(var(--kb,0px) + 12px)}
 body.sheetopen .toast,body.tmopen .toast{bottom:auto;top:calc(12px + env(safe-area-inset-top,0px))}
 body.kb .sheet{bottom:var(--kb,0px);max-height:calc(var(--vvh,100vh) * .92)}
@@ -59,6 +58,16 @@ body.kb .sheet{bottom:var(--kb,0px);max-height:calc(var(--vvh,100vh) * .92)}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 10px;margin-inline:-2px}
 .top h1{font-size:30px;line-height:1;text-transform:uppercase}
+.top{flex-wrap:wrap}.top .hback{flex:none;align-self:center;border:0;background:none;padding:6px 4px 6px 0;margin:-6px 0;min-height:40px;font-weight:600;font-size:16px;color:var(--accent);white-space:nowrap}.top .hback+h1{margin-right:auto}
+#scrollPad{height:0}
+details.acc{padding:0}details.acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;min-height:52px}details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary .acc-t{font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.15}details.acc>summary .acc-s{font-size:12.5px;color:var(--muted);text-align:right;margin-left:auto}
+details.acc>summary::after{content:'';flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:-4px 4px 0 2px;transition:transform .15s}details.acc[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+details.acc>.acc-b{padding:0 14px 14px;border-top:1px solid var(--line);padding-top:12px}
+.acc-b>.card{border:0;background:none;padding:0;border-radius:0}.acc-b>.card+.card{border-top:1px solid var(--line);padding-top:12px}
+details.hlp{margin:-2px 0 0}details.hlp>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--accent);min-height:30px}details.hlp>summary::-webkit-details-marker{display:none}
+details.hlp>div{font-size:13px;color:var(--muted);background:var(--surface2);border-radius:10px;padding:8px 10px;margin-top:2px;line-height:1.45}details.hlp[open]>summary{color:var(--muted)}
+.zone{font-family:var(--f-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px -6px}
 .top .sub{color:var(--muted);font-size:13px;text-align:right}
 main{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-inline:auto;min-width:0}
 .top{max-width:760px;margin-inline:auto}
@@ -267,7 +276,7 @@ body.rton:not(.kb):not(.sheetopen):not(.tmopen) .toast{bottom:calc(150px + env(s
 .bandbtn .dot+.dot{margin-left:-8px}
 
 /* nav */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
   display:grid;grid-template-columns:repeat(5,1fr);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
 nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted);min-height:50px;justify-content:center}
 nav.tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -383,8 +392,8 @@ body.kb .savebar{bottom:0}
 </style>
 </head>
 <body>
-<header class="top"><h1 id="ttl">Запис</h1><div class="sub" id="tsub"></div></header>
-<main id="main"></main>
+<header class="top"><button class="hback" id="hback" hidden>‹ Назад</button><h1 id="ttl">Запис</h1><div class="sub" id="tsub"></div></header>
+<main id="main"></main><div id="scrollPad"></div>
 <nav class="tabs" id="tabs">
   <button data-tab="log"><svg viewBox="0 0 24 24"><path d="M6 9v6M18 9v6M3 11v2M21 11v2M6 12h12"/></svg>Запис</button>
   <button data-tab="hist"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Історія</button>
@@ -459,7 +468,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='50 · 19.10.2026';
+const APPV='51 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -661,6 +670,9 @@ const HOST_THEME=document.documentElement.getAttribute('data-theme');
 function defaults(){return{v:1,seedV:13,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:[],workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 let PERSIST=null;
 const SNAP='trainlog.snap.',SNAPN=7;let LOADFAIL=false;
+// хто читає збережене (Android-автокопія, експорт), отримує свіже: відкладене збереження виконується перед читанням
+try{const _gi=Storage.prototype.getItem;Storage.prototype.getItem=function(k){try{if(k===KEY&&SAVEPEND)saveNow()}catch(e){}return _gi.call(this,k)}}catch(e){}
+addEventListener('pagehide',()=>{try{saveNow()}catch(e){}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')try{saveNow()}catch(e){}});
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
 function snapKeys(){const a=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(SNAP))a.push(k)}}catch(e){}return a.sort().reverse()}
@@ -755,7 +767,9 @@ function syReplace(R){const loc={};SY_LOCAL.forEach(k=>{if(S.settings&&k in S.se
 function syKeepAcct(osy){if(!osy||!osy.acct)return;const sy=syState();['acct','init','auto','last'].forEach(k=>{if(osy[k]!=null)sy[k]=osy[k]});sy.err=''}
 function syFp(P){const o=[];for(const k of SY_KINDS)(P[k]||[]).forEach(r=>o.push(k+':'+r.id+':'+(r.mt||0)+':'+syJ(r).length));o.sort();const kv=m=>Object.keys(m||{}).sort().map(k=>k+'='+m[k]).join(',');const st=P.settings||{};return o.join('|')+'#'+kv(P.del)+'#'+kv(P.sk)+'#'+Object.keys(st).sort().map(k=>k+'='+JSON.stringify(st[k])).join(',')}
 const sySame=(a,b)=>syFp(a)===syFp(b);
-function save(){CACHE=null;if(LOADFAIL)return;try{syStamp()}catch(e){}try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
+let SAVET=null,SAVEPEND=false;
+function save(){CACHE=null;if(LOADFAIL)return;SAVEPEND=true;if(!SAVET)SAVET=setTimeout(saveNow,500)}
+function saveNow(){clearTimeout(SAVET);SAVET=null;if(!SAVEPEND||LOADFAIL)return;SAVEPEND=false;try{syStamp()}catch(e){}try{const prev=localStorage.getItem(KEY);const nx=JSON.stringify(S);
  if(prev){try{const po=JSON.parse(prev);if((po.workouts||[]).length>=3&&!(S.workouts||[]).length&&!S._allowEmpty){snapshot(prev,'before-empty')}}catch(e){}}
  try{localStorage.setItem(KEY,nx)}catch(q){const ks=snapKeys();for(let i=ks.length-1;i>=1;i--){try{localStorage.removeItem(ks[i])}catch(e){}try{localStorage.setItem(KEY,nx);return}catch(e){}}throw q}}catch(e){toast('Браузер не дав зберегти дані. Зроби резервну копію в Налаштуваннях')}}
 const ex=id=>Array.isArray(S.catalog)?S.catalog.find(e=>e.id===id):undefined;
@@ -946,6 +960,10 @@ function wuAvg(role){const v=[];S.workouts.forEach(w=>{const o=wuInfo(w);const x
 
 /* ========== render core ========== */
 const TITLES={log:'Запис',hist:'Історія',stats:'Аналітика',tpl:'Шаблони',set:'Налаштування'};
+function hbackUpd(){const b=document.querySelector('header .hback');if(!b)return;const t=S.ui.tab;let m=null;if(!AND){if(t==='tpl'&&S.ui.tplEd)m='tpl';else if(t==='log'&&S.draft)m='draft'}
+ b.hidden=!m;if(!m){b.removeAttribute('data-a');b.id='hback';return}if(m==='tpl'){b.id='tpl-back';b.dataset.a='tpl-exit';b.textContent=tplChanged()?'‹ Без збереження':'‹ Назад'}else{b.id='hback';b.dataset.a='draft-back';b.textContent=S.draft._edit?'‹ Історія':'‹ Назад'}}
+function draftBack(){const d=S.draft;if(!d)return;if(!draftHasData()){S.draft=null;if(d._edit)S.ui.tab='hist';save();render();window.scrollTo(0,0);return}
+ openSheet(`<h3>${d._edit?'Зберегти зміни?':isWarm(d)?'Зберегти зарядку?':'Зберегти тренування?'}</h3><button class="btn pri full" data-a="lv-save">${d._edit?'Зберегти зміни':'Зберегти'}</button><button class="btn danger full" data-a="lv-drop">${d._edit?'Скасувати зміни':'Не зберігати'}</button><button class="btn ghost full" data-a="close">Залишитись</button>`,'leave')}
 const CH={};
 function applyTheme(){const t=S.settings.theme;const r=document.documentElement;if(t==='light'||t==='dark')r.setAttribute('data-theme',t);else if(HOST_THEME)r.setAttribute('data-theme',HOST_THEME);else r.removeAttribute('data-theme');if(AND){try{const dk=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);if(dk!==applyTheme.dk){applyTheme.dk=dk;AND.setBars(dk)}}catch(e){}}}
 function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm(S.draft)?'warm':'main'):(t==='hist'||t==='stats')?(S.ui.scope==='warm'&&(t==='hist'?warmOn():warmStatsOn())?'warm':'main'):'main';$('#ttl').textContent=TITLES[t];document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
@@ -957,8 +975,15 @@ function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm
  $('#main').innerHTML=({log:vLog,hist:vHist,stats:vStats,tpl:vTpl,set:vSet})[t]();attachCharts();
  if(openD.length)document.querySelectorAll('#main details > summary').forEach(x=>{if(openD.includes(x.textContent))x.parentElement.open=true});
  LASTVIEW=t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:'');
- if(keep&&Math.abs(window.scrollY-y)>1)window.scrollTo(0,y)}
+ const pad=document.getElementById('scrollPad');if(pad){if(keep)padKeep(y);else pad.style.height='0px'}
+ if(keep&&Math.abs(window.scrollY-y)>1)window.scrollTo(0,y);hbackUpd()}
 let LASTVIEW='';
+/* v51: екран стоїть на місці. Якщо сторінка коротшає (згорнув блок, прибрав вправу), знизу додається запас, щоб браузер не «підтягував» прокрутку */
+function padKeep(y){const pad=document.getElementById('scrollPad');if(!pad)return;const need=y+innerHeight-(document.documentElement.scrollHeight-pad.offsetHeight);pad.style.height=Math.max(0,Math.ceil(need))+'px'}
+// Розгортання/згортання робимо самі і одразу повертаємо заголовок блоку на те саме місце екрана
+document.addEventListener('click',e=>{const sm=e.target.closest('summary');if(!sm||e.target.closest('a,button,input,select,textarea,label'))return;const d=sm.parentElement;if(!d||d.tagName!=='DETAILS')return;
+ e.preventDefault();const top0=sm.getBoundingClientRect().top,y0=window.scrollY;padKeep(y0);d.open=!d.open;padKeep(y0);if(Math.abs(window.scrollY-y0)>0.5)window.scrollTo(0,y0);const dy=sm.getBoundingClientRect().top-top0;if(Math.abs(dy)>0.5){padKeep(window.scrollY+dy);window.scrollTo(0,window.scrollY+dy)}},true);
+document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.acc){const o=new Set(S.ui.acc||[]);if(d.open)o.add(d.dataset.acc);else o.delete(d.dataset.acc);S.ui.acc=[...o];save()}},true);
 
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.dataset||d.dataset.anl==null)return;const i=+d.dataset.anl;const o=new Set(S.ui.anl||[]);if(d.open)o.add(i);else o.delete(i);S.ui.anl=[...o]},true);
 
@@ -1004,15 +1029,15 @@ function vLog(){if(S.draft)return vDraft();
 function phImp(w,k,dg){const r=imputed(w,k);return r.v!=null?'≈ '+nf(r.v,dg):''}
 function warmMeta(){return S.settings.warmMeta===true}
 function vDraft(){const w=S.draft;const mo=k=>mfW(w,k),meta=MF.some(([k])=>mo(k));
+ // v51: три зони - перед тренуванням / вправи / після тренування
  let h=`<section class="card stack">
   <div class="wk-name">${esc(w.tplName)}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}
+  <div class="lbl">Перед тренуванням</div>
   <div class="metrics">
    <label class="field" style="grid-column:1/-1"><span>Дата тренування</span><input class="in" type="date" data-f="w" data-k="date" value="${esc(w.date)}" id="w-date"></label>
    ${mo('sleep')?`<label class="field"><span>Сон, год</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>`:''}
    ${mo('well')?`<label class="field"><span>Самопочуття, 1-10</span><input class="in" inputmode="decimal" data-f="w" data-k="well" value="${esc(w.well)}" placeholder="${phImp(w,'well',1)}" id="w-well"></label>`:''}
-   ${mo('dur')?`<label class="field"><span>Тривалість, хв</span><input class="in" inputmode="numeric" data-f="w" data-k="dur" value="${esc(w.dur)}" placeholder="${w._edit?phImp(w,'dur',0):'таймер'}" id="w-dur"></label>`:''}
    ${mo('bw')?`<label class="field"><span>Вага тіла, кг</span><input class="in" inputmode="decimal" data-f="w" data-k="bw" value="${esc(w.bw)}" placeholder="${phImp(w,'bw',1)||'≈ '+S.settings.bw}" id="w-bw"></label>`:''}
-   ${mo('srpe')?`<label class="field"><span>Важкість тренування, 1-10</span><input class="in" inputmode="decimal" data-f="w" data-k="srpe" value="${esc(w.srpe)}" placeholder="наприкінці" id="w-srpe"></label>`:''}
    ${mo('phase')?`<label class="field" style="grid-column:1/-1"><span>Фаза харчування</span>${phaseSel(w.phase||'','w-phase','w-phase')}</label>`:''}
   </div>
   ${meta?'':'<p class="muted small" style="margin:0">Сон, самопочуття та інші дані тренування вимкнені (Налаштування → Дані тренування).</p>'}
@@ -1021,7 +1046,13 @@ function vDraft(){const w=S.draft;const mo=k=>mfW(w,k),meta=MF.some(([k])=>mo(k)
  h+=w.items.map((it,i)=>itemHTML(it,i,w.items.length,w)).join('');
  if(!w.items.length)h+=`<p class="empty">Вправ немає. Додай першу.</p>`;
  h+=`<div class="g2"><button class="btn" data-a="add-item">+ Додати вправу</button><button class="btn" data-a="blk-add">+ HIIT-блок</button></div>
- <label class="field"><span>Нотатки</span><textarea class="in" data-f="w" data-k="notes" id="w-notes" placeholder="Дискомфорт, натяг гуми, тренажер...">${esc(w.notes)}</textarea></label>
+ <section class="card stack" id="w-after"><div class="lbl">Після тренування</div>
+  ${mo('dur')||mo('srpe')?`<div class="metrics">
+   ${mo('dur')?`<label class="field"><span>Тривалість, хв</span><input class="in" inputmode="numeric" data-f="w" data-k="dur" value="${esc(w.dur)}" placeholder="${w._edit?phImp(w,'dur',0):'таймер'}" id="w-dur"></label>`:''}
+   ${mo('srpe')?`<label class="field"><span>Важкість тренування, 1-10</span><input class="in" inputmode="decimal" data-f="w" data-k="srpe" value="${esc(w.srpe)}" placeholder="наприкінці" id="w-srpe"></label>`:''}
+  </div>`:''}
+  <label class="field"><span>Нотатки</span><textarea class="in" data-f="w" data-k="notes" id="w-notes" placeholder="Дискомфорт, натяг гуми, тренажер...">${esc(w.notes)}</textarea></label>
+ </section>
  <button class="btn pri full" data-a="finish">${w._edit?'Зберегти зміни':'Завершити і зберегти'}</button>
  <div class="g2"><button class="btn" data-a="save-tpl">Зберегти як шаблон</button><button class="btn danger" data-a="cancel-draft">${w._edit?'Скасувати зміни':'Скасувати'}</button></div>
  ${w._edit?'<button class="btn danger ghost full" data-a="del-w">Видалити це тренування з історії</button>':''}`;
@@ -1331,9 +1362,9 @@ function reportText(R){const L=[];L.push(`Звіт тренувань: ${MON[+R.
 
 /* ========== TEMPLATES ========== */
 function vTpl(){const sub=S.ui.ttab||'t';
+ const ed=sub==='t'&&edT();if(ed)return vTplEdit(ed);
  let h=`<div class="seg"><button class="${sub==='t'?'on':''}" data-a="ttab" data-v="t">Шаблони</button><button class="${sub==='e'?'on':''}" data-a="ttab" data-v="e">Каталог вправ</button></div>`;
  if(sub==='e')return h+vCatalog();
- const ed=edT();if(ed)return h+vTplEdit(ed);
  h+=`<button class="btn pri full" data-a="tpl-new">+ Новий шаблон</button>`;
  const g={};S.templates.forEach(t=>{(g[t.tag||'Інше']=g[t.tag||'Інше']||[]).push(t)});
  Object.keys(g).sort(tagOrder).forEach(tag=>{h+=`<div class="tgroup"><div class="gh">${esc(tag)}</div>${g[tag].map(t=>`<button class="tpl" data-a="tpl-edit" data-t="${t.id}"><span><b>${esc(t.name)}</b><small>${tplCount(t)}${t.note?' · '+esc(t.note):''}</small></span><span class="go">✎</span></button>`).join('')}</div>`});
@@ -1348,7 +1379,7 @@ function tplCanSave(){const e=S.ui.tplEd;return!!e&&(e.isNew||tplChanged())}
 function tplOpen(t,isNew){S.ui.tplEd={id:t.id,isNew:!!isNew,t:JSON.parse(JSON.stringify(t)),base:JSON.stringify(t)};S.ui.editTpl=t.id}
 function tplClose(){S.ui.tplEd=null;S.ui.editTpl=null}
 function tplDirtyUI(){const b=document.getElementById('tpl-back'),sv=document.getElementById('tpl-save'),d=document.getElementById('tpl-dirty');const ch=tplChanged(),cs=tplCanSave();if(b)b.textContent=ch?'‹ Без збереження':'‹ Назад';if(d)d.innerHTML=ch?'<span class="pill p-warn">Є незбережені зміни</span>':'';if(sv){sv.disabled=!cs;sv.textContent=cs?'Зберегти шаблон':'Змін немає'}}
-function vTplEdit(t){const ch=tplChanged(),cs=tplCanSave();let h=`<div class="row between">${AND?'<span></span>':`<button class="btn ghost" data-a="tpl-exit" id="tpl-back">${ch?'‹ Без збереження':'‹ Назад'}</button>`}<span id="tpl-dirty">${ch?'<span class="pill p-warn">Є незбережені зміни</span>':''}</span></div>
+function vTplEdit(t){const ch=tplChanged(),cs=tplCanSave();let h=`<div class="row between" id="tpl-dirty" style="min-height:0">${ch?'<span class="pill p-warn">Є незбережені зміни</span>':''}</div>
  <section class="card stack"><label class="field"><span>Назва</span><input class="in" data-f="tpl" data-k="name" id="tpl-name" value="${esc(t.name)}"></label>
  <div class="g2"><label class="field"><span>Місце / тип</span><select class="in" data-f="tpl" data-k="tag" id="tpl-tag">${TAGS.map(x=>`<option ${x===t.tag?'selected':''}>${x}</option>`).join('')}</select></label>
  <label class="field"><span>Примітка</span><input class="in" data-f="tpl" data-k="note" id="tpl-note" value="${esc(t.note)}" placeholder="Із собою: гуми"></label></div></section>`;
@@ -1391,44 +1422,52 @@ function bandRows(selectable,sel){sel=sel||{};const t=bandTab();const ids={min:'
  return S.settings.bands.map(b=>`<div class="bandrow ${sel[b.id]?'on':''}" id="brow-${b.id}"><div class="l1"><input type="color" value="${esc(b.hex)}" data-f="band" data-b="${b.id}" data-k="hex" id="bc-${b.id}" aria-label="Колір"><input class="in" data-f="band" data-b="${b.id}" data-k="name" id="bn-${b.id}" value="${esc(b.name)}" aria-label="Назва">${selectable?`<div class="stepper"><button class="ib" data-a="bq" data-b="${b.id}" data-d="-1" aria-label="Менше">−</button><b class="num" id="bq-${b.id}">${sel[b.id]||0}</b><button class="ib" data-a="bq" data-b="${b.id}" data-d="1" aria-label="Більше">+</button></div>`:`<button class="ib del" data-a="band-del" data-b="${b.id}" aria-label="Видалити гуму">✕</button>`}</div>
  <div class="${t==='2'?'g2':'g3'}">${t==='2'?cell(b,'min','Від, кг')+cell(b,'max','До, кг'):cell(b,'k50','50 см, кг')+cell(b,'k100','100 см, кг')+cell(b,'k150','150 см, кг')}</div>
  <div class="small ${bandMethod(b)?'muted':''}" id="bst-${b.id}" style="${bandMethod(b)?'':'color:var(--bad)'}">${bandMethTxt(b)}</div></div>`).join('')}
-function setStrHTML(){const rm=restMode();const D={off:'Колонки «Відп» немає. Відпочинок оцінюється з тривалості тренування, кількості повторів і темпу (у підсумку і в «Динаміці»). Вже записаний відпочинок не зникає.',man:'«Відп» стоїть першою колонкою: відпочинок перед підходом, вписуєш у тому ж рядку, коли записуєш підхід. У підході 1 - перерва між вправами (у першій вправі поля немає). У вправах Л/П: «Л» - перед лівою (між підходами), «П» - перед правою (між сторонами). Сіра підказка - відпочинок минулого разу, а якщо його нема - відпочинок вправи з шаблону або стандартний. В аналітику йде лише вписане.'};
- return`<section class="card stack"><div class="lbl">Силові підходи</div><label class="chk"><input type="checkbox" data-c="wuset" id="set-wuset" ${wuOn()?'checked':''}>Розминкові підходи</label>
- <p class="muted small" style="margin:0">Тап по номеру підходу позначає його розминковим (Р). Розминкові не входять в обсяг, робочі підходи, 1ПМ, рекорди і середній відпочинок. Підказки з минулого разу: розминка до розминки, робочі до робочих.</p>
- <div class="field"><span>Відпочинок</span><div class="seg">${[['off','Без'],['man','Вручну']].map(([k,l])=>`<button class="${rm===k?'on':''}" data-a="restm" data-v="${k}">${l}</button>`).join('')}</div></div>
- <p class="muted small" style="margin:0">${D[rm]}</p>
- ${rm!=='off'?`<label class="field"><span>Стандартний відпочинок, с</span><input class="in" inputmode="numeric" data-f="set" data-k="restStd" id="set-reststd" value="${esc(S.settings.restStd??'')}" placeholder="180"></label><p class="muted small" style="margin:0">Сіра підказка в порожньому полі «Відп». Порожньо - 180, 0 - без підказки. Свій відпочинок для вправи можна задати в шаблоні («Відпоч., с»).</p>`:''}
- <label class="field"><span>Темп, с на повтор</span><input class="in" inputmode="decimal" data-f="set" data-k="tempo" id="set-tempo" value="${esc(S.settings.tempo??'')}" placeholder="4"></label>
- <p class="muted small" style="margin:0">Для оцінки з тривалості тренування: робота = повтори × темп, решта - відпочинок і переходи (у підсумку і в «Динаміці»). 4 с - звичайний темп; повільні повтори з паузами - 5-6 с.</p>
- </section>
- <section class="card stack"><div class="lbl">Інтервали (HIIT, зарядка)</div>
- <label class="field"><span>«Готуйся» перед стартом, розминкою і заминкою, с (0 - старт одразу)</span><input class="in" inputmode="numeric" data-f="set" data-k="prepS" id="set-preps" value="${esc(S.settings.prepS??'')}" placeholder="10"></label>
- <label class="field"><span>Сигнал до кінця відпочинку між раундами, с (0 - вимкнено)</span><input class="in" inputmode="numeric" data-f="set" data-k="ivPreS" id="set-ivpres" value="${esc(S.settings.ivPreS??'')}" placeholder="10"></label>
- <p class="muted small" style="margin:0">Сигнал звучить, лише якщо відпочинок довший за цей час щонайменше на 5 с, щоб не злитися з 3-2-1. Сигнали 3-2-1 в кінці кожної фази залишаються.</p></section>`}
-function mfHTML(){const W=warmOn();return`<section class="card stack"><div class="lbl">Дані тренування</div><div class="mft${W?'':' one'}"><span></span><span class="h">Силові</span>${W?'<span class="h">Зарядка</span>':''}
- ${MF.map(([k,l])=>`<span>${l}</span><input type="checkbox" data-c="mf" data-kind="str" data-k="${k}" id="mf-str-${k}" ${mfOn('str',k)?'checked':''} aria-label="${l}: силові">${W?`<input type="checkbox" data-c="mf" data-kind="warm" data-k="${k}" id="mf-warm-${k}" ${mfOn('warm',k)?'checked':''} aria-label="${l}: зарядка">`:''}`).join('')}</div>
- <p class="muted small" style="margin:0">Вимкнене поле зникає із запису тренування, з аналітики і з кореляцій. Вже введені дані не стираються. Важкість тренування - твоя оцінка всього тренування наприкінці (1 - дуже легко, 10 - максимум). Разом із тривалістю дає «навантаження»: важкість × хвилини.</p></section>`}
+/* v51: Налаштування - блоки-гармошки. Пояснення сховані в «ⓘ Як це працює» */
 const AN_DEF=[['Огляд: картки',[['kpi_n','Тренувань'],['kpi_hard','Робочих підходів'],['kpi_vol','Обсяг'],['kpi_dur','Сер. тривалість'],['kpi_sleep','Сон'],['kpi_well','Самопочуття'],['kpi_load','Навантаження']]],['Що потребує уваги',[['sig_pr','Рекорди'],['sig_drop','Спад'],['sig_stall','Застій'],['sig_low','Мало підходів, не тренуються'],['sig_high','Багато підходів'],['sig_fat','Втома']]],['Блоки й вкладки',[['blk_dyn','Динаміка тренувань'],['blk_wu','Розминка і заминка'],['blk_corr','Кореляції'],['tab_gr','Вкладка «Групи м’язів»'],['tab_rep','Вкладка «Звіт»']]]];
-function anHTML(){return`<section class="card stack"><div class="lbl">Аналітика</div>${AN_DEF.map(([t,a],i)=>`<details class="anl" data-anl="${i}" ${(S.ui.anl||[]).includes(i)?'open':''}><summary><span>${t}</span><span class="muted small" style="font-weight:600;margin-left:auto">${a.filter(([k])=>anOn(k)).length} з ${a.length}</span></summary>${a.map(([k,l])=>`<label class="chk"><input type="checkbox" data-c="an" data-k="${k}" id="an-${k}" ${anOn(k)?'checked':''}>${l}</label>`).join('')}</details>`).join('')}
- <div class="field"><span>Непрямі підходи в сумі «Разом» (Групи м’язів)</span><div class="seg"><button class="${secW()===1?'on':''}" data-a="secw" data-v="1">×1</button><button class="${secW()===0.5?'on':''}" data-a="secw" data-v="0.5">×0,5</button></div></div>
- <p class="muted small" style="margin:0">×1 - проста сума прямих і непрямих підходів. ×0,5 - непрямий рахується як половина, так зазвичай рахують зону 10-20 у дослідженнях об’єму. Вимкнене тут лише ховається, дані не змінюються.</p></section>`}
-function vSet(){const t=S.settings.theme;
- return`<section class="card stack"><div class="lbl">Тема</div><div class="seg">${[['auto','Як у системі'],['light','Світла'],['dark','Темна']].map(([k,l])=>`<button class="${t===k?'on':''}" data-a="theme" data-v="${k}">${l}</button>`).join('')}</div></section>
- <section class="card stack"><div class="lbl">Звук таймера</div><label class="chk"><input type="checkbox" data-c="snd" id="set-snd" ${S.settings.sound!==false?'checked':''}>Звук у таймері (також перемикається на екрані таймера)</label>
+function acc(key,title,sub,body){const open=window.__accAll||(S.ui.acc||[]).includes(key);return`<details class="card acc" data-acc="${key}" ${open?'open':''}><summary><span class="acc-t">${title}</span><span class="acc-s">${sub||''}</span></summary><div class="acc-b stack">${body}</div></details>`}
+function hlp(x){return`<details class="hlp" ${window.__accAll?'open':''}><summary>ⓘ Як це працює</summary><div>${x}</div></details>`}
+const HL=t=>t.replace(/<p class="muted small" style="margin:0">([\s\S]*?)<\/p>/g,(m,x)=>hlp(x));
+function setStrHTML(){const rm=restMode();
+ return`<label class="chk"><input type="checkbox" data-c="wuset" id="set-wuset" ${wuOn()?'checked':''}>Розминкові підходи</label>
+ ${hlp('Тап по номеру підходу позначає його розминковим (Р). Розминкові не входять в обсяг, робочі підходи, 1ПМ, рекорди і середній відпочинок.<br><b>Приклад:</b> 40×10 (Р), 60×6 (Р), 80×8, 80×8 - у статистику підуть лише два підходи по 80 кг. Підказки з минулого разу: розминка до розминки, робочі до робочих.')}
+ <div class="field"><span>Відпочинок</span><div class="seg">${[['off','Без'],['man','Вручну']].map(([k,l])=>`<button class="${rm===k?'on':''}" data-a="restm" data-v="${k}">${l}</button>`).join('')}</div></div>
+ ${hlp(rm==='off'?'Колонки «Відп» немає. Відпочинок оцінюється з тривалості тренування, кількості повторів і темпу.<br><b>Приклад:</b> 55 хв, 160 повторів × 4 с ≈ 11 хв роботи → відпочинок і переходи ≈ 44 хв. Видно в підсумку і в «Динаміці». Вже записаний відпочинок не зникає.':'«Відп» - перша колонка: відпочинок <b>перед</b> підходом, вписуєш у тому ж рядку, коли записуєш підхід. У підході 1 - перерва між вправами (у першій вправі поля немає).<br><b>Приклад:</b> жим 1 - без відпочинку; 2 - «180»; 3 - «150». Присідання 1 - «240» (перерва після жиму).<br>Л/П: «Л» - перед лівою (між підходами), «П» - перед правою (між сторонами). В аналітику йде лише вписане.')}
+ ${rm!=='off'?`<label class="field"><span>Стандартний відпочинок, с</span><input class="in" inputmode="numeric" data-f="set" data-k="restStd" id="set-reststd" value="${esc(S.settings.restStd??'')}" placeholder="180"></label>
+ ${hlp('Сіра підказка в порожньому полі «Відп». Порожньо - 180, 0 - без підказки.<br><b>Приклад:</b> вписав 150 - у порожніх полях буде сіре «150». Якщо минулого разу в цьому підході було 165, покажеться 165. Свій відпочинок для вправи задається в шаблоні («Відпоч., с») і має перевагу.')}`:''}
+ <label class="field"><span>Темп, с на повтор</span><input class="in" inputmode="decimal" data-f="set" data-k="tempo" id="set-tempo" value="${esc(S.settings.tempo??'')}" placeholder="4"></label>
+ ${hlp('Для оцінки з тривалості тренування: робота = повтори × темп, решта - відпочинок і переходи (у підсумку і в «Динаміці»).<br><b>Приклад:</b> темп 4, 3 підходи по 10 → 2 хв роботи. 4 с - звичайний темп; повільні повтори з паузами (3-1-3) - 6-7 с.')}
+ <label class="field"><span>Поточна фаза харчування</span>${phaseSel(S.settings.phase||'','setphase','set-phase')}</label><p class="muted small" style="margin:0">Ставиться в кожне нове тренування, поки не зміниш. Змінити можна тут або в самому тренуванні.</p>
+ <label class="field"><span>Вага тіла за замовчуванням, кг</span><input class="in" inputmode="decimal" data-f="set" data-k="bw" id="set-bw" value="${esc(S.settings.bw)}"></label><p class="muted small" style="margin:0">Використовується для вправ з власною вагою, поки ти не впишеш вагу тіла в тренуванні. Далі береться середнє вписаних значень.</p>`}
+function ivHTML(){return`<label class="field"><span>«Готуйся» перед стартом, розминкою і заминкою, с</span><input class="in" inputmode="numeric" data-f="set" data-k="prepS" id="set-preps" value="${esc(S.settings.prepS??'')}" placeholder="10"></label>
+ ${hlp('Відлік перед основною частиною таймера. 0 - старт одразу.<br><b>Приклад:</b> 15 - встигнеш взяти гирю і стати на місце.')}
+ <label class="field"><span>Сигнал до кінця відпочинку між раундами, с</span><input class="in" inputmode="numeric" data-f="set" data-k="ivPreS" id="set-ivpres" value="${esc(S.settings.ivPreS??'')}" placeholder="10"></label>
+ ${hlp('Короткий сигнал за N секунд до кінця відпочинку. 0 - вимкнено. Звучить, лише якщо відпочинок довший за N щонайменше на 5 с, щоб не злитися з 3-2-1.<br><b>Приклад:</b> відпочинок 30 с, сигнал 10 → сигнал на 20-й секунді, потім 3-2-1.')}
+ <div class="lbl" style="margin-top:6px">Звук таймера</div><label class="chk"><input type="checkbox" data-c="snd" id="set-snd" ${S.settings.sound!==false?'checked':''}>Звук у таймері (також перемикається на екрані таймера)</label>
  <label class="field"><span>Гучність сигналу: <b id="vol-v">${f0((num(S.settings.vol)||1)*100)}%</b></span><input type="range" min="30" max="100" step="5" data-f="vol" id="set-vol" value="${f0((num(S.settings.vol)||1)*100)}"></label>
  <label class="chk"><input type="checkbox" data-c="duck" id="set-duck" ${S.settings.duck!==false?'checked':''}>Приглушувати музику на час сигналу</label>
  <button class="btn" data-a="snd-test">Перевірити звук</button>
- <p class="muted small" style="margin:0">Сигнал не може бути гучнішим за загальну гучність iPhone. Тому він різкий і високий, щоб пробиватися крізь музику, а музика на мить притихає (Safari 16.4 і новіші). Гучність 100% - максимум без спотворень.</p></section>
- <section class="card stack"><div class="lbl">Деталізація м’язів</div><div class="seg"><button class="${musFull()?'':'on'}" data-a="musmode" data-v="short">Коротко</button><button class="${musFull()?'on':''}" data-a="musmode" data-v="full">Детально</button></div><p class="muted small" style="margin:0">Діє скрізь: вибір м’язів у вправі, каталог вправ, аналітика, місячний звіт і зарядка.<br><b>Коротко</b> - 13 груп: груди, спина, трапеції, передня, середня і задня дельти, біцепс, трицепс, квадрицепс, сідниці, біцепс стегна, ікри, прес.<br><b>Детально</b> - окремі м’язи (груди верх/середина/низ, найширші, ромбоподібні, головки біцепса й трицепса, литковий і камбалоподібний тощо) плюс розгиначі спини, передпліччя, привідні.<br>Перемикання нічого не стирає: детальна розмітка вправ зберігається і в короткому режимі показується групами.</p></section>
- <section class="card stack"><div class="lbl">Зарядка</div><label class="chk"><input type="checkbox" data-c="warmon" id="set-warm" ${S.settings.warmOn!==false?'checked':''}>Показувати зарядку</label>
+ <p class="muted small" style="margin:0">Сигнал не може бути гучнішим за загальну гучність iPhone. Тому він різкий і високий, щоб пробиватися крізь музику, а музика на мить притихає (Safari 16.4 і новіші). Гучність 100% - максимум без спотворень.</p>`}
+function mfHTML(){const W=warmOn();return`<div class="mft${W?'':' one'}"><span></span><span class="h">Силові</span>${W?'<span class="h">Зарядка</span>':''}
+ ${MF.map(([k,l])=>`<span>${l}</span><input type="checkbox" data-c="mf" data-kind="str" data-k="${k}" id="mf-str-${k}" ${mfOn('str',k)?'checked':''} aria-label="${l}: силові">${W?`<input type="checkbox" data-c="mf" data-kind="warm" data-k="${k}" id="mf-warm-${k}" ${mfOn('warm',k)?'checked':''} aria-label="${l}: зарядка">`:''}`).join('')}</div>
+ ${hlp('Вимкнене поле зникає із запису тренування, з аналітики і з кореляцій. Вже введені дані не стираються.<br><b>Важкість тренування</b> - твоя оцінка всього тренування наприкінці (1 - дуже легко, 10 - максимум). Разом із тривалістю дає «навантаження».<br><b>Приклад:</b> важкість 7 × 60 хв = навантаження 420.')}`}
+function anHTML(){return`${AN_DEF.map(([t,a],i)=>`<details class="anl" data-anl="${i}" ${(S.ui.anl||[]).includes(i)?'open':''}><summary><span>${t}</span><span class="muted small" style="font-weight:600;margin-left:auto">${a.filter(([k])=>anOn(k)).length} з ${a.length}</span></summary>${a.map(([k,l])=>`<label class="chk"><input type="checkbox" data-c="an" data-k="${k}" id="an-${k}" ${anOn(k)?'checked':''}>${l}</label>`).join('')}</details>`).join('')}
+ ${hlp('Вимкнене тут лише ховається з «Аналітики», дані не змінюються.')}
+ <div class="field"><span>Непрямі підходи в сумі «Разом» (Групи м’язів)</span><div class="seg"><button class="${secW()===1?'on':''}" data-a="secw" data-v="1">×1</button><button class="${secW()===0.5?'on':''}" data-a="secw" data-v="0.5">×0,5</button></div></div>
+ ${hlp('<b>×1</b> - проста сума прямих і непрямих підходів. <b>×0,5</b> - непрямий рахується як половина, так зазвичай рахують зону 10-20 у дослідженнях об’єму.<br><b>Приклад:</b> 6 підходів жиму дають трицепсу 6 непрямих. ×1 → «Разом» 6, ×0,5 → 3.')}`}
+function vSet(){const t=S.settings.theme,sy=syState(),rm=restMode();
+ const nOn=MF.filter(([k])=>mfOn('str',k)).length;
+ const look=`<div class="field"><span>Тема</span><div class="seg">${[['auto','Як у системі'],['light','Світла'],['dark','Темна']].map(([k,l])=>`<button class="${t===k?'on':''}" data-a="theme" data-v="${k}">${l}</button>`).join('')}</div></div>
+ <div class="field"><span>Деталізація м’язів</span></div>${HL(`<div class="seg"><button class="${musFull()?'':'on'}" data-a="musmode" data-v="short">Коротко</button><button class="${musFull()?'on':''}" data-a="musmode" data-v="full">Детально</button></div><p class="muted small" style="margin:0">Діє скрізь: вибір м’язів у вправі, каталог вправ, аналітика, місячний звіт і зарядка.<br><b>Коротко</b> - 13 груп: груди, спина, трапеції, передня, середня і задня дельти, біцепс, трицепс, квадрицепс, сідниці, біцепс стегна, ікри, прес.<br><b>Детально</b> - окремі м’язи (груди верх/середина/низ, найширші, ромбоподібні, головки біцепса й трицепса, литковий і камбалоподібний тощо) плюс розгиначі спини, передпліччя, привідні.<br>Перемикання нічого не стирає: детальна розмітка вправ зберігається і в короткому режимі показується групами.</p>`)}`;
+ return acc('look','Вигляд',{auto:'як у системі',light:'світла тема',dark:'темна тема'}[t]+' · м’язи '+(musFull()?'детально':'коротко'),look)
+ +acc('rec','Запис силових','відп. '+(rm==='off'?'оцінка':'вручну')+' · темп '+nf(tempoS(),1)+' с',HL(setStrHTML()))
+ +acc('data','Дані тренування','силові: '+nOn+' з '+MF.length,mfHTML())
+ +acc('warm','Зарядка',S.settings.warmOn!==false?'показується':'вимкнена',HL(`<label class="chk"><input type="checkbox" data-c="warmon" id="set-warm" ${S.settings.warmOn!==false?'checked':''}>Показувати зарядку</label>
  ${S.settings.warmOn!==false?`<label class="chk"><input type="checkbox" data-c="warmstats" id="set-warmstats" ${warmStatsOn()?'checked':''}>Статистика й аналітика зарядки</label><p class="muted small" style="margin:0">Вимкнено: зникають серія і «N з M» у картці, кнопка «Статистика», перемикач «Тренування / Зарядка» в «Аналітиці» і рядок зарядки в місячному звіті. Записи збираються далі, історія зарядки лишається, основна статистика не змінюється.</p>`:''}
  ${S.settings.warmOn!==false?`<div class="field"><span>Картка зарядки на екрані «Запис»</span><div class="seg"><button class="${S.settings.warmPos==='bottom'?'':'on'}" data-a="warmpos" data-v="top">Зверху</button><button class="${S.settings.warmPos==='bottom'?'on':''}" data-a="warmpos" data-v="bottom">Знизу</button></div></div>`:''}
- <p class="muted small" style="margin:0">Вимкнена зарядка ховається з «Запису», «Історії» та «Аналітики». Записи і шаблони зберігаються, повернути можна будь-коли.</p></section>
- <section class="card stack"><label class="field"><span>Поточна фаза харчування</span>${phaseSel(S.settings.phase||'','setphase','set-phase')}</label><p class="muted small" style="margin:0">Ставиться в кожне нове тренування, поки не зміниш. Змінити можна тут або в самому тренуванні.</p></section>
- <section class="card stack"><label class="field"><span>Вага тіла за замовчуванням, кг</span><input class="in" inputmode="decimal" data-f="set" data-k="bw" id="set-bw" value="${esc(S.settings.bw)}"></label><p class="muted small" style="margin:0">Використовується для вправ з власною вагою, поки ти не впишеш вагу тіла в тренуванні. Далі береться середнє вписаних значень.</p></section>
- ${setStrHTML()}
- ${mfHTML()}
- ${anHTML()}
- <section class="card stack"><div class="lbl">TRX</div>
+ <p class="muted small" style="margin:0">Вимкнена зарядка ховається з «Запису», «Історії» та «Аналітики». Записи і шаблони зберігаються, повернути можна будь-коли.</p>`))
+ +acc('iv','Інтервали і звук','Готуйся '+prepS()+' с'+(S.settings.sound!==false?'':' · без звуку'),HL(ivHTML()))
+ +acc('an','Аналітика','непрямі ×'+(secW()===1?'1':'0,5'),anHTML())
+ +acc('trx','TRX','зріст '+esc(S.settings.trx.height||'—')+' см',HL(`
  <p class="muted small" style="margin:0">Положення петель - за стандартом TRX (довжина лямок FS, ML, MC, FL). Кріплення - стандартної висоти або своєї, вписаної вручну. Програма рахує кут тіла, рівень і кг.</p>
  <div class="g2"><label class="field"><span>Зріст, см</span><input class="in" inputmode="numeric" data-f="trx" data-k="height" id="trx-h" value="${esc(S.settings.trx.height)}"></label><label class="field"><span>Довжина ступні, см</span><input class="in" inputmode="decimal" data-f="trx" data-k="foot" id="trx-f" value="${esc(S.settings.trx.foot)}"></label></div>
  <div class="field"><span>Висота кріплення для нових записів</span><div class="seg"><button class="${S.settings.trx.amode==='man'?'':'on'}" data-a="trxam" data-v="std">Стандарт ${nf(num(S.settings.trx.std.anchor)||1.83,2)} м</button><button class="${S.settings.trx.amode==='man'?'on':''}" data-a="trxam" data-v="man">Вручну</button></div></div>
@@ -1438,16 +1477,16 @@ function vSet(){const t=S.settings.theme;
  ${trxRefTable()}
  <button class="btn full" data-a="trx-recalc">Перерахувати збережені тренування TRX</button>
  <p class="muted small" style="margin:0">Після зміни зросту, ступні, висоти кріплення чи калібрування петель натисни, щоб рівні й кг у збережених записах перерахувались. Рівні, виставлені вручну, не змінюються.</p>
- <p class="muted small" style="margin:0">Кут перевіряється програмою iPhone «Рулетка» → «Рівень»: телефон на груди або спину в нижній точці.</p></section>
- <section class="card stack" id="bands-card"><div class="lbl">Фітнес-гуми</div>${bandTabs()}${bandHelp()}<div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button>
+ <p class="muted small" style="margin:0">Кут перевіряється програмою iPhone «Рулетка» → «Рівень»: телефон на груди або спину в нижній точці.</p>`))
+ +acc('bands','Фітнес-гуми',S.settings.bands.length+' шт.',HL(`${bandTabs()}${bandHelp()}<div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button>
  <button class="btn full" data-a="band-recalc">Перерахувати збережені тренування з гумами</button>
- <p class="muted small" style="margin:0">Зміни показників діють для нових записів. Збережені тренування зберігають гуми такими, якими вони були в день запису. Кнопка «Перерахувати» підставить поточні показники в збережені тренування за обраний період або за весь час, і обсяг та 1ПМ по гумах в історії зміняться.</p></section>
- <section class="card stack"><div class="lbl">Автокопії на цьому пристрої</div><p class="muted small" style="margin:0">Програма щодня сама зберігає копію даних (останні 7). Вони рятують від помилки програми, але не від очищення даних Safari - для цього потрібна копія в iCloud.${PERSIST===true?' Браузер підтвердив постійне зберігання.':''}</p>
- ${snapKeys().map(snapInfo).filter(Boolean).map(x=>`<div class="row between"><span class="small">${dShort(x.date)}.${x.date.slice(0,4)}${x.tag?' <span class="muted">('+esc(x.tag)+')</span>':''} · ${x.n} трен.</span><button class="btn" data-a="snap-restore" data-k="${esc(x.k)}">Відновити</button></div>`).join('')||'<p class="muted small" style="margin:0">Автокопій ще немає.</p>'}</section>
- ${syCard()}${andBackupCard()}<section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">${AND?'Усе зберігається в застосунку на цьому телефоні. Дані зникнуть, якщо видалити застосунок або очистити його дані, тому тримай автокопії в папці або роби резервну копію.':'Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.'}</p>
+ <p class="muted small" style="margin:0">Зміни показників діють для нових записів. Збережені тренування зберігають гуми такими, якими вони були в день запису. Кнопка «Перерахувати» підставить поточні показники в збережені тренування за обраний період або за весь час, і обсяг та 1ПМ по гумах в історії зміняться.</p>`))
+ +acc('sync','Синхронізація Google',sy.acct?esc(sy.acct):'вимкнена',syCard())
+ +acc('backup','Резервні копії і дані',AND?'Android':'цей браузер',andBackupCard()+`<section class="card stack"><div class="lbl">Автокопії на цьому пристрої</div><p class="muted small" style="margin:0">Програма щодня сама зберігає копію даних (останні 7). Вони рятують від помилки програми, але не від очищення даних Safari - для цього потрібна копія в iCloud.${PERSIST===true?' Браузер підтвердив постійне зберігання.':''}</p>
+ ${snapKeys().map(snapInfo).filter(Boolean).map(x=>`<div class="row between"><span class="small">${dShort(x.date)}.${x.date.slice(0,4)}${x.tag?' <span class="muted">('+esc(x.tag)+')</span>':''} · ${x.n} трен.</span><button class="btn" data-a="snap-restore" data-k="${esc(x.k)}">Відновити</button></div>`).join('')||'<p class="muted small" style="margin:0">Автокопій ще немає.</p>'}</section>`+`<section class="card stack"><div class="lbl">Дані</div><p class="muted small" style="margin:0">${AND?'Усе зберігається в застосунку на цьому телефоні. Дані зникнуть, якщо видалити застосунок або очистити його дані, тому тримай автокопії в папці або роби резервну копію.':'Усе зберігається лише в цьому браузері на цьому пристрої. Safari може стерти дані сайту, яким давно не користувались. Роби резервну копію хоча б раз на тиждень.'}</p>
  <div class="g2"><button class="btn" data-a="exp-all">Резервна копія</button><button class="btn" data-a="imp" data-v="all">Відновити</button></div>
- <button class="btn danger full" data-a="wipe">Скинути все до початкового</button></section>
- <section class="card stack"><div class="lbl">Довідка</div>
+ <button class="btn danger full" data-a="wipe">Скинути все до початкового</button></section>`)
+ +acc('help','Довідка','як зберігаються дані, iPhone, TRX…',`
  <details class="how"><summary>Як зберігаються дані</summary><ul class="small">
   <li><b>Застосунок</b> - це один файл HTML. Він лише показує екрани, твоїх тренувань у ньому немає.</li>
   <li><b>Історія, шаблони, вправи, гуми</b> зберігаються в браузері на телефоні, окремо для кожної адреси сайту.</li>
@@ -1530,7 +1569,8 @@ function vSet(){const t=S.settings.theme;
  <details class="how"><summary>Новий телефон або передати іншій людині</summary><ul class="small">
   <li><b>Новий телефон:</b> відкрий ту саму адресу, додай іконку, потім «Відновити» з копії в iCloud.</li>
   <li><b>Іншій людині</b> дай адресу сайту або файл застосунку. Свої шаблони передай через «Шаблони» → «Експорт шаблонів»: там немає твоєї історії.</li></ul></details>
- </section>
+ `)
+ +`
  <p class="muted small" style="text-align:center;margin:0">Версія застосунку ${APPV}<br>Тренувань: ${S.workouts.length} · шаблонів: ${S.templates.length} · вправ у каталозі: ${S.catalog.length}</p>`}
 
 /* ========== SHEETS & TOAST ========== */
@@ -1744,6 +1784,8 @@ const ACT={
  'brc-go'(){const[f,t]=brcRange();if(!BRC.all&&f&&t&&f>t){toast('Дата «з» пізніша за «по»');return}const cur=lsGet(KEY);if(cur)snapshot(cur,'before-bands');const r=bandRecalc(f,t,false);closeSheet();toast(r.n?'Перераховано тренувань: '+r.wn:'У цьому періоді немає записів з гумами')},
  'band-del'(el){const id=el.dataset.b;confirmSheet('Видалити цю гуму зі списку?','Видалити',()=>{S.settings.bands=S.settings.bands.filter(b=>b.id!==id);save()})},
  finish(){finish()},
+ 'draft-back'(){draftBack()},
+ 'wend-drop'(){confirmSheet(S.draft&&isWarm(S.draft)?'Не зберігати зарядку?':'Не зберігати тренування?','Не зберігати',()=>ACT['lv-drop']())},
  'lv-save'(){closeSheet(false);const d=S.draft;if(!d)return;finish(d._edit?'hist':isWarm(d)?'log':'hist')},
  'lv-drop'(){closeSheet(false);const d=S.draft;if(!d)return;S.draft=null;S.ui.tab=d._edit?'hist':'log';save();render();window.scrollTo(0,0);toast(d._edit?'Зміни скасовано':'Тренування не збережено',d._edit?null:()=>{S.draft=d;S.ui.tab='log';save();render()})},
  'tm-save'(){const warm=S.draft&&isWarm(S.draft);tmClose();finish(warm?'log':'hist')},
@@ -1953,7 +1995,7 @@ function tmFinish(stopped){if(!TM)return;clearInterval(TM.iv);const now=TM.pause
   if(hw){if(TM.wskip)r.tm.wskip=true;else r.tm.warm=Math.round(R.warm)||0}
   if(hc){if(TM.cskip||(stopped&&!R.cool))r.tm.cskip=true;else r.tm.cool=Math.round(R.cool)||0}
   save()}
- if(warmAuto()){const warm=isWarm(S.draft);tmClose();finish(warm?'log':'hist');return}
+ if(warmAuto()){const warm=isWarm(S.draft);tmClose();openSheet(`<h3>${warm?'Зарядку завершено':'Тренування завершено'}</h3><p class="muted small" style="margin:0">Перевір раунди й повтори або одразу збережи.</p><button class="btn pri full" data-a="lv-save">Зберегти</button><button class="btn full" data-a="close">Редагувати</button><button class="btn danger ghost full" data-a="wend-drop">Не зберігати</button>`,'wend');return}
  tmRender()}
 function tmClose(){if(TM&&TM.iv)clearInterval(TM.iv);wake(false);TM=null;$('#timerHost').innerHTML='';document.body.classList.remove('tmopen');render()}
 function tmExLine(x){return x?`<div class="tm-exn">${esc(x.name)}</div><div class="tm-exs">${esc(bexTxt(x))}</div>`:''}
@@ -2128,7 +2170,7 @@ function syToken(interactive){const t=syTokGet();if(t)return Promise.resolve(t);
  if(AND&&AND.gToken)return new Promise((res,rej)=>{window.__andTok=(tok,err,sec)=>{window.__andTok=null;if(tok){syTokSet(tok,sec);res(tok)}else rej(new Error(err||'Вхід у Google не виконано'))};try{AND.gToken(!!interactive)}catch(e){rej(e)}});
  if(!interactive)return Promise.reject(Object.assign(new Error('Потрібен вхід'),{needLogin:true}));
  if(!GCID)return Promise.reject(new Error('Синхронізацію ще не налаштовано (немає Client ID)'));
- return syLoadGis().then(()=>new Promise((res,rej)=>{SYTC=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:GSCOPE,callback:r=>{if(r&&r.access_token){syTokSet(r.access_token,r.expires_in);res(r.access_token)}else rej(new Error((r&&r.error)||'Вхід скасовано'))},error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'Вікно входу закрито':'Вхід не вдався'))});SYTC.requestAccessToken({prompt:''})}))}
+ return syLoadGis().then(()=>new Promise((res,rej)=>{SYTC=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:GSCOPE,hint:(syState().acct&&syState().acct.includes('@'))?syState().acct:undefined,callback:r=>{if(r&&r.access_token){syTokSet(r.access_token,r.expires_in);res(r.access_token)}else rej(new Error((r&&r.error)||'Вхід скасовано'))},error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'Вікно входу закрито':'Вхід не вдався'))});SYTC.requestAccessToken({prompt:''})}))}
 async function gd(method,url,body,ctype,interactive){let tok=await syToken(interactive);const go=t=>fetch(url,{method,headers:Object.assign({Authorization:'Bearer '+t},ctype?{'Content-Type':ctype}:{}),body});
  let r=await go(tok);if(r.status===401){syTokClear();if(AND&&AND.gTokenClear)try{AND.gTokenClear(tok)}catch(e){}tok=await syToken(interactive);r=await go(tok)}
  if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}throw new Error('Google Диск: '+r.status+(m?' '+m:''))}return r}
@@ -2139,12 +2181,12 @@ async function gdCreate(name,obj,i){const b='trb'+Date.now();const body=`--${b}\
 async function gdWrite(id,obj,i){await gd('PATCH',GDU+'/'+id+'?uploadType=media',JSON.stringify(obj),'application/json',i)}
 async function gdDel(id,i){await gd('DELETE',GDF+'/'+id,null,null,i)}
 async function gdEmail(i){try{const r=await gd('GET','https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)',null,null,i);return((await r.json()).user||{}).emailAddress||''}catch(e){return''}}
-function sySt(msg,err){const sy=syState();if(err==='need'){sy.need=true;sy.err=''}else if(err){sy.err=msg;}else{sy.err='';sy.need=false;sy.dirty=false;sy.last=Date.now()}try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}syUi()}
+function sySt(msg,err){const sy=syState();if(err==='need'){sy.need=true;sy.err=''}else if(err){sy.err=msg;}else{sy.err='';sy.need=false;sy.dirty=false;sy.last=Date.now()}SAVEPEND=true;saveNow();syUi()}
 function syUi(){const el=document.getElementById('sy-card');if(el&&!SHEET)el.outerHTML=syCard();const bar=document.querySelector('.sybar');const nb=syBanner();if(bar&&!nb)bar.remove();else if(!bar&&nb&&S.ui.tab==='log'&&!S.draft&&!SHEET)render()}
 function syStatusTxt(){const sy=syState();if(SYB)return'Синхронізація…';if(sy.err)return'Помилка: '+sy.err;if(sy.need)return'Натисни «Синхронізувати зараз», щоб оновити вхід Google'+(sy.dirty?' (є зміни, яких ще немає на Диску)':'')+'.';if(sy.last)return'Синхронізовано '+andTime(new Date(sy.last).toISOString());return'Ще не синхронізовано'}
 /* Головна процедура. interactive=true лише після натискання кнопки (вікно входу Google) */
 async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)return;SYB=true;syUi();
- try{save();const files=await gdFind(`name = '${SY_FILE}'`,interactive);const sy=syState();
+ try{save();saveNow();const files=await gdFind(`name = '${SY_FILE}'`,interactive);const sy=syState();
   if(!sy.acct){sy.acct=(await gdEmail(interactive))||'Google';sy.auto=sy.auto!==false}
   if(!files.length){await gdCreate(SY_FILE,syPayload(),interactive);sy.init=true;await syBackup(syPayload(),interactive);SYB=false;sySt('ok');if(interactive)toast('Дані збережено в Google Диск');return}
   const fid=files[0].id;const R=await gdRead(fid,interactive);
