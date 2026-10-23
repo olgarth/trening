@@ -169,7 +169,7 @@ button.it-name{border:0;background:none;padding:2px 0;margin:0;text-align:left;c
 .glv{font-weight:700;font-size:13px;min-height:16px}
 .rvrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvrow>span:first-child{min-width:0}.rvrow>:last-child{white-space:nowrap;flex-shrink:0;text-align:right}
 .recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0}.recb .rmain{flex:1;min-width:0;line-height:1.25}.recb .rlab{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin-bottom:1px}.recb .rtx{font-family:var(--f-display);font-size:17px}
-.nw{white-space:nowrap}.recb .rbtns{display:inline-flex;align-items:center;gap:6px;flex:none}.rb{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:transparent;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:15px;font-weight:700;line-height:1}
+.nw{white-space:nowrap}.rask{flex-basis:100%;background:color-mix(in srgb,var(--warn) 12%,transparent);border-radius:8px;padding:6px 9px}.rask .rbt{display:inline-flex;gap:12px;margin-left:6px}.recb .rbtns{display:inline-flex;align-items:center;gap:6px;flex:none}.rb{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:transparent;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:15px;font-weight:700;line-height:1}
 .rb.ok{border-color:color-mix(in srgb,var(--good) 60%,transparent);color:var(--good)}.rb.info{color:var(--accent);border-color:transparent;font-size:17px;width:28px}
 .recb .rwhy{flex-basis:100%;display:none;background:var(--surface2);border-radius:8px;padding:6px 9px;color:var(--muted)}.recb.open .rwhy{display:block}.sndrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.sndrow .btn{min-height:36px;width:44px;padding:0;flex:none}.sndrow .chk{flex:1;min-width:0}
 .rb.clr{border-color:color-mix(in srgb,var(--bad) 55%,transparent);color:var(--bad);font-size:13px}.recb .rwhy{flex-basis:100%;order:3}
@@ -508,7 +508,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='55.2 · 23.10.2026';
+const APPV='55.3 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -873,23 +873,35 @@ function recFor(it,w){if(!recOn()||!STR.includes(it.type)||!w)return null;let pr
  const allTop=reps.every(r=>r!=null&&r>=hi),rirOk=rirs.every(q=>q==null||q>=ra-.5),nLow=rirs.filter(q=>q!=null&&q<ra-.5).length;
  // v55.2: верх діапазону, але RIR нижче цілі - та сама вага; якщо так двічі поспіль - та сама вага з RIR на верхній межі цілі
  const topHard2=()=>{const p2=prevSessionT(it.exId,{id:prev.w.id,date:prev.w.date},it.type);if(!p2||p2.w.date>prev.w.date)return false;const W2=p2.item.sets.filter(s=>!s.wu&&(repsOf(p2.item,s)||{}).tot);const pu2=p2.item.uni;const rp2=s=>{if(pu2){const l=num(s.rl),r=num(s.rr);return l!=null&&r!=null?Math.min(l,r):(l??r)}return num(s.r)};return W2.length&&W2.every(s=>(rp2(s)??0)>=hi)&&W2.some(s=>{const q=num(s.rir);return q!=null&&q<ra-.5})};
- let kind=allTop&&rirOk?'up':allTop?(topHard2()?'top2':'top'):(rirs.some(q=>q!=null&&q<ra-1)||reps.some(r=>r!=null&&r<lo))?'hold':'reps';
+ // v55.3: поза діапазоном - вага підібрана неправильно. Оцінка: скільки повторів вийшло б з RIR посередині цілі
+ const rmid=(ra+rb)/2,estOf=(r,q)=>r==null?null:r+(q??rmid)-rmid;const est=W.map((s,k)=>estOf(reps[k],rirs[k])).filter(x=>x!=null);
+ const oorOf=E=>!E.length?'':Math.min(...E)<lo-.5?'heavy':Math.min(...E)>hi+3?'light':'';const oor=oorOf(est);
+ let ask=null;if(oor){const p2=prevSessionT(it.exId,{id:prev.w.id,date:prev.w.date},it.type);if(p2){const W2=p2.item.sets.filter(s=>!s.wu&&(repsOf(p2.item,s)||{}).tot);const pu2=p2.item.uni;const rp2=s=>{if(pu2){const l=num(s.rl),r=num(s.rr);return l!=null&&r!=null?Math.min(l,r):(l??r)}return num(s.r)};
+  if(oorOf(W2.map(s=>estOf(rp2(s),num(s.rir))).filter(x=>x!=null))===oor&&(S.settings.rangeNo||{})[it.exId]!==prev.w.id){const av=Math.round(avg(reps.filter(x=>x!=null)));const l2=Math.max(1,av-2);ask={av,lo2:l2,hi2:l2+4,wid:prev.w.id}}}}
+ let kind=oor?'fix':allTop&&rirOk?'up':allTop?(topHard2()?'top2':'top'):(rirs.some(q=>q!=null&&q<ra-1)||reps.some(r=>r!=null&&r<lo))?'hold':'reps';
  const base=`за тренуванням ${dShort(prev.w.date)}: ${W.map(s=>setTxt(prev.item,s)).join(', ')}`;
  if(dd==='L'||(!dd&&sg.v==='L'))kind='light';else if(kind==='up'&&!dd&&sg.v&&sg.sc<=-.75){kind='reps';why.push('сьогодні без додавання ваги: '+sg.why.join(', '))}
- let wt=lastW,rr=reps.map(r=>Math.max(lo,Math.min(hi,r??lo))),verb='',ns=W.length;
+ let wt=lastW,rr=reps.map(r=>Math.max(lo,Math.min(hi,r??lo))),verb='',ns=W.length,rOv='';
+ if(oor){const NUMC=!other&&['weight','db1','db2'].includes(it.type)&&!(it.neg&&negType(it));rr=W.map(()=>lo);const hv=oor==='heavy';
+  const E=median(W.map((s,k)=>{const L=num(s.w);return L&&reps[k]?e1rm(L,reps[k],rirs[k]??rmid):null}).filter(Boolean));
+  if(NUMC&&E&&lastW!=null&&step){const T=E/(1+(lo+rmid)/30);let c;if(hv){c=lastW-step;while(c-step>0&&c>T+1e-9)c-=step;if(c<=0)c=Math.max(step,lastW-step)}else{c=lastW+step;while(c+step<=T+1e-9)c+=step}wt=Math.round(c*100)/100;const eR=Math.floor(30*(E/wt-1)-rmid);rOv=lo+(Math.min(hi,eR)>lo?'-'+Math.min(hi,eR):'')}
+  else{wt=null;verb=other?'':it.type==='band'?(it.neg&&negType(it)?(hv?'більше допомоги (сильніша гума)':'менше допомоги (легша гума)'):(hv?'легша гума або слабший натяг':'важча гума або ще одна')):it.type==='trx'?(hv?'нижчий рівень':'вищий рівень'):lvList(it.exId)?(hv?'легше положення':'складніше положення'):it.neg&&negType(it)?(hv?'більше противаги':'менше противаги'):noKg(it.exId)?(hv?'легший варіант':'складніший варіант'):(hv?'менше додаткової ваги':'більше додаткової ваги')}
+  const rtx=`минулого разу ${reps.filter(x=>x!=null).join(', ')} повт.${rirs.some(q=>q!=null)?' з RIR '+rirs.map(q=>q??'–').join(', '):''} при цілі ${lo}-${hi} · RIR ${ra}-${rb}`;
+  why.unshift(hv?`${rtx} - вага завелика. Підбираю вагу, з якою вийде ${lo} повт. із запасом ${ra}-${rb}${wt!=null?` (оцінка 1ПМ ≈ ${nf(E,1)})`:''}`:`${rtx} - вага замала. Підбираю вагу під ${lo}-${hi} повт.${wt!=null?` (оцінка 1ПМ ≈ ${nf(E,1)})`:''}`)}
  if(kind==='up'){rr=W.map(()=>lo);if(LN&&lastW!=null&&step){wt=it.neg?Math.max(0,lastW-step):lastW+step;why.unshift(`минулого разу всі робочі підходи дійшли до ${hi} повт.${rirs.some(q=>q!=null)?' з потрібним RIR':''} → ${it.neg?'менше противаги на '+nf(step,1)+' кг':'+'+nf(step,1)+' кг'}, повтори знову з ${lo} (подвійна прогресія)`)}
   else{verb=other?'':it.type==='band'?(it.neg&&negType(it)?'легша гума або слабший натяг (менше допомоги)':'важча гума або ще одна'):it.type==='trx'?'рівень +1':lvList(it.exId)?'складніше положення':noKg(it.exId)?'складніший варіант':'';why.unshift(`минулого разу всі підходи дійшли до ${hi} повт. → ${verb||'більше навантаження'}, повтори з ${lo}`)}}
  else if(kind==='reps'){rr=reps.map(r=>Math.min(hi,(r??lo)+(r!=null&&r>=hi?0:1)));if(!why.length||!why[0].startsWith('сьогодні'))why.unshift(`не всі підходи дійшли до ${hi} → та сама вага, +1 повтор там, де не дотягнув`)}
+ else if(kind==='fix'){}
  else if(kind==='top'){rr=W.map(()=>hi);why.unshift(`верх діапазону (${hi}) є в усіх підходах, але ${nLow} ${nLow===1?'підхід':'підходи'} з RIR нижче цілі ${ra}-${rb} → та сама вага; зроби ${hi} з запасом хоча б ${ra} - тоді додамо вагу`)}
  else if(kind==='top2'){rr=W.map(()=>hi);why.unshift(`друге тренування поспіль верх діапазону лише ціною RIR нижче ${ra} → та сама вага, але з RIR ${rb}: якщо ${hi} з таким запасом не виходить, зупинись раніше. Так не накопичується втома від постійної відмови`)}
  else if(kind==='hold')why.unshift(rirs.some(q=>q!=null&&q<ra-1)?`минулого разу RIR нижче цілі ${ra}-${rb} → тримай вагу, повтори як були`:`повтори були нижче ${lo} → тримай вагу і добирай повтори`);
  else{ns=Math.max(1,Math.round(W.length*2/3));why.unshift('легкий день: та сама вага, RIR 3-4, ≈ на третину менше підходів (розвантаження: Bell et al., 2023; третина - оцінка)')}
  why.push(base);if(sg.why.some(x=>x.startsWith('≈')))why.push('≈ - не вписано сьогодні, взято типове з останніх тренувань');
- const rTxt=(()=>{const a=Math.min(...rr),b=Math.max(...rr);return a===b?String(a):a+'-'+b})();
+ const rTxt=rOv||(()=>{const a=Math.min(...rr),b=Math.max(...rr);return a===b?String(a):a+'-'+b})();
  const wTxt=other?'':LN&&wt!=null?(it.neg?'−':'')+nf(wt,1)+' кг':verb||(it.type==='band'?'та сама гума':it.type==='trx'?'той самий рівень':lvList(it.exId)?'те саме положення':'');
  if(other)why.push(`вага не пропонується: минулого разу був режим «${TYPES[prev.item.type]}», сьогодні «${TYPES[it.type]}»`);
- return{kind,wt:LN?wt:null,rr,ns,why,txt:`${wTxt?wTxt+' × ':''}${rTxt}${noKg(it.exId)&&it.type==='bw'?' повт.':''} · RIR ${kind==='light'?'3-4':kind==='top2'?rb:ra+(rb!==ra?'-'+rb:'')}${kind==='light'?' · '+ns+' підх.':''}`}}
-function recHTML(it,R){return`<div class="recb"><div class="rmain"><span class="rlab">${R.kind==='up'?'↑ ':''}Рекомендація</span> <b class="rtx">${R.txt.split(' · ').map(x=>`<span class="nw">${esc(x)}</span>`).join(' · ')}</b></div><span class="rbtns"><button class="rb info" data-a="rec-why" aria-label="Чому така рекомендація">ⓘ</button><button class="rb ok" data-a="rec-fill" data-i="${it.uid}" aria-label="Заповнити рекомендацію в порожні клітинки">✓</button><button class="rb clr" data-a="rec-clear" data-i="${it.uid}" aria-label="Очистити вписане: повтори, вагу і RIR">✕</button></span><div class="rwhy small">${R.why.map(esc).join('<br>')}</div></div>`}
+ return{kind,ask,wt:LN?wt:null,rr,ns,why,txt:`${wTxt?wTxt+' × ':''}${rTxt}${noKg(it.exId)&&it.type==='bw'?' повт.':''} · RIR ${kind==='light'?'3-4':kind==='top2'?rb:ra+(rb!==ra?'-'+rb:'')}${kind==='light'?' · '+ns+' підх.':''}`}}
+function recHTML(it,R){return`<div class="recb"><div class="rmain"><span class="rlab">${R.kind==='up'?'↑ ':''}Рекомендація</span> <b class="rtx">${R.txt.split(' · ').map(x=>`<span class="nw">${esc(x)}</span>`).join(' · ')}</b></div><span class="rbtns"><button class="rb info" data-a="rec-why" aria-label="Чому така рекомендація">ⓘ</button><button class="rb ok" data-a="rec-fill" data-i="${it.uid}" aria-label="Заповнити рекомендацію в порожні клітинки">✓</button><button class="rb clr" data-a="rec-clear" data-i="${it.uid}" aria-label="Очистити вписане: повтори, вагу і RIR">✕</button></span><div class="rwhy small">${R.why.map(esc).join('<br>')}</div>${R.ask?`<div class="rask small">2 тренування поспіль ≈${R.ask.av} повт. при цілі ${esc(String(it.tgt.reps||''))}. Змінити діапазон${S.draft&&S.draft.tplId?' у шаблоні':''} на ${R.ask.lo2}-${R.ask.hi2}? <span class="rbt"><button class="lnk" data-a="rng-yes" data-i="${it.uid}" data-v="${R.ask.lo2}-${R.ask.hi2}">Так</button><button class="lnk" data-a="rng-no" data-i="${it.uid}" data-w="${R.ask.wid}">Ні</button></span></div>`:''}</div>`}
 function orderNote(it,w){const its=w.items||[],i=its.indexOf(it);if(i<1)return'';const mine=new Set(primOf(it).map(musGrp).filter(Boolean));const before=its.slice(0,i).filter(x=>x.type==='hiit'||x.type==='block');if(!before.length)return'';
  const hg=new Set();before.forEach(x=>{const L=x.type==='block'?mainEx(x).map(e=>ex(e.exId)||{}):[x];L.forEach(e=>primOf(e).forEach(m=>{const g=musGrp(m);if(g)hg.add(g)}))});const ov=[...mine].filter(g=>hg.has(g));if(!ov.length)return'';
  if(its.slice(0,i).some(x=>STR.includes(x.type)&&primOf(x).some(m=>ov.includes(musGrp(m)))))return'';
@@ -2236,6 +2248,8 @@ const ACT={
  'mh-tog'(el){const m=el.closest('.it').querySelector('.mh');if(m)m.hidden=!m.hidden},
  'rec-why'(el){el.closest('.recb').classList.toggle('open')},
  'pre-col'(){const w=S.draft;if(!w)return;colKeep('pre-card',()=>{preTog(w);save();render()})},
+ 'rng-yes'(el){const it=itemBy(el.dataset.i);if(!it)return;const v=el.dataset.v,old=it.tgt.reps;it.tgt.reps=v;let tn='';const t=S.draft&&S.draft.tplId&&S.templates.find(x=>x.id===S.draft.tplId);if(t){(t.items||[]).forEach(x=>{if(x.exId===it.exId&&!x.kind)x.reps=v});tn=t.name}save();render();toast(tn?`Діапазон ${v}: шаблон «${tn}»`:`Діапазон ${v} у цьому тренуванні`)},
+ 'rng-no'(el){const it=itemBy(el.dataset.i);if(!it)return;(S.settings.rangeNo=S.settings.rangeNo||{})[it.exId]=el.dataset.w;save();render()},
  kset(el){S.settings[el.dataset.k]=+el.dataset.v;save();render()},
  'wu-tog'(el){if(Date.now()-LPSKIP<800)return;const it=itemBy(el.dataset.i);const s=it&&it.sets[+el.dataset.n];if(!s)return;if(s.wu)delete s.wu;else s.wu=true;save();render()},
  restdir(el){S.settings.restDir=el.dataset.v;save();render()},
