@@ -56,9 +56,14 @@ body.sheetopen .toast,body.tmopen .toast{bottom:auto;top:calc(12px + env(safe-ar
 body.kb .sheet{bottom:var(--kb,0px);max-height:calc(var(--vvh,100vh) * .92)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 h1,h2,h3{font-family:var(--f-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 10px;margin-inline:-2px}
+.topnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;min-height:40px;padding-top:4px;max-width:760px;margin-inline:auto;transition:box-shadow .15s}
+.topnav .hback{grid-column:1;justify-self:start}.topnav .mini{grid-column:2;font:700 16px var(--f-display);text-transform:uppercase;letter-spacing:.02em;opacity:0;transition:opacity .15s;white-space:nowrap;pointer-events:none}
+.topnav .sub{grid-column:3;justify-self:end;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+body.hcol .topnav .mini{opacity:1}body.hcol .topnav{box-shadow:0 1px 0 var(--line)}
+body.wide .topnav{max-width:1080px}
+.top{display:block;padding-block:2px 10px;margin-inline:-2px}
 .top h1{font-size:30px;line-height:1;text-transform:uppercase}
-.top{flex-wrap:wrap}.top .hback{flex:none;align-self:center;border:0;background:none;padding:6px 4px 6px 0;margin:-6px 0;min-height:40px;font-weight:600;font-size:16px;color:var(--accent);white-space:nowrap}.top .hback+h1{margin-right:auto}
+.topnav .hback{border:0;background:none;padding:6px 4px 6px 0;min-height:40px;font-weight:600;font-size:16px;color:var(--accent);white-space:nowrap}
 #scrollPad{height:0}
 details.acc{padding:0}details.acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;min-height:52px}details.acc>summary::-webkit-details-marker{display:none}
 details.acc>summary .acc-t{font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.15}details.acc>summary .acc-s{font-size:12.5px;color:var(--muted);text-align:right;margin-left:auto}
@@ -68,7 +73,7 @@ details.acc>.acc-b{padding:0 14px 14px;border-top:1px solid var(--line);padding-
 details.hlp{margin:-2px 0 0}details.hlp>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--accent);min-height:30px}details.hlp>summary::-webkit-details-marker{display:none}
 details.hlp>div{font-size:13px;color:var(--muted);background:var(--surface2);border-radius:10px;padding:8px 10px;margin-top:2px;line-height:1.45}details.hlp[open]>summary{color:var(--muted)}
 .zone{font-family:var(--f-display);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:4px 2px -6px}
-.top .sub{color:var(--muted);font-size:13px;text-align:right}
+.topnav .sub{color:var(--muted);font-size:13px;text-align:right}
 main{display:flex;flex-direction:column;gap:14px;max-width:760px;margin-inline:auto;min-width:0}
 .top{max-width:760px;margin-inline:auto}
 body.wide main,body.wide .top{max-width:1080px}
@@ -128,6 +133,7 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 /* workout head */
 .wk-name{font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1.05;text-transform:uppercase}
 .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metrics>.field>span:first-child{flex:1;display:flex;align-items:flex-end}
 @media (min-width:520px){.metrics{grid-template-columns:repeat(4,1fr)}}
 
 /* exercise card */
@@ -154,7 +160,8 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .dseg .sug{outline:2px dashed var(--accent);outline-offset:-4px}
 .glv{font-weight:700;font-size:13px;min-height:16px}
 .rvrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvrow>span:first-child{min-width:0}.rvrow>:last-child{white-space:nowrap;flex-shrink:0;text-align:right}
-.recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:2px 0 6px}.recb .rtx{font-family:var(--f-display);font-size:17px}.recb .btn{min-height:34px;padding:4px 12px;margin-left:auto}.recb .rwhy{flex-basis:100%;order:3}
+.recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:2px 0 6px}.recb .rtx{font-family:var(--f-display);font-size:17px}.recb .rbtns{margin-left:auto;display:inline-flex;align-items:center;gap:8px}.recb .btn{min-height:34px;padding:4px 12px}.sndrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.sndrow .btn{min-height:36px;width:44px;padding:0;flex:none}.sndrow .chk{flex:1;min-width:0}
+.clr{width:30px;height:30px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--bad) 55%,transparent);background:transparent;color:var(--bad);font-size:13px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0}.recb .rwhy{flex-basis:100%;order:3}
 .negw{position:relative;min-width:0}.negw .cell{width:100%;padding-left:14px}.negw i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-style:normal;font-weight:700;font-size:18px;color:var(--accent);pointer-events:none}.negm{color:var(--accent);margin-right:1px}
 .negb{border:1px dashed var(--line);background:transparent;color:var(--accent);font:inherit;border-radius:8px;padding:2px 4px;min-height:28px}
 .ssb{margin-right:6px;font-size:12px;padding:1px 7px}
@@ -170,7 +177,7 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .sub .dp{display:inline-flex;align-items:center;gap:2px}.sub .dp i{color:var(--muted);font-style:normal}
 .sub .ib{width:38px;height:38px}
 [data-lp]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
-.stb{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px}.stb .small{font-weight:400;opacity:.85}
+.stb{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;gap:3px;padding:12px 16px;min-height:66px;line-height:1.25}.stb b{font-size:16px}.stb .small{font-weight:400;font-size:13.5px;opacity:.8}
 .rtbar{position:fixed;left:50%;transform:translateX(-50%);width:min(728px,calc(100% - 32px));bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:19;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 8px 8px 14px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
 .rtbar[hidden],body.sheetopen .rtbar,body.tmopen .rtbar{display:none}
 body.kb .rtbar{bottom:calc(var(--kb,0px) + 8px);padding:4px 4px 4px 12px}
@@ -190,7 +197,7 @@ body.kb .rtbar .rt-l{display:none}body.kb .rtbar .rt-t{font-size:22px}body.kb .r
 .rtbar .btn{flex:none}
 .rtbar{cursor:pointer}
 .cell.est{font-style:italic;color:var(--warn);font-size:16px;letter-spacing:-.02em}
-.mft{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px;gap:4px 8px;align-items:center;font-size:14px}
+.mft{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px;gap:4px 8px;align-items:center;font-size:14px}.mft .mfz{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:8px}
 .mft .h{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;text-align:center}
 .mft input{width:22px;height:22px;accent-color:var(--accent);justify-self:center}
 .mft.one{grid-template-columns:minmax(0,1fr) 64px}
@@ -412,7 +419,7 @@ body.kb .savebar{bottom:0}
 </style>
 </head>
 <body>
-<header class="top"><button class="hback" id="hback" hidden>‹ Назад</button><h1 id="ttl">Запис</h1><div class="sub" id="tsub"></div></header>
+<header class="topnav" id="topnav"><button class="hback" id="hback" hidden>‹ Назад</button><span class="mini" id="tmini" aria-hidden="true">Запис</span><div class="sub" id="tsub"></div></header><div class="top"><h1 id="ttl">Запис</h1></div>
 <main id="main"></main><div id="scrollPad"></div>
 <nav class="tabs" id="tabs">
   <button data-tab="log"><svg viewBox="0 0 24 24"><path d="M6 9v6M18 9v6M3 11v2M21 11v2M6 12h12"/></svg>Запис</button>
@@ -490,7 +497,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='54 · 23.10.2026';
+const APPV='54.1 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -764,7 +771,13 @@ const GM=[['gReady','Готовність до тренування','pre',0,100
  ['gKcalA','Активні ккал','post',0,5000,''],['gKcalT','Усього ккал','post',0,8000,''],['gHrA','Середній пульс','post',30,230,''],['gHrM','Максимальний пульс','post',30,230,'']];
 const GMK=Object.fromEntries(GM.map(x=>[x[0],x]));
 const GBEN=['Відновлення','Базова','Темпова','Порогова','VO2 Max','Анаеробна','Спринт'];
-const gOn=()=>S.settings.gOn===true,gmOn=k=>gOn()&&((S.settings.gm||{})[k]!==false);
+const gOn=()=>S.settings.gOn===true;
+/* v54.1: окремі набори для силових і для HIIT/кардіо. Типово: силові - готовність і оцінка сну; HIIT/кардіо - готовність, ефекти, пульс, активні ккал */
+const GMDEF={s:{gReady:1,gSleep:1},h:{gReady:1,gAE:1,gAN:1,gHrA:1,gHrM:1,gKcalA:1}};
+const gmK=(k,kd)=>{if(!gOn())return false;const o=(kd==='h'?S.settings.gmH:S.settings.gm)||{};return o[k]!=null?!!o[k]:!!GMDEF[kd][k]};
+const gmOn=k=>gmK(k,'s')||gmK(k,'h');
+const wKinds=w=>{const its=(w&&w.items)||[];const tg=w&&w.tag;const s=its.some(it=>STR.includes(it.type)),h=its.some(it=>['hiit','block','cardio'].includes(it.type))||tg==='HIIT'||tg==='Кардіо';return{s:s||(!h),h}};
+const gmW=(w,k)=>{const K=wKinds(w);return(K.s&&gmK(k,'s'))||(K.h&&gmK(k,'h'))};
 const GCOL={red:'#e5484d',orange:'#f08c00',green:'#2f9e44',blue:'#1c7ed6',purple:'#8e44ad',gray:'#8a8f98'};
 function gColor(k,v){v=num(v);if(v==null)return null;const t=(GMK[k]||[])[5];
  if(t==='ready')return v>=95?['purple','Відмінна']:v>=75?['blue','Висока']:v>=50?['green','Помірна']:v>=25?['orange','Низька']:['red','Погана'];
@@ -779,12 +792,13 @@ function diffSuggest(w){const F=[];const FW=factW();const add=(sc,t,k,imp)=>{if(
  const val=k=>{const v=num(w[k]);if(v!=null)return[v,''];const a=ws.map(x=>num(x[k])).filter(x=>x!=null).slice(-5);return a.length>=3?[median(a),'≈']:[null,'']};
  {const[v,i]=val('sleep');if(mfOn('str','sleep')&&v!=null)add(v<6?-1:v<7?-.5:v>=8?.5:0,i+'сон '+nf(v,1)+' год','sleep',i)}
  {const[v,i]=val('well');if(mfOn('str','well')&&v!=null)add(v<=4?-1:v<=6?-.5:v>=8?.5:0,i+'самопочуття '+nf(v,1),'well',i)}
- {const[v,i]=val('gReady');if(gmOn('gReady')&&v!=null)add(v<25?-2:v<50?-1:v>=95?1.5:v>=75?1:0,i+'готовність '+f0(v),'gReady',i)}
- {const[v,i]=val('gBB');if(gmOn('gBB')&&v!=null)add(v<25?-1:v<50?-.5:v>=75?.5:0,i+'Body Battery '+f0(v),'gBB',i)}
- {const[v,i]=val('gSleep');if(gmOn('gSleep')&&v!=null)add(v<60?-1:v<70?-.5:v>=85?.5:0,i+'оцінка сну '+f0(v),'gSleep',i)}
+ {const[v,i]=val('gReady');if(gmW(w,'gReady')&&v!=null)add(v<25?-2:v<50?-1:v>=95?1.5:v>=75?1:0,i+'готовність '+f0(v),'gReady',i)}
+ {const[v,i]=val('gBB');if(gmW(w,'gBB')&&v!=null)add(v<25?-1:v<50?-.5:v>=75?.5:0,i+'Body Battery '+f0(v),'gBB',i)}
+ {const[v,i]=val('gSleep');if(gmW(w,'gSleep')&&v!=null)add(v<60?-1:v<70?-.5:v>=85?.5:0,i+'оцінка сну '+f0(v),'gSleep',i)}
  if(pv){const d=Math.round((new Date((w.date||todayStr())+'T12:00')-new Date(pv.date+'T12:00'))/864e5);
   if(d===0)add(-1,'друге тренування за день','rest');else if(d===1&&diffOf(pv)==='H')add(-.5,'вчора важке','rest');else if(d>=3)add(.5,'відпочинок '+d+' дн','rest');
   const rc=num(pv.gRec);if(gmOn('gRec')&&rc){const left=rc-d*24;if(left>0)add(-1,'відновлення Garmin ще ≈'+f0(left)+' год','gRec')}}
+ {const hl=hiitLeft(w);if(hl>0)add(hl>=12?-1:-.5,'після HIIT ще ≈'+f0(hl)+' год','rest',num(w.gReady)!=null&&gmW(w,'gReady'))}
  if(!F.length)return{v:'',why:[],sc:0};const sc=F.reduce((t,x)=>t+x[0],0);return{v:sc<=-1.5?'L':sc>=1?'H':'M',sc,why:F.sort((a,b)=>Math.abs(b[0])-Math.abs(a[0])).map(x=>x[1]).slice(0,3)}}
 /* v54: особисті ваги факторів - після 12+ тренувань з даними. Множник = 1 + 2,5·r (кореляція з індексом сили), у межах 0,3-2 */
 const FACT=[['sleep','Сон'],['well','Самопочуття'],['gReady','Готовність Garmin'],['gBB','Body Battery'],['gSleep','Оцінка сну Garmin'],['rest','Дні відпочинку']];
@@ -802,19 +816,36 @@ function factBlock(){const fw=factW(),ws=(S.workouts||[]).length;if(!persOn())re
   return`<div class="rvrow small"><span><b>${l}</b> <span class="muted">n=${f.n}${f.r!=null?' · r='+nf(f.r,2):''}</span></span><span>${v}${f.r!=null?' · вага ×'+nf(f.m,1):''}</span></div>`}).join('')+`<p class="muted small" style="margin:0">Вага × у пропозиції складності: більше 1 - фактор важить більше за загальне правило, менше 1 - менше. Рахується за збігом з індексом сили, легкі тренування не беруться. Це збіг, а не доведена причина; точніше від 20-30 тренувань.</p>`}
 /* v54: відновлення груп м'язів - оцінка з правил: потрібно ≈ 24 год + 6 год на робочий підхід (до 96), або «Час відновлення» Garmin, якщо більше */
 let RVC=null;
-function recovery(excl){const ws0=S.workouts||[];const sig=ws0.length+'|'+(ws0.length?ws0[ws0.length-1].id:'')+'|'+(excl||'')+'|'+Math.floor(Date.now()/36e5)+'|'+secW()+'|'+kRir();if(RVC&&RVC.sig===sig)return RVC.r;
+const recK=()=>{const v=num(S.settings.recK);return v&&v>0?v:1};
+const LEGG=['Квадрицепс','Сідниці','Біцепс стегна','Привідні'];const PLYO=new Set(['jump_squat','burpee','jjack']);
+const isLegBig=o=>{const L=['quads','glute_max','hams'],p=primOf(o||{}),q=(o&&o.sec)||[];return p.filter(x=>L.includes(x)).length>=2||(p.some(x=>L.includes(x))&&q.some(x=>L.concat('adductors').includes(x)))};
+/* години на підхід: відмова 8, RIR 1-2 - 6, RIR 3-4 - 3; 10+ повторів ×1,2, 1-5 ×0,6; Myo і дропи - за коефіцієнтами */
+function setHrs(it,s){const q=num(s.rir);let h=q==null?6:q<=0?8:q<=2?6:q<=4?3:0;if(!h)return 0;const R=repsOf(it,s),r=R?R.per:0;if(r>=10)h*=1.2;else if(r&&r<=5)h*=.6;return h*(1+kMyo()*miniOf(it,s).length+kDrop()*dropsOf(it,s).length)}
+/* одне тренування: години на групу (силові + HIIT) і загальна втома HIIT */
+function wRecov(w){const g={},add=(gr,h)=>{if(h>0)g[gr]=(g[gr]||0)+h};
+ const hiit=(exId,k,o)=>{if(!k)return;const c=musContrib(o).g,pl=PLYO.has(exId);for(const gr in c)add(gr,k*3.6*c[gr]*(pl&&LEGG.includes(gr)?1.3:1))};
+ (w.items||[]).forEach(it=>{if(STR.includes(it.type)){let H=0;it.sets.forEach(s=>{if(!s.wu&&(repsOf(it,s)||{}).tot)H+=setHrs(it,s)});if(!H)return;const c=musContrib(it).g,lb=isLegBig(it);for(const gr in c)add(gr,H*c[gr]*(lb&&LEGG.includes(gr)?1.2:1));return}
+  if(it.type==='hiit'){hiit(it.exId,it.sets.filter(s=>num(s.work)||num(s.r)).length,it);return}
+  if(it.type==='block'){const st=blockStats(it);if(!st.has)return;const E=mainEx(it),n=Math.max(1,E.length),c=it.cfg||{};E.forEach(x=>{const e=ex(x.exId)||{};const k=it.fmt==='int'?(st.wd||0)/n:it.fmt==='emom'?(c.alt?(st.done||0)/n:(st.done||0)):it.fmt==='amrap'?(st.rounds||0)+((st.extra||0)>0?.5:0):(st.rounds||0);hiit(x.exId,k,{prim:primOf(e),sec:e.sec||[]})})}});
+ let hm=0;(w.items||[]).forEach(it=>{if(it.type==='block'){const st=blockStats(it);if(st.has)hm+=(st.work||0)/60*1.5}else if(it.type==='hiit'){const st=itemStats(it,0);if(st.has)hm+=(st.work||0)/60*1.5}});
+ if(hm&&!(w.items||[]).some(it=>STR.includes(it.type)&&itemStats(it,0).has)&&num(w.dur))hm=num(w.dur);
+ const rp=num(w.srpe);return{g,sys:hm?Math.min(48,(rp??7)*hm/10):0}}
+const wEnd=w=>w.startedAt&&iso(new Date(w.startedAt))===w.date?w.startedAt+(num(w.dur)||60)*6e4:new Date(w.date+'T18:00').getTime();
+/* v54.1: відновлення груп - 12 год + години підходів і раундів, × «Мій запас відновлення», до 96 год. Кілька недавніх тренувань - береться найдовший залишок */
+function recovery(excl){const ws0=S.workouts||[];const sig=ws0.length+'|'+(ws0.length?ws0[ws0.length-1].id:'')+'|'+(excl||'')+'|'+Math.floor(Date.now()/36e5)+'|'+secW()+'|'+recK()+'|'+kMyo()+'|'+kDrop()+'|'+gOn();if(RVC&&RVC.sig===sig)return RVC.r;
  const ws=sortedW().filter(w=>w.id!==excl&&!isWarm(w)),out={},now=Date.now(),seen={};
- for(let i=ws.length-1;i>=0;i--){const w=ws[i];const st=wStats(w);for(const g in st.groups){const n=st.groups[g];if(n<1)continue;(seen[g]=seen[g]||[]).push(w.date);if(out[g])continue;
-   let t=w.startedAt&&iso(new Date(w.startedAt))===w.date?w.startedAt+(num(w.dur)||60)*6e4:new Date(w.date+'T18:00').getTime();
-   let need=Math.min(96,24+6*n);const gr=num(w.gRec);if(gmOn('gRec')&&gr&&gr>need)need=gr;const el=(now-t)/36e5;
-   out[g]={d:w.date,n,need,el,left:Math.max(0,need-el),st:el>=need?'ok':el>=need*.75?'almost':'early'}}}
- for(const g in out){const d=(seen[g]||[]).slice(0,8).reverse();if(d.length>=2){let s2=0;for(let i=1;i<d.length;i++)s2+=(new Date(d[i]+'T12:00')-new Date(d[i-1]+'T12:00'))/864e5;out[g].gap=s2/(d.length-1)}}
+ for(let i=ws.length-1;i>=0;i--){const w=ws[i];const el=(now-wEnd(w))/36e5;if(el>21*24&&Object.keys(out).length)break;const R=wRecov(w),st=wStats(w);
+  for(const g in R.g){(seen[g]=seen[g]||[]).push(w.date);let need=Math.min(96,(12+R.g[g])*recK());const gr=num(w.gRec);if(gmW(w,'gRec')&&gr&&gr>need)need=Math.min(96,gr);const left=Math.max(0,need-el);
+   if(!out[g])out[g]={d:w.date,n:st.groups[g]||0,hiit:!(st.groups[g]>=1),need,el,left};else if(left>out[g].left){out[g].left=left;out[g].need=need}}}
+ for(const g in out){const o=out[g];o.st=o.left<=0?'ok':o.left<=o.need*.25?'almost':'early';const d=(seen[g]||[]).slice(0,8).reverse();if(d.length>=2){let s2=0;for(let i=1;i<d.length;i++)s2+=(new Date(d[i]+'T12:00')-new Date(d[i-1]+'T12:00'))/864e5;o.gap=s2/(d.length-1)}}
  RVC={sig,r:out};return out}
+/* загальна втома після HIIT для пропозиції складності */
+function hiitLeft(w){const ws=sortedW().filter(x=>x.id!==w.id&&!isWarm(x)&&x.date<=(w.date||todayStr())).slice(-4);const now=w._edit?new Date((w.date||todayStr())+'T12:00').getTime():Date.now();let best=0;ws.forEach(x=>{const r=wRecov(x);if(!r.sys)return;const left=r.sys-(now-wEnd(x))/36e5;if(left>best)best=left});return best}
 const RST={ok:['p-good','відновлена'],almost:['p-warn','майже'],early:['p-bad','ще рано']};
 function recovBlock(){const r=recovery(S.draft&&S.draft.id);const gs=(musFull()?GROUPS:SHORT_GROUPS).filter(g=>!MINOR.includes(g)&&r[g]&&r[g].el<14*24);
  if(!gs.length)return'<p class="muted small" style="margin:0">За останні 14 днів робочих підходів немає.</p>';
- return gs.map(g=>{const o=r[g];return`<div class="rvrow small"><span><b>${g}</b> <span class="muted">${o.el<24?'сьогодні':f0(o.el/24)+' дн тому'} · ${fH(o.n)} підх.${o.gap?' · між тренуваннями ≈'+nf(o.gap,1)+' дн':''}</span></span><span class="pill ${RST[o.st][0]}">${RST[o.st][1]}${o.st!=='ok'?' ≈'+f0(o.left)+' год':''}</span></div>`}).join('')
- +`<p class="muted small" style="margin:0">Оцінка з правил, а не вимірювання: потрібно ≈ 24 год + 6 год на кожен робочий підхід групи (до 4 діб); непрямі й RIR 3-4 рахуються за коефіцієнтами. Якщо вписаний «Час відновлення» Garmin і він довший - береться він. Вважай орієнтиром разом із самопочуттям.</p>`}
+ return gs.map(g=>{const o=r[g];return`<div class="rvrow small"><span><b>${g}</b> <span class="muted">${o.el<24?'сьогодні':f0(o.el/24)+' дн тому'} · ${o.hiit?'HIIT':fH(o.n)+' підх.'}${o.gap?' · між тренуваннями ≈'+nf(o.gap,1)+' дн':''}</span></span><span class="pill ${RST[o.st][0]}">${RST[o.st][1]}${o.st!=='ok'?' ≈'+f0(o.left)+' год':''}</span></div>`}).join('')
+ +`<p class="muted small" style="margin:0">Оцінка з правил, а не вимірювання: 12 год + за кожен підхід групи ≈8 год (до відмови), 6 (RIR 1-2), 3 (RIR 3-4); 10+ повторів ×1,2, 1-5 повторів ×0,6; ноги у великих вправах ×1,2; непрямі ×0,5. HIIT: раунд ≈ пів підходу, стрибки й спринти ×1,3 для ніг. Усе × «Мій запас відновлення» (×${nf(recK(),1)}), до 4 діб. Орієнтири: Bartolomei 2017, Morán-Navarro 2017, Belcher 2019, Yang 2026.</p>`}
 /* v54: рекомендація перед вправою - подвійна прогресія з RIR */
 const stepOf=it=>{const st=S.settings.steps||{};const g=(k,d)=>{const v=num(st[k]);return v&&v>0?v:d};if(it.type==='db1'||it.type==='db2')return g('db',2);if(it.type==='weight')return it.mach&&it.mach.k!=='free'?g('mach',5):g('bar',2.5);if(it.type==='bw')return g('bw',2.5);return null};
 const loadNumT=it=>['weight','db1','db2'].includes(it.type)||(it.type==='bw'&&!noKg(it.exId)&&!lvList(it.exId));
@@ -838,7 +869,11 @@ function recFor(it,w){if(!recOn()||!STR.includes(it.type)||!w)return null;const 
  const rTxt=(()=>{const a=Math.min(...rr),b=Math.max(...rr);return a===b?String(a):a+'-'+b})();
  const wTxt=LN&&wt!=null?(it.neg?'−':'')+nf(wt,1)+(it.type==='db2'?' кг ×2':' кг'):verb||(it.type==='band'?'та сама гума':it.type==='trx'?'той самий рівень':lvList(it.exId)?'те саме положення':'');
  return{kind,wt:LN?wt:null,rr,ns,why,txt:`${wTxt?wTxt+' × ':''}${rTxt}${noKg(it.exId)&&it.type==='bw'?' повт.':''} · RIR ${kind==='light'?'3-4':ra+(rb!==ra?'-'+rb:'')}${kind==='light'?' · '+ns+' підх.':''}`}}
-function recHTML(it,R){return`<div class="recb"><span class="pill p-acc">${R.kind==='up'?'↑ ':''}Рекомендація</span><b class="rtx">${esc(R.txt)}</b><details class="hlp rwhy"><summary>ⓘ чому</summary><div>${R.why.map(esc).join('<br>')}</div></details><button class="btn" data-a="rec-fill" data-i="${it.uid}">Заповнити</button></div>`}
+function recHTML(it,R){return`<div class="recb"><span class="pill p-acc">${R.kind==='up'?'↑ ':''}Рекомендація</span><b class="rtx">${esc(R.txt)}</b><details class="hlp rwhy"><summary>ⓘ чому</summary><div>${R.why.map(esc).join('<br>')}</div></details><span class="rbtns"><button class="btn" data-a="rec-fill" data-i="${it.uid}">Заповнити</button><button class="clr" data-a="rec-clear" data-i="${it.uid}" aria-label="Очистити вписане: повтори, вагу і RIR">✕</button></span></div>`}
+function orderNote(it,w){const its=w.items||[],i=its.indexOf(it);if(i<1)return'';const mine=new Set(primOf(it).map(musGrp).filter(Boolean));const before=its.slice(0,i).filter(x=>x.type==='hiit'||x.type==='block');if(!before.length)return'';
+ const hg=new Set();before.forEach(x=>{const L=x.type==='block'?mainEx(x).map(e=>ex(e.exId)||{}):[x];L.forEach(e=>primOf(e).forEach(m=>{const g=musGrp(m);if(g)hg.add(g)}))});const ov=[...mine].filter(g=>hg.has(g));if(!ov.length)return'';
+ if(its.slice(0,i).some(x=>STR.includes(x.type)&&primOf(x).some(m=>ov.includes(musGrp(m)))))return'';
+ return`<div class="hint">HIIT перед силовими на ті самі м’язи (${ov.join(', ')}) знижує повтори і ріст сили ніг. Для сили краще силові спершу, HIIT після (Eddens et al., 2018).</div>`}
 function recovNote(it){if(!recovOn()||!S.draft)return'';const r=recovery(S.draft.id);const gs=[...new Set((it.prim||[]).map(musGrp).filter(Boolean))].filter(g=>!MINOR.includes(g)&&r[g]&&r[g].st==='early');
  return gs.length?`<div class="hint">${gs.map(g=>`${g}: ще відновлюється, ≈${f0(r[g].left)} год`).join('; ')} (оцінка)</div>`:''}
 /* складність після тренування: обсяг проти попередніх за тим самим шаблоном + середній RIR */
@@ -848,9 +883,9 @@ function diffAutoOf(w){const st=wStats(w);if(!st.vol&&!st.hard)return'';const rs
 function diffBox(w){if(!diffOn())return'';const sg=diffSuggest(w);
  return`<div class="field"><span>Складність тренування</span><div class="seg dseg">${['L','M','H'].map(k=>`<button class="${w.diff===k?'on':''}${!w.diff&&sg.v===k?' sug':''}" data-a="w-diff" data-v="${k}">${DIFF[k]}</button>`).join('')}</div></div>
  <div class="hint" id="diff-why">${w.diff?(w.diff==='L'?'Легкий день: та сама вага, RIR 3-4, ≈ на третину менше підходів. ':'')+(sg.v&&sg.v!==w.diff?'Пропозиція була: '+DIFF[sg.v]+' ('+esc(sg.why.join(', '))+'). ':'')+'Тап ще раз - зняти вибір.':sg.v?'Пропозиція: <b>'+DIFF[sg.v]+'</b> - '+esc(sg.why.join(', '))+'. Обери або залиш - після тренування складність визначиться за обсягом і RIR.':'Обери складність або залиш - після тренування вона визначиться за обсягом і RIR.'}</div>`}
-function gField(w,k){const g=GMK[k];if(g[5]==='sel')return`<label class="field"><span>${g[1]}</span><select class="in" data-c="w-gben" id="w-${k}"><option value="">—</option>${GBEN.map(b=>`<option ${w[k]===b?'selected':''}>${b}</option>`).join('')}</select></label>`;
- const c=gColor(k,w[k]);return`<label class="field"><span>${g[1]}</span><input class="in${c?' gc':''}" style="${c?'border-left:6px solid '+GCOL[c[0]]:''}" inputmode="decimal" data-f="w" data-k="${k}" id="w-${k}" value="${esc(w[k]??'')}" placeholder="${g[3]}-${g[4]}">${g[5]?`<b class="glv" id="gl-${k}" style="color:${c?GCOL[c[0]]:'inherit'}">${c?c[1]:''}</b>`:''}</label>`}
-function gZone(w,z){const ks=GM.filter(g=>g[2]===z&&gmOn(g[0])).map(g=>g[0]);if(!ks.length)return'';return`<div class="lbl">Garmin</div><div class="metrics">${ks.map(k=>gField(w,k)).join('')}</div>`}
+function gField(w,k){const g=GMK[k];if(g[5]==='sel')return`<label class="field"><span>${g[1]}</span><select class="in" data-c="w-gben" id="w-${k}"><option value="">—</option>${GBEN.map(b=>`<option ${w[k]===b?'selected':''}>${b}</option>`).join('')}</select><b class="glv"></b></label>`;
+ const c=gColor(k,w[k]);return`<label class="field"><span>${g[1]}</span><input class="in${c?' gc':''}" style="${c?'border-left:6px solid '+GCOL[c[0]]:''}" inputmode="decimal" data-f="w" data-k="${k}" id="w-${k}" value="${esc(w[k]??'')}" placeholder="${g[3]}-${g[4]}"><b class="glv" id="gl-${k}" style="color:${c?GCOL[c[0]]:'inherit'}">${c?c[1]:''}</b></label>`}
+function gZone(w,z){const ks=GM.filter(g=>g[2]===z&&gmW(w,g[0])).map(g=>g[0]);if(!ks.length)return'';return`<div class="lbl">Garmin</div><div class="metrics">${ks.map(k=>gField(w,k)).join('')}</div>`}
 function gUpd(el){const k=el.dataset.k;if(!GMK[k])return;const c=gColor(k,el.value);el.style.borderLeft=c?'6px solid '+GCOL[c[0]]:'';const l=document.getElementById('gl-'+k);if(l){l.textContent=c?c[1]:'';l.style.color=c?GCOL[c[0]]:'inherit'}}
 function diffUpd(){const b=document.getElementById('diff-box');if(b&&S.draft)b.innerHTML=diffBox(S.draft)}
 const MF=[['sleep','Сон'],['well','Самопочуття'],['dur','Тривалість'],['bw','Вага тіла'],['phase','Фаза харчування'],['srpe','Важкість тренування 1-10']];
@@ -1157,13 +1192,15 @@ function wuAvg(role){const v=[];S.workouts.forEach(w=>{const o=wuInfo(w);const x
 
 /* ========== render core ========== */
 const TITLES={log:'Запис',hist:'Історія',stats:'Аналітика',tpl:'Шаблони',set:'Налаштування'};
+let HCR=0;function hcolUpd(){const t=document.getElementById('ttl'),n=document.getElementById('topnav');if(!t||!n)return;document.body.classList.toggle('hcol',t.getBoundingClientRect().bottom<=n.getBoundingClientRect().bottom+2)}
+window.addEventListener('scroll',()=>{if(HCR)return;HCR=requestAnimationFrame(()=>{HCR=0;hcolUpd()})},{passive:true});
 function hbackUpd(){const b=document.querySelector('header .hback');if(!b)return;const t=S.ui.tab;let m=null;if(!AND){if(t==='tpl'&&S.ui.tplEd)m='tpl';else if(t==='log'&&S.draft)m='draft'}
  b.hidden=!m;if(!m){b.removeAttribute('data-a');b.id='hback';return}if(m==='tpl'){b.id='tpl-back';b.dataset.a='tpl-exit';b.textContent=tplChanged()?'‹ Без збереження':'‹ Назад'}else{b.id='hback';b.dataset.a='draft-back';b.textContent=S.draft._edit?'‹ Історія':'‹ Назад'}}
 function draftBack(){const d=S.draft;if(!d)return;if(!draftHasData()){S.draft=null;if(d._edit)S.ui.tab='hist';save();render();window.scrollTo(0,0);return}
  openSheet(`<h3>${d._edit?'Зберегти зміни?':isWarm(d)?'Зберегти зарядку?':'Зберегти тренування?'}</h3><button class="btn pri full" data-a="lv-save">${d._edit?'Зберегти зміни':'Зберегти'}</button><button class="btn danger full" data-a="lv-drop">${d._edit?'Скасувати зміни':'Не зберігати'}</button><button class="btn ghost full" data-a="close">Залишитись</button>`,'leave')}
 const CH={};
 function applyTheme(){const t=S.settings.theme;const r=document.documentElement;if(t==='light'||t==='dark')r.setAttribute('data-theme',t);else if(HOST_THEME)r.setAttribute('data-theme',HOST_THEME);else r.removeAttribute('data-theme');if(AND){try{const dk=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);if(dk!==applyTheme.dk){applyTheme.dk=dk;AND.setBars(dk)}}catch(e){}}}
-function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm(S.draft)?'warm':'main'):(t==='hist'||t==='stats')?(S.ui.scope==='warm'&&(t==='hist'?warmOn():warmStatsOn())?'warm':'main'):'main';$('#ttl').textContent=TITLES[t];document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm(S.draft)?'warm':'main'):(t==='hist'||t==='stats')?(S.ui.scope==='warm'&&(t==='hist'?warmOn():warmStatsOn())?'warm':'main'):'main';$('#ttl').textContent=TITLES[t];$('#tmini').textContent=TITLES[t];document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
  let sub='';if(t==='log'&&S.draft)sub=S.draft._edit?'редагування':'триває '+Math.max(0,Math.round((Date.now()-S.draft.startedAt)/6e4))+' хв';$('#tsub').textContent=sub;
  for(const k in CH)delete CH[k];
  document.body.classList.toggle('wide',t!=='log'||!S.draft);
@@ -1173,7 +1210,7 @@ function render(){applyTheme();const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm
  if(openD.length)document.querySelectorAll('#main details > summary').forEach(x=>{if(openD.includes(x.textContent))x.parentElement.open=true});
  LASTVIEW=t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:'');
  const pad=document.getElementById('scrollPad');if(pad){if(keep)padKeep(y);else pad.style.height='0px'}
- if(keep&&Math.abs(window.scrollY-y)>1)window.scrollTo(0,y);hbackUpd()}
+ if(keep&&Math.abs(window.scrollY-y)>1)window.scrollTo(0,y);hbackUpd();hcolUpd()}
 let LASTVIEW='';
 /* v51: екран стоїть на місці. Якщо сторінка коротшає (згорнув блок, прибрав вправу), знизу додається запас, щоб браузер не «підтягував» прокрутку */
 function padKeep(y){const pad=document.getElementById('scrollPad');if(!pad)return;const need=y+innerHeight-(document.documentElement.scrollHeight-pad.offsetHeight);pad.style.height=Math.max(0,Math.ceil(need))+'px'}
@@ -1271,7 +1308,7 @@ function itemHTML(it,i,n,w){if(it.type==='block')return blockHTML(it,i,n,w);if(i
  if(it.type==='weight'){const m=it.mach||{k:'free'};h+=`<button class="btn mbtn" data-a="pick-mach" data-i="${it.uid}"><span class="muted small">Тренажер:</span> <b>${esc(machLbl(m))}</b></button>${m.k!=='free'?`<div class="hint">Вписуй вагу, як на тренажері: ${esc(machFormula(m))}</div>`:''}`}
  {const mh=modeHint(it);if(mh)h+=`<div class="hint">${mh}</div>`}
  if(SSL&&it.ssIn&&restMode()!=='off')h+=`<div class="hint">Суперсет: «Відп» тут - пауза після попередньої вправи суперсету${ssRestStd()?' (підказка '+ssRestStd()+' с)':''}. Рахується окремо.</div>`;
- const RC=STR.includes(it.type)?recFor(it,w):null;if(prev)h+=prevLine(it,prev,!!RC);if(RC)h+=recHTML(it,RC);if(STR.includes(it.type))h+=recovNote(it);
+ const RC=STR.includes(it.type)?recFor(it,w):null;if(prev)h+=prevLine(it,prev,!!RC);if(RC)h+=recHTML(it,RC);if(STR.includes(it.type))h+=recovNote(it)+orderNote(it,w);
  if(STR.includes(it.type))h+=strRows(it,prev);else if(it.type==='hiit')h+=hiitRows(it,prev);else h+=cardioForm(it,prev);
  h+=`<div class="it-foot"><div class="stat" id="ft-${it.uid}">${footTxt(it)}</div><div class="minibtns">${it.type==='cardio'?'':`<button class="btn" data-a="del-set" data-i="${it.uid}" ${it.sets.length<2?'disabled':''} aria-label="Прибрати останній підхід">−</button><button class="btn" data-a="add-set" data-i="${it.uid}">+ ${it.type==='hiit'?'Раунд':'Підхід'}</button>`}</div></div></article>`;
  return h}
@@ -1699,9 +1736,12 @@ function advHTML(){const st=S.settings.steps||{};const sf=(k,l,ph)=>`<label clas
  <label class="chk"><input type="checkbox" data-c="sett" data-k="persOn" id="set-pers" ${persOn()?'checked':''}>Особисті ваги факторів (після 12 тренувань)</label>
  ${hlp('Після 12 тренувань програма дивиться, що в тебе реально збігається з силою: сон, самопочуття, показники Garmin, дні відпочинку. Сильніший фактор отримує більшу вагу в пропозиції складності, слабкий - меншу. Видно в «Аналітиці» → «Твої фактори». Це збіг, а не доведена причина.')}
  <label class="chk"><input type="checkbox" data-c="sett" data-k="recovOn" id="set-recov" ${recovOn()?'checked':''}>Примітка «ще відновлюється» на картці вправи</label>
- ${hlp('Якщо основна група вправи за оцінкою ще не відновилась, на картці з’являється примітка. Оцінка: ≈ 24 год + 6 год на робочий підхід групи (до 4 діб) або «Час відновлення» Garmin, якщо він довший. Таблиця - в «Аналітиці» → «Групи м’язів».')}`}
+ <div class="field"><span>Мій запас відновлення</span>${kSeg('recK',recK(),[[.8,'0,8'],[1,'1'],[1.2,'1,2'],[1.5,'1,5']])}</div>
+ ${hlp('Множник для всіх оцінок відновлення. ×1,2 чи ×1,5 - якщо відновлюєшся довше (вік, сон, робота, стрес), ×0,8 - якщо швидше.<br><b>Приклад:</b> 3 підходи з RIR 2 по 10 → ≈34 год; з ×1,5 - ≈50 год.')}
+ ${hlp('Якщо основна група вправи за оцінкою ще не відновилась, на картці з’являється примітка. Оцінка: 12 год + години за кожен підхід залежно від RIR і повторів, HIIT-раунди теж рахуються (до 4 діб). Таблиця - в «Аналітиці» → «Групи м’язів».')}`}
 function gHTML(){return`<label class="chk"><input type="checkbox" data-c="sett" data-k="gOn" id="set-gon" ${gOn()?'checked':''}>Дані Garmin у тренуванні</label>
- ${gOn()?['pre','post'].map(z=>`<div class="lbl" style="margin-top:4px">${z==='pre'?'Перед тренуванням':'Після тренування'}</div>${GM.filter(g=>g[2]===z).map(([k,l])=>`<label class="chk"><input type="checkbox" data-c="gm" data-k="${k}" id="gm-${k}" ${gmOn(k)?'checked':''}>${l}</label>`).join('')}`).join(''):''}
+ ${gOn()?`<div class="mft"><span></span><span class="h">Силові</span><span class="h">HIIT / кардіо</span>${['pre','post'].map(z=>`<span class="mfz">${z==='pre'?'Перед тренуванням':'Після тренування'}</span><span></span><span></span>${GM.filter(g=>g[2]===z).map(([k,l])=>`<span>${l}</span><input type="checkbox" data-c="gm" data-kind="s" data-k="${k}" id="gm-${k}" ${gmK(k,'s')?'checked':''} aria-label="${l}: силові"><input type="checkbox" data-c="gm" data-kind="h" data-k="${k}" id="gmh-${k}" ${gmK(k,'h')?'checked':''} aria-label="${l}: HIIT і кардіо">`).join('')}`).join('')}</div>
+ ${hlp('Чому так типово. На силовому корисна лише «Готовність» (вона враховує варіабельність пульсу і стрес, які вручну не внести) і, за бажанням, оцінка сну. Ефекти тренування, інтенсивність, ккал і пульс Garmin рахує за пульсом - для залу вони малоінформативні, а «Час відновлення» відображає загальну втому, а не м’язи (8-13 год проти 1-3 діб). У HIIT і кардіо пульс справді відображає роботу, тож там ефекти, пульс і ккал мають сенс. У змішаному тренуванні показуються поля обох наборів.')}`:''}
  ${hlp('Вводиш з годинника вручну. Вимкнене зникає з тренування, аналітики й кореляцій і не враховується в пропозиції складності, введене не стирається.<br><b>Кольори</b> як у Garmin. Готовність: 1-24 червоний, 25-49 помаранчевий, 50-74 зелений, 75-94 синій, 95-100 фіолетовий. Ефект тренування: 0-1,9 сірий, 2-2,9 синій, 3-3,9 зелений, 4-4,9 помаранчевий, 5 червоний.<br><b>Приклад:</b> готовність 38 (помаранчевий) і Body Battery 30 → пропозиція «Легке».')}`}
 function setTypSub(){const a=[];if(wuOn())a.push('розминкові');if(myoOn())a.push('Myo');if(dropOn())a.push('дроп');if(ssOn())a.push('суперсети');return a.join(' · ')||'лише робочі'}
 function setStrHTML(){const rm=restMode();
@@ -1711,11 +1751,13 @@ function setStrHTML(){const rm=restMode();
  ${hlp('Сіра підказка в порожньому полі «Відп». Порожньо - 180, 0 - без підказки.<br><b>Приклад:</b> вписав 150 - у порожніх полях буде сіре «150». Якщо минулого разу в цьому підході було 165, покажеться 165. Свій відпочинок для вправи задається в шаблоні («Відпоч., с») і має перевагу.<br>Чому 180: відпочинок понад 60 с трохи краще для росту, після 90 с різниці майже немає (дослідження: Singer et al., 2024); у базових вправах 2-3 хв зберігають більше повторів.')}`:''}
  <label class="field"><span>Темп, с на повтор</span><input class="in" inputmode="decimal" data-f="set" data-k="tempo" id="set-tempo" value="${esc(S.settings.tempo??'')}" placeholder="4"></label>
  ${hlp('Для оцінки з тривалості тренування: робота = повтори × темп, решта - відпочинок і переходи (у підсумку і в «Динаміці»).<br><b>Приклад:</b> темп 4, 3 підходи по 10 → 2 хв роботи. 4 с - звичайний темп; повільні повтори з паузами (3-1-3) - 6-7 с.')}`}
+function sndHTML(){const cur=sndP();return`<div class="field"><span>Звук сигналу</span></div>${SNDS.map(([k,l,d])=>`<div class="sndrow"><label class="chk"><input type="radio" name="sndp" data-c="sndp" value="${k}" id="snd-${k}" ${cur===k?'checked':''}><span><b>${l}</b> <span class="muted small">${d}</span></span></label><button class="btn" data-a="snd-play" data-v="${k}" aria-label="Прослухати: ${l}">▶</button></div>`).join('')}
+ ${hlp('Звук застосовується до всіх сигналів таймера: відлік 3-2-1, старт, відпочинок, попередження і кінець - вони відрізняються висотою або кількістю сигналів. ▶ програє «3-2-1 + старт». Якщо слухаєш музику в навушниках чи в залі шумно - краще Різкий або Дзвіночок: м’які звуки гірше пробиваються.')}`}
 function ivHTML(){return`<label class="field"><span>«Готуйся» перед стартом, розминкою і заминкою, с</span><input class="in" inputmode="numeric" data-f="set" data-k="prepS" id="set-preps" value="${esc(S.settings.prepS??'')}" placeholder="10"></label>
  ${hlp('Відлік перед основною частиною таймера. 0 - старт одразу.<br><b>Приклад:</b> 15 - встигнеш взяти гирю і стати на місце.')}
  <label class="field"><span>Сигнал до кінця відпочинку між раундами, с</span><input class="in" inputmode="numeric" data-f="set" data-k="ivPreS" id="set-ivpres" value="${esc(S.settings.ivPreS??'')}" placeholder="10"></label>
  ${hlp('Короткий сигнал за N секунд до кінця відпочинку. 0 - вимкнено. Звучить, лише якщо відпочинок довший за N щонайменше на 5 с, щоб не злитися з 3-2-1.<br><b>Приклад:</b> відпочинок 30 с, сигнал 10 → сигнал на 20-й секунді, потім 3-2-1.')}
- <div class="lbl" style="margin-top:6px">Звук таймера</div><label class="chk"><input type="checkbox" data-c="snd" id="set-snd" ${S.settings.sound!==false?'checked':''}>Звук у таймері (також перемикається на екрані таймера)</label>
+ <div class="lbl" style="margin-top:6px">Звук таймера</div>${sndHTML()}<label class="chk"><input type="checkbox" data-c="snd" id="set-snd" ${S.settings.sound!==false?'checked':''}>Звук у таймері (також перемикається на екрані таймера)</label>
  <label class="field"><span>Гучність сигналу: <b id="vol-v">${f0((num(S.settings.vol)||1)*100)}%</b></span><input type="range" min="30" max="100" step="5" data-f="vol" id="set-vol" value="${f0((num(S.settings.vol)||1)*100)}"></label>
  <label class="chk"><input type="checkbox" data-c="duck" id="set-duck" ${S.settings.duck!==false?'checked':''}>Приглушувати музику на час сигналу</label>
  <button class="btn" data-a="snd-test">Перевірити звук</button>
@@ -1745,7 +1787,7 @@ function vSet(){const t=S.settings.theme,sy=syState(),rm=restMode();
  +acc('diff','Складність тренування',diffOn()?'увімкнено':'вимкнено',`<label class="chk"><input type="checkbox" data-c="sett" data-k="diffOn" id="set-diff" ${diffOn()?'checked':''}>Складність Легке / Середнє / Важке</label>
  ${hlp('Перед тренуванням програма пропонує складність за сном, самопочуттям, днями відпочинку і Garmin (лише увімкненими показниками). Обираєш сам або залишаєш - тоді після тренування складність визначиться за обсягом (проти попередніх тренувань за тим самим шаблоном), середнім RIR і важкістю 1-10.<br><b>Легке</b>: підказка «та сама вага, RIR 3-4, ≈ на третину менше підходів» - так роблять розвантаження (дослідження: Bell et al., 2023; Rogerson et al., 2024; «третина» - оцінка). Такий день не знижує 1ПМ і не дає сигналів «Спад» / «Застій».<br><b>Середнє і Важке</b>: сірі цифри й підказки беруться з останнього не легкого тренування.<br>Пороги авто-складності (обсяг < 75% звичного, середній RIR ≥ 3, важкість ≤ 4) - оцінка, наукових порогів немає.<br><b>Приклад:</b> готовність 38, сон 5 год → пропозиція «Легке».')}`)
  +acc('adv','Рекомендації і відновлення',[recOn()?'рекомендації':'',persOn()?'свої ваги':'',recovOn()?'відновлення':''].filter(Boolean).join(' · ')||'вимкнено',advHTML())
- +acc('garmin','Garmin',gOn()?GM.filter(g=>gmOn(g[0])).length+' з '+GM.length:'вимкнено',gHTML())
+ +acc('garmin','Garmin',gOn()?'силові '+GM.filter(g=>gmK(g[0],'s')).length+' · HIIT '+GM.filter(g=>gmK(g[0],'h')).length:'вимкнено',gHTML())
  +acc('data','Дані тренування','силові: '+nOn+' з '+MF.length,mfHTML())
  +acc('warm','Зарядка',S.settings.warmOn!==false?'показується':'вимкнена',HL(`<label class="chk"><input type="checkbox" data-c="warmon" id="set-warm" ${S.settings.warmOn!==false?'checked':''}>Показувати зарядку</label>
  ${S.settings.warmOn!==false?`<label class="chk"><input type="checkbox" data-c="warmstats" id="set-warmstats" ${warmStatsOn()?'checked':''}>Статистика й аналітика зарядки</label><p class="muted small" style="margin:0">Вимкнено: зникають серія і «N з M» у картці, кнопка «Статистика», перемикач «Тренування / Зарядка» в «Аналітиці» і рядок зарядки в місячному звіті. Записи збираються далі, історія зарядки лишається, основна статистика не змінюється.</p>`:''}
@@ -2135,6 +2177,8 @@ const ACT={
  'rec-fill'(el){const it=itemBy(el.dataset.i);if(!it||!S.draft)return;const R=recFor(it,S.draft);if(!R)return;const old=JSON.stringify(it.sets);let j=0,k=0;const ein=v=>v==null||v==='';
   it.sets.forEach(s=>{if(s.wu)return;const r=String(R.rr[Math.min(j,R.rr.length-1)]);j++;if(R.wt!=null&&ein(s.w)){s.w=String(R.wt);k++}if(it.uni){if(ein(s.rl)){s.rl=r;k++}if(ein(s.rr)){s.rr=r;k++}}else if(ein(s.r)){s.r=r;k++}});
   if(!k){toast('Клітинки вже заповнені');return}save();render();toast('Рекомендацію вписано',()=>{it.sets=JSON.parse(old);save();render()})},
+ 'rec-clear'(el){const it=itemBy(el.dataset.i);if(!it)return;const old=JSON.stringify(it.sets);let k=0;const LN=loadNumT(it);it.sets.forEach(s=>{if(s.wu)return;['r','rl','rr','rir'].concat(LN?['w']:[]).forEach(x=>{if(s[x]!=null&&s[x]!==''){s[x]='';k++}})});
+  if(!k){toast('Нема що очищати');return}save();render();toast('Вписане очищено',()=>{it.sets=JSON.parse(old);save();render()})},
  kset(el){S.settings[el.dataset.k]=+el.dataset.v;save();render()},
  'wu-tog'(el){if(Date.now()-LPSKIP<800)return;const it=itemBy(el.dataset.i);const s=it&&it.sets[+el.dataset.n];if(!s)return;if(s.wu)delete s.wu;else s.wu=true;save();render()},
  restdir(el){S.settings.restDir=el.dataset.v;save();render()},
@@ -2248,7 +2292,15 @@ function warmAuto(){const b=TM&&tmB();return!!(TM&&!TM.stopped&&TM.done&&b&&b.fm
 function draftHasData(){return!!S.draft&&S.draft.items.some(i=>(i.type==='block'&&blockStats(i).has)||(i.sets||[]).some(s=>Object.values(s).some(v=>v&&typeof v!=='object')))}
 function audioMode(){try{if(navigator.audioSession)navigator.audioSession.type=S.settings.duck===false?'ambient':'transient'}catch(e){}}
 function audioInit(){try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&!ACX)ACX=new AC();audioMode();if(ACX&&ACX.resume)ACX.resume()}catch(e){}}
-function beep(f,d,force){try{if(!ACX||(S.settings.sound===false&&!force))return;const vol=Math.min(1,Math.max(.3,num(S.settings.vol)||1));const t=ACX.currentTime;const g=ACX.createGain();g.connect(ACX.destination);
+const SNDS=[['sharp','Різкий','пробивається крізь музику (типовий)'],['soft','М’який','чистий тон, плавний'],['bell','Дзвіночок','короткий удар із затуханням'],['double','Подвійний','два короткі тихі сигнали'],['low','Низький','глухий, найменш нав’язливий']];let SNDOV=null;
+const sndP=()=>{const p=SNDOV||S.settings.sndP;return SNDS.some(x=>x[0]===p)?p:'sharp'};
+function tone(type,fr,t0,dur,peak,att,dec){const o=ACX.createOscillator(),g=ACX.createGain();o.type=type;o.frequency.value=fr;o.connect(g);g.connect(ACX.destination);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(peak,t0+att);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.start(t0);o.stop(t0+dur+.05)}
+function beep(f,d,force){try{if(!ACX||(S.settings.sound===false&&!force))return;const vol=Math.min(1,Math.max(.3,num(S.settings.vol)||1));const t=ACX.currentTime;const P=sndP();
+ if(P==='soft'){tone('sine',f*.6,t,Math.max(.18,d+.08),.9*vol,.03,0);return}
+ if(P==='bell'){const L=Math.max(.5,d*1.6);tone('sine',f*.8,t,L,.8*vol,.005,0);tone('sine',f*.8*2.76,t,L*.5,.22*vol,.005,0);return}
+ if(P==='double'){const fr=f*.75,n=d>=.4?3:2;for(let i=0;i<n;i++)tone('sine',fr,t+i*.13,.08,.7*vol,.008,0);return}
+ if(P==='low'){tone('triangle',f*.4,t,Math.max(.2,d+.1),.95*vol,.04,0);return}
+ const g=ACX.createGain();g.connect(ACX.destination);
  [['square',f,.5],['sine',f*2,.35]].forEach(([ty,fr,lv])=>{const o=ACX.createOscillator(),og=ACX.createGain();o.type=ty;o.frequency.value=fr;og.gain.value=lv;o.connect(og);og.connect(g);o.start(t);o.stop(t+d+.05)});
  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.setValueAtTime(vol,t+Math.max(.02,d-.05));g.gain.exponentialRampToValueAtTime(.0001,t+d)}catch(e){}}
 async function wake(on){if(AND){try{AND.keepScreen(!!on)}catch(e){}return}try{if(on&&navigator.wakeLock){WL=await navigator.wakeLock.request('screen')}else if(!on&&WL){await WL.release();WL=null}}catch(e){}}
@@ -2365,6 +2417,7 @@ Object.assign(ACT,{
  'w-timer'(el){const t=S.templates.find(x=>x.id===el.dataset.t);if(!t)return;const go=()=>{S.draft=newWorkout(t);save();render();const b=S.draft.items.find(i=>i.type==='block');if(b)tmStart(b.uid)};if(S.draft&&draftHasData())confirmSheet('Зараз триває незбережене тренування. Замінити його зарядкою?','Замінити',go);else go()},
  'w-mark'(){const d=todayStr();const q=S.workouts.filter(w=>isWarm(w)&&w.date===d);if(q.length){const quick=q.filter(w=>w.quick);if(!quick.length){toast('Сьогодні вже є записана зарядка. Видалити її можна в історії');return}S.workouts=S.workouts.filter(w=>!(w.quick&&isWarm(w)&&w.date===d))}else{const t=S.templates.find(x=>x.tag===WARM);S.workouts.push({id:uid(),date:d,tplName:t?t.name:'Зарядка',tag:WARM,quick:true,items:[],startedAt:Date.now()})}save();render()},
  'w-stats'(){S.ui.scope='warm';S.ui.tab='stats';S.ui.stab='ov';save();render();window.scrollTo(0,0)},
+ 'snd-play'(el){audioInit();const k=el.dataset.v;const go=(f,d,ms)=>setTimeout(()=>{SNDOV=k;beep(f,d,true);SNDOV=null},ms);go(1200,.15,0);go(1200,.15,500);go(1200,.15,1000);go(1800,.45,1500)},
  'snd-test'(){audioInit();beep(1200,.15,true);setTimeout(()=>beep(1800,.45,true),400);if(S.settings.sound===false)toast('Звук у таймері вимкнено, це лише перевірка')},
  musmode(el){S.settings.musMode=el.dataset.v;save();render()},
  warmpos(el){S.settings.warmPos=el.dataset.v;save();render()},
@@ -2437,6 +2490,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(el.da
  if(c==='it-type'){const it=itemBy(el.dataset.i);it.type=el.value;if(it.type==='weight'&&!it.mach)it.mach=machDefault(it.exId);if(it.type==='band'){const b=lastBandFor(it.exId);it.sets.forEach(s=>{if(!bandsOf(s).length&&b){s.bands=b.map(x=>({...x}));if(b.bmode)s.bmode=b.bmode;if(b.bstr)s.bstr=b.bstr}})}save();render();return}
  if(c==='w-phase'){S.draft.phase=el.value;syncProf(S.draft,'phase');save();return}
  if(c==='setphase'){S.settings.phase=el.value;S.settings.phaseAt=todayStr();S.settings.phaseSrc='m';save();const e2=document.getElementById('src-phase');if(e2)e2.textContent=profSrc('phase');return}
+ if(c==='sndp'){S.settings.sndP=el.value;save();return}
  if(c==='snd'){S.settings.sound=el.checked;save();if(el.checked){audioInit();beep(1400,.15)}return}
  if(c==='duck'){S.settings.duck=el.checked;save();audioMode();return}
  if(c==='warmmeta'){S.settings.warmMeta=el.checked;save();render();return}
@@ -2455,7 +2509,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(el.da
  if(c==='bedex-load'){BED.ex[+el.dataset.n].load=el.value;renderBed();return}
  if(c==='bedex-band'){BED.ex[+el.dataset.n].band=el.value;return}
  if(c==='w-gben'){S.draft.gBen=el.value;save();return}
- if(c==='gm'){(S.settings.gm=S.settings.gm||{})[el.dataset.k]=el.checked;save();render();return}
+ if(c==='gm'){const key=el.dataset.kind==='h'?'gmH':'gm';(S.settings[key]=S.settings[key]||{})[el.dataset.k]=el.checked;save();render();return}
  if(c==='it-ss'){const it=itemBy(el.dataset.i);if(el.checked)it.ssN=true;else delete it.ssN;save();render();return}
  if(c==='ti-ss'){const t=edT();if(!t)return;const o=t.items[+el.dataset.n];if(el.checked)o.ssN=true;else delete o.ssN;save();tplDirtyUI();return}
  if(c==='it-uni'){const it=itemBy(el.dataset.i);it.uni=el.checked;save();render();return}
