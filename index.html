@@ -497,7 +497,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='54.2 · 23.10.2026';
+const APPV='54.3 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -807,13 +807,16 @@ let FWC=null;
 function factW(){const ws0=S.workouts||[];const sig=ws0.length+'|'+(ws0.length?ws0[ws0.length-1].id:'')+'|'+persOn();if(FWC&&FWC.sig===sig)return FWC.fw;const fw={};
  if(persOn()&&ws0.length>=12){const ws=sortedW().filter(w=>!isWarm(w));const sc={};const by={};ws.forEach(w=>(w.items||[]).forEach(it=>{if(!STR.includes(it.type)||diffOf(w)==='L')return;const st=itemStats(it,bwOf(w));if(st.score)(by[keyOf(it)]=by[keyOf(it)]||[]).push([w.id,st.score])}));
   const pf={};Object.values(by).forEach(a=>{if(a.length<2)return;const md=median(a.map(x=>x[1]));a.forEach(([id,v])=>(pf[id]=pf[id]||[]).push(v/md*100))});
-  FACT.forEach(([k])=>{const x=[],y=[];ws.forEach((w,i)=>{const p=pf[w.id];if(!p)return;let v;if(k==='rest'){const pv=ws[i-1];if(!pv)return;v=Math.round((new Date(w.date+'T12:00')-new Date(pv.date+'T12:00'))/864e5);if(v>14)return}else{if(GMK[k]?!gmOn(k):!mfOn('str',k))return;v=num(w[k])}if(v==null)return;x.push(v);y.push(avg(p))});const r=x.length>=12?pearson(x,y):null;fw[k]={n:x.length,r,m:r==null?1:Math.min(2,Math.max(.3,1+2.5*r))}})}
+  FACT.forEach(([k])=>{const x=[],y=[];ws.forEach((w,i)=>{const p=pf[w.id];if(!p)return;let v;if(k==='rest'){const pv=ws[i-1];if(!pv)return;v=Math.round((new Date(w.date+'T12:00')-new Date(pv.date+'T12:00'))/864e5);if(v>14)return}else{if(GMK[k]?!gmOn(k):!mfOn('str',k))return;v=num(w[k])}if(v==null)return;x.push(v);y.push(avg(p))});const n=x.length,r=n>=12?pearson(x,y):null;
+   // v54.3: обережно - лише статистично помітний зв'язок (Фішер, p<0,05) і поступово: частка n/40
+   const sig=r!=null&&Math.abs(Math.atanh(Math.max(-.999,Math.min(.999,r))))*Math.sqrt(n-3)>=1.96,sh=Math.min(1,n/40);
+   fw[k]={n,r,sig,sh,m:sig?Math.min(2,Math.max(.3,1+2.5*r*sh)):1}})}
  FWC={sig,fw};return fw}
 const W0warm=()=>SCOPE==='warm';
 function factBlock(){const fw=factW(),ws=(S.workouts||[]).length;if(!persOn())return'<p class="muted small" style="margin:0">Вимкнено в Налаштуваннях → Рекомендації.</p>';
  if(ws<12)return`<p class="muted small" style="margin:0">Потрібно 12 тренувань, зараз ${ws}. До того працюють загальні правила.</p>`;
- return FACT.filter(([k])=>k==='rest'||(GMK[k]?gmOn(k):mfOn('str',k))).map(([k,l])=>{const f=fw[k]||{n:0};const v=f.r==null?(f.n<12?`ще ${12-f.n} трен. з даними`:'—'):f.r>=.3?'впливає сильно ++':f.r>=.1?'впливає +':f.r>-.1?'майже не впливає ~':'збіг навпаки −';
-  return`<div class="rvrow small"><span><b>${l}</b> <span class="muted">n=${f.n}${f.r!=null?' · r='+nf(f.r,2):''}</span></span><span>${v}${f.r!=null?' · вага ×'+nf(f.m,1):''}</span></div>`}).join('')+`<p class="muted small" style="margin:0">Вага × у пропозиції складності: більше 1 - фактор важить більше за загальне правило, менше 1 - менше. Рахується за збігом з індексом сили, легкі тренування не беруться. Це збіг, а не доведена причина; точніше від 20-30 тренувань.</p>`}
+ return FACT.filter(([k])=>k==='rest'||(GMK[k]?gmOn(k):mfOn('str',k))).map(([k,l])=>{const f=fw[k]||{n:0};const v=f.r==null?(f.n<12?`ще ${12-f.n} трен. з даними`:'—'):!f.sig?'поки не відрізняється від випадковості':f.r>=.3?'впливає сильно ++':f.r>=.1?'впливає +':'збіг навпаки −';
+  return`<div class="rvrow small"><span><b>${l}</b> <span class="muted">n=${f.n}${f.r!=null?' · r='+nf(f.r,2):''}</span></span><span>${v}${f.r!=null?' · вага ×'+nf(f.m,2):''}</span></div>`}).join('')+`<p class="muted small" style="margin:0">Вага × у пропозиції складності: більше 1 - фактор важить більше за загальне правило, менше 1 - менше. Вага змінюється лише тоді, коли зв’язок статистично помітний (p < 0,05), і поступово: при 12 тренуваннях - на третину, повністю - від 40. Рахується за збігом з індексом сили, легкі тренування не беруться. Це збіг, а не доведена причина.</p>`}
 /* v54: відновлення груп м'язів - оцінка з правил: потрібно ≈ 24 год + 6 год на робочий підхід (до 96), або «Час відновлення» Garmin, якщо більше */
 let RVC=null;
 const recK=()=>{const v=num(S.settings.recK);return v&&v>0?v:1};
