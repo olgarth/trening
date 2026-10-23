@@ -41,6 +41,14 @@
   color-scheme:dark;}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
+html.ptr,html.ptr body{overscroll-behavior-y:none}
+#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:60;transform:translate(-50%,-60px);opacity:0;display:flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:999px;background:var(--surface);color:var(--fg);border:1px solid var(--line);box-shadow:0 4px 18px rgba(0,0,0,.18);font-size:14px;font-weight:600;pointer-events:none;white-space:nowrap}
+#ptr.anim{transition:transform .22s ease,opacity .22s ease}
+#ptr .ptr-i{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:50%;background:var(--accent);color:#fff;font-size:14px;transition:transform .15s}
+#ptr.arm .ptr-i{transform:rotate(180deg)}
+#ptr.run .ptr-i{animation:ptrspin .8s linear infinite}
+#ptr.ok .ptr-i{background:var(--good)}#ptr.err .ptr-i{background:var(--bad)}
+@keyframes ptrspin{to{transform:rotate(360deg)}}
 body{background:var(--bg);color:var(--fg);font:15px/1.45 var(--f-body);margin:0;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
@@ -508,7 +516,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='55.8 · 23.10.2026';
+const APPV='55.9 · 23.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -2614,7 +2622,7 @@ document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)ret
  if(f==='pickq'){$('#picklist').innerHTML=catalogList(v.toLowerCase(),'pick');return}
  if(f==='catq'){S.ui.catq=v;$('#catlist').innerHTML=catalogList(v.toLowerCase(),'ex-edit');return}});
 document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(el.dataset.f==='wu'||el.dataset.f==='bwu'){setTimeout(()=>{if(document.body.contains(el))wuCardRefresh(el)},350);return}if(!c)return;
- if(c==='sy-auto'){syState().auto=el.checked;save();if(el.checked)syKick(300);return}
+ if(c==='sy-auto'){syState().auto=el.checked;save();if(el.checked)syKick(300);return}if(c==='sy-ptr'){S.settings.ptr=el.checked;save();ptrCls();return}
  if(c==='it-type'){const it=itemBy(el.dataset.i);it.type=el.value;if(it.type==='weight'&&!it.mach)it.mach=machDefault(it.exId);if(it.type==='band'){const b=lastBandFor(it.exId);it.sets.forEach(s=>{if(!bandsOf(s).length&&b){s.bands=b.map(x=>({...x}));if(b.bmode)s.bmode=b.bmode;if(b.bstr)s.bstr=b.bstr}})}save();render();return}
  if(c==='w-phase'){S.draft.phase=el.value;syncProf(S.draft,'phase');save();return}
  if(c==='setphase'){S.settings.phase=el.value;S.settings.phaseAt=todayStr();S.settings.phaseSrc='m';save();const e2=document.getElementById('src-phase');if(e2)e2.textContent=profSrc('phase');return}
@@ -2678,6 +2686,7 @@ async function gdEmail(i){try{const r=await gd('GET','https://www.googleapis.com
 function sySt(msg,err){const sy=syState();if(err==='need'){sy.need=true;sy.err=''}else if(err){sy.err=msg;}else{sy.err='';sy.need=false;sy.dirty=false;sy.last=Date.now()}SAVEPEND=true;saveNow();syUi()}
 function syUi(){const el=document.getElementById('sy-card');if(el&&!SHEET)el.outerHTML=syCard();const bar=document.querySelector('.sybar');const nb=syBanner();if(bar&&!nb)bar.remove();else if(!bar&&nb&&S.ui.tab==='log'&&!S.draft&&!SHEET)render()}
 function syStatusTxt(){const sy=syState();if(SYB)return'Синхронізація…';if(sy.err)return'Помилка: '+sy.err;if(sy.need)return'Натисни «Синхронізувати зараз», щоб оновити вхід Google'+(sy.dirty?' (є зміни, яких ще немає на Диску)':'')+'.';if(sy.last)return'Синхронізовано '+andTime(new Date(sy.last).toISOString());return'Ще не синхронізовано'}
+let PTRQ=false;
 /* Головна процедура. interactive=true лише після натискання кнопки (вікно входу Google) */
 async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)return;SYB=true;syUi();
  try{save();saveNow();const files=await gdFind(`name = '${SY_FILE}'`,interactive);const sy=syState();
@@ -2690,7 +2699,7 @@ async function syncNow(interactive,mode){if(SYB)return;if(!syOn()&&!interactive)
   let M;if(mode==='cloud')M=R;else if(mode==='device')M=syPayload();else M=syMerge(syPayload(),R);
   const L=syPayload();if(!sySame(M,L)){syApply(M);syRender()}
   if(!sySame(M,R))await gdWrite(fid,M,interactive);
-  sy.init=true;await syBackup(M,interactive);SYB=false;sySt('ok');if(interactive)toast('Синхронізовано')}
+  sy.init=true;await syBackup(M,interactive);SYB=false;sySt('ok');if(interactive)if(!PTRQ)toast('Синхронізовано')}
  catch(e){SYB=false;if(e&&e.needLogin){sySt('','need')}else sySt((e&&e.message)||'невідома помилка',true);if(interactive)toast('Синхронізація: '+((e&&e.message)||'помилка'))}}
 async function syBackup(M,i){const day=todayStr();const fs=await gdFind(`name contains '${SY_BK}'`,i);if(fs.some(f=>f.name===SY_BK+day+'.json'))return;await gdCreate(SY_BK+day+'.json',M,i);
  const old=fs.filter(f=>f.name.startsWith(SY_BK)).sort((a,b)=>a.name.localeCompare(b.name));for(let k=0;k<old.length+1-SY_BKN;k++)try{await gdDel(old[k].id,i)}catch(e){}}
@@ -2704,17 +2713,41 @@ function syCard(){const sy=syState(),on=syOn();if(!AND&&GCID&&!(window.google&&g
  return`<section class="card stack" id="sy-card"><div class="lbl">Синхронізація через Google</div>
  ${on?`<p class="muted small" style="margin:0">Акаунт: <b>${esc(sy.acct)}</b>. Дані лежать у прихованій папці застосунку на твоєму Google Диску. Інших файлів на Диску застосунок не бачить.</p>
  <label class="chk"><input type="checkbox" data-c="sy-auto" ${sy.auto!==false?'checked':''}>Автосинхронізація (при відкритті, після тренування, при виході)</label>
+ <label class="chk"><input type="checkbox" data-c="sy-ptr" ${ptrSet()?'checked':''}>Синхронізація протяжкою вниз (на самому верху сторінки)</label>
  <p class="small" style="margin:0;${sy.err?'color:var(--bad)':''}" id="sy-st">${esc(syStatusTxt())}</p>
  <div class="g2"><button class="btn pri" data-a="sy-now" ${SYB?'disabled':''}>Синхронізувати зараз</button><button class="btn" data-a="sy-bk">Копії на Диску</button></div>
  <button class="btn ghost full" data-a="sy-out">Вийти з Google</button>`
  :`<p class="muted small" style="margin:0">Однакові дані на iPhone, Android і після перевстановлення. Дані зберігаються в прихованій папці застосунку на твоєму Google Диску, а ще щодня там з’являється копія (останні ${SY_BKN}).</p>
- ${sy.err?`<p class="small" style="margin:0;color:var(--bad)">${esc(sy.err)}</p>`:''}<button class="btn pri full" data-a="sy-in" ${SYB?'disabled':''}>Увійти через Google</button>`}</section>`}
+ ${sy.err?`<p class="small" style="margin:0;color:var(--bad)">${esc(sy.err)}</p>`:''}<button class="btn pri full" data-a="sy-in" ${SYB?'disabled':''}>Увійти через Google</button>
+ <label class="chk"><input type="checkbox" data-c="sy-ptr" ${ptrSet()?'checked':''}>Протяжка вниз підказує, що синхронізацію не налаштовано</label>`}</section>`}
 function syBanner(){const sy=syState();if(!syOn()||!sy.need||SYB)return'';return`<section class="card row between sybar" style="flex-wrap:nowrap;gap:10px"><span class="small">${sy.dirty?'Є зміни, яких ще немає на Google Диску':'Онови дані з Google Диска'}</span><button class="btn pri" data-a="sy-now" style="white-space:nowrap;flex-shrink:0">Синхронізувати</button></section>`}
 function syRender(){const ae=document.activeElement;if(isTextField(ae)&&document.body.contains(ae)){if(!syRender.p){syRender.p=true;document.addEventListener('focusout',function h(){setTimeout(()=>{if(isTextField(document.activeElement))return;document.removeEventListener('focusout',h);syRender.p=false;render()},250)})}return}render()}
 function syKick(delay){if(!syAuto())return;clearTimeout(SYT);SYT=setTimeout(()=>syncNow(false),delay||1500)}
 document.addEventListener('visibilitychange',()=>{if(!syAuto())return;if(document.visibilityState==='hidden'){clearTimeout(SYT);syncNow(false)}else syKick(800)});
 
-load();syBaseline();render();syKick(1200);
+/* v55.9: синхронізація протяжкою пальцем вниз (Android і iPhone, свій жест замість системного) */
+const ptrSet=()=>S.settings.ptr!==false;
+function ptrCls(){document.documentElement.classList.toggle('ptr',ptrSet())}
+let PTR=null,PTRT=null;const PTRD=70;
+function ptrEl(){let e=document.getElementById('ptr');if(!e){e=document.createElement('div');e.id='ptr';e.setAttribute('role','status');e.innerHTML='<span class="ptr-i">↓</span><span class="ptr-t"></span>';document.body.appendChild(e)}return e}
+function ptrShow(d,txt,cls,anim){const e=ptrEl();clearTimeout(PTRT);e.className=(cls||'')+(anim?' anim':'');e.querySelector('.ptr-t').textContent=txt;e.querySelector('.ptr-i').textContent=cls==='ok'?'✓':cls==='err'?'!':cls==='run'?'↻':'↓';e.style.transform=`translate(-50%,${Math.round(d-60)}px)`;e.style.opacity=d<=0?0:Math.min(1,d/40)}
+function ptrHide(delay){clearTimeout(PTRT);PTRT=setTimeout(()=>{const e=document.getElementById('ptr');if(e){e.classList.add('anim');e.style.transform='translate(-50%,-60px)';e.style.opacity=0}},delay||0)}
+function ptrBlocked(t){return!ptrSet()||window.scrollY>2||document.body.classList.contains('sheetopen')||document.body.classList.contains('tmopen')||(t&&t.closest&&t.closest('input,textarea,select,.chart,.sheet,.tm,[contenteditable]'))}
+document.addEventListener('touchstart',e=>{PTR=null;if(e.touches.length!==1||ptrBlocked(e.target))return;if(SYB){return}const t=e.touches[0];PTR={x0:t.clientX,y0:t.clientY,d:0,arm:false,go:false}},{passive:true});
+document.addEventListener('touchmove',e=>{if(!PTR)return;const t=e.touches[0],dy=t.clientY-PTR.y0,dx=t.clientX-PTR.x0;
+ if(!PTR.go){if(Math.abs(dx)>10&&Math.abs(dx)>dy){PTR=null;return}if(dy<8)return;if(window.scrollY>2){PTR=null;return}PTR.go=true}
+ if(window.scrollY>2||dy<=0){PTR=null;ptrHide();return}
+ const d=Math.min(110,dy*.55);PTR.d=d;const arm=d>=PTRD;if(arm&&!PTR.arm&&navigator.vibrate)try{navigator.vibrate(12)}catch(_){}PTR.arm=arm;
+ ptrShow(d,arm?'Відпусти':'Потягни для синхронізації',arm?'arm':'')},{passive:true});
+document.addEventListener('touchend',()=>{const p=PTR;PTR=null;if(!p||!p.go)return;if(!p.arm){ptrHide();return}ptrRun()},{passive:true});
+document.addEventListener('touchcancel',()=>{if(PTR&&PTR.go)ptrHide();PTR=null},{passive:true});
+async function ptrRun(){if(SYB){ptrShow(PTRD,'Синхронізація вже йде','run',true);ptrHide(1200);return}
+ if(!syOn()){ptrShow(PTRD,'Синхронізацію не налаштовано','err',true);ptrHide(1600);S.ui.tab='set';const a=new Set(S.ui.acc||[]);a.add('sync');S.ui.acc=[...a];save();render();setTimeout(()=>{const c=document.getElementById('sy-card');if(c)c.scrollIntoView({block:'center'})},60);return}
+ ptrShow(PTRD,'Синхронізація…','run',true);PTRQ=true;
+ try{await syncNow(true)}finally{PTRQ=false}
+ const sy=syState();if(SHEET==='sychoice'){ptrHide();return}
+ if(sy.err||sy.need)ptrShow(PTRD,sy.need?'Потрібен вхід Google':'Помилка синхронізації','err',true);else ptrShow(PTRD,'Синхронізовано','ok',true);ptrHide(1300)}
+load();syBaseline();ptrCls();render();syKick(1200);
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().then(v=>{PERSIST=v}).catch(()=>{})}catch(e){}
 </script>
 
