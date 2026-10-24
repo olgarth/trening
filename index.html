@@ -175,6 +175,7 @@ button.it-name{border:0;background:none;padding:2px 0;margin:0;text-align:left;c
 .srow.wu .cell{background:transparent;border-style:dashed}
 .dseg .sug{outline:2px dashed var(--accent);outline-offset:-4px}
 .glv{font-weight:700;font-size:13px;min-height:16px}
+.mrow{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:6px 12px;border:1px dashed var(--line);border-radius:10px;background:none;font-size:14px;color:var(--fg);text-align:left}.mrow .mrv{flex:1;min-width:0;font-weight:600}.mrow .mre{color:var(--accent)}.mtag{font-style:normal;font-size:11px;font-weight:600;color:var(--accent);margin-left:4px}
 .rvrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.xdet>summary{list-style:none;cursor:pointer}.xdet>summary::-webkit-details-marker{display:none}.xdet[open]>summary b{color:var(--accent)}.xbox{border-left:2px solid var(--line);margin:4px 0 8px 2px;padding:2px 0 2px 10px;display:flex;flex-direction:column;gap:4px;font-size:13px}.xh{font-size:12px;font-weight:600}.xr{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.xn{display:flex;flex-direction:column;min-width:0;line-height:1.25}.xn .muted{font-size:11.5px}.xsum{font-variant-numeric:tabular-nums;font-weight:600}.xg{padding:2px 0}.xt{border-top:1px solid var(--line);padding-top:5px;font-weight:600}.rvrow>span:first-child{min-width:0}.rvrow>:last-child{white-space:nowrap;flex-shrink:0;text-align:right}
 .recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0}.recb .rmain{flex:1;min-width:0;line-height:1.25}.recb .rlab{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin-bottom:1px}.recb .rtx{font-family:var(--f-display);font-size:17px}
 .nw{white-space:nowrap}.cdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}.tsel>summary{list-style:none;display:flex;align-items:center;gap:8px;min-height:42px;padding:8px 12px;border:1px solid var(--line);background:var(--surface2);border-radius:10px;cursor:pointer;font-size:15px}.tsel>summary::-webkit-details-marker{display:none}.tsel>summary::after{content:'▾';margin-left:auto;color:var(--muted);transition:transform .15s}.tsel[open]>summary::after{transform:rotate(180deg)}.tsl{color:var(--muted)}.tsv{font-weight:600}.tsd{display:inline-flex;gap:0}.tsd .cdot{margin-right:3px}.tlist{border:1px solid var(--line);border-radius:10px;margin-top:6px;overflow:hidden;background:var(--surface)}.xsw{position:relative;display:inline-block;max-width:100%;vertical-align:middle;min-width:0}.xsw.blk{display:block;width:100%}.xso{position:absolute;inset:0;z-index:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -521,7 +522,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='56.1 · 23.10.2026';
+const APPV='56.2 · 24.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 function andStatus(){if(!AND)return null;try{return JSON.parse(AND.status())}catch(e){return null}}
@@ -949,7 +950,7 @@ function diffBox(w){if(!diffOn())return'';const sg=diffSuggest(w);
  return`<div class="field"><span>Складність тренування</span><div class="seg dseg">${['L','M','H'].map(k=>`<button class="${w.diff===k?'on':''}${!w.diff&&sg.v===k?' sug':''}" data-a="w-diff" data-v="${k}">${DIFF[k]}</button>`).join('')}</div></div>
  <div class="hint" id="diff-why">${w.diff?(w.diff==='L'?'Легкий день: та сама вага, RIR 3-4, ≈ на третину менше підходів. ':'')+(sg.v&&sg.v!==w.diff?'Пропозиція була: '+DIFF[sg.v]+' ('+esc(sg.why.join(', '))+'). ':'')+'Тап ще раз - зняти вибір.':sg.v?'Пропозиція: <b>'+DIFF[sg.v]+'</b> - '+esc(sg.why.join(', '))+'. Обери або залиш - після тренування складність визначиться за обсягом і RIR.':'Обери складність або залиш - після тренування вона визначиться за обсягом і RIR.'}</div>`}
 function gField(w,k){const g=GMK[k];if(g[5]==='sel')return`<label class="field"><span>${g[1]}</span><select class="in" data-c="w-gben" id="w-${k}"><option value="">—</option>${GBEN.map(b=>`<option ${w[k]===b?'selected':''}>${b}</option>`).join('')}</select><b class="glv"></b></label>`;
- const c=gColor(k,w[k]);return`<label class="field"><span>${g[1]}</span><input class="in${c?' gc':''}" style="${c?'border-left:6px solid '+GCOL[c[0]]:''}" inputmode="decimal" data-f="w" data-k="${k}" id="w-${k}" value="${esc(w[k]??'')}" placeholder="${g[3]}-${g[4]}"><b class="glv" id="gl-${k}" style="color:${c?GCOL[c[0]]:'inherit'}">${c?c[1]:''}</b></label>`}
+ const c=gColor(k,w[k]);return`<label class="field"><span>${g[1]}${mtag(w,k)}</span><input class="in${c?' gc':''}" style="${c?'border-left:6px solid '+GCOL[c[0]]:''}" inputmode="decimal" data-f="w" data-k="${k}" id="w-${k}" value="${esc(w[k]??'')}" placeholder="${g[3]}-${g[4]}"><b class="glv" id="gl-${k}" style="color:${c?GCOL[c[0]]:'inherit'}">${c?c[1]:''}</b></label>`}
 function gZone(w,z){const ks=GM.filter(g=>g[2]===z&&gmW(w,g[0])).map(g=>g[0]);if(!ks.length)return'';return`<div class="lbl">Garmin</div><div class="metrics">${ks.map(k=>gField(w,k)).join('')}</div>`}
 function gUpd(el){const k=el.dataset.k;if(!GMK[k])return;const c=gColor(k,el.value);el.style.borderLeft=c?'6px solid '+GCOL[c[0]]:'';const l=document.getElementById('gl-'+k);if(l){l.textContent=c?c[1]:'';l.style.color=c?GCOL[c[0]]:'inherit'}}
 function diffUpd(){const b=document.getElementById('diff-box');if(b&&S.draft)b.innerHTML=diffBox(S.draft)}
@@ -1316,8 +1317,28 @@ function andBackupCard(){if(!AND)return'';const st=andStatus()||{};const fo=st.f
 function andLastBackupDay(){const st=andStatus();if(!st||!st.folder||!st.last)return null;const d=new Date(st.last);return isNaN(d)?null:todayStrOf(d)}
 function warmOn(){return S.settings.warmOn!==false}
 function warmStatsOn(){return warmOn()&&S.settings.warmStats!==false}
+/* v56.2: ранкові дані (сон, вага, бали сну Garmin) - вводяться перед таймером зарядки або з картки зарядки, самі підставляються в тренування цього дня. У статистику зарядки не йдуть */
+const mornOn=()=>S.settings.mornOn!==false&&warmOn()&&window.__noMorn!==true;
+const MRF=[['sleep','Час сну, год','1,5-12'],['bw','Вага, кг',''],['gSleep','Бали сну Garmin','0-100']];
+const mornF=k=>k==='gSleep'?gOn()&&(S.settings.mornF||{}).gSleep!==false:(S.settings.mornF||{})[k]!==false;
+const mornKs=()=>MRF.filter(([k])=>mornF(k)).map(x=>x[0]);
+const mornT=()=>{const m=S.settings.morn;return m&&m.d===todayStr()?m:null};
+let MORNGO=null;
+function mornTxt(){const m=mornT()||{};const p=[];if(mornF('sleep')&&num(m.sleep)!=null)p.push('сон '+nf(num(m.sleep),1)+' год');if(mornF('bw')&&num(m.bw)!=null)p.push(nf(num(m.bw),1)+' кг');if(mornF('gSleep')&&num(m.gSleep)!=null)p.push('бали сну '+f0(num(m.gSleep)));return p.join(' · ')}
+function mornSheet(mode){const m=mornT()||{};const lastBw=num(S.settings.bw);
+ openSheet(`<h3>Ранок</h3><p class="muted small" style="margin:0">Підставиться в тренування сьогодні, щоб не вводити ще раз. У статистику зарядки не йде.</p>
+ <div class="metrics">${mornKs().map(k=>{const f=MRF.find(x=>x[0]===k);const ph=k==='bw'&&lastBw?'≈ '+nf(lastBw,1):f[2];return`<label class="field"><span>${f[1]}</span><input class="in" inputmode="decimal" id="m-${k}" value="${esc(m[k]??'')}" placeholder="${esc(ph)}"></label>`}).join('')}</div>
+ ${mode==='go'?`<button class="btn pri full" data-a="morn-go">${IC.play} Почати зарядку</button><button class="btn ghost full" data-a="morn-skip">Пропустити</button>`:`<button class="btn pri full" data-a="morn-save">Зберегти</button><button class="btn ghost full" data-a="close">Скасувати</button>`}`,'morn')}
+function mornSave(){const o={d:todayStr(),at:Date.now()};mornKs().forEach(k=>{const el=document.getElementById('m-'+k);let v=el?String(el.value).trim().replace(',','.'):'';if(v!==''&&num(v)==null)v='';o[k]=v});const old=mornT();if(old)MRF.forEach(([k])=>{if(!(k in o)&&old[k]!=null)o[k]=old[k]});S.settings.morn=o;
+ if(num(o.bw)!=null&&(!S.settings.bwAt||S.settings.bwAt<=o.d)){S.settings.bw=String(o.bw);S.settings.bwAt=o.d;S.settings.bwSrc='m'}
+ if(S.draft)mornApply(S.draft);save()}
+/* підставити в тренування цього дня: тільки в порожні поля, і лише один раз на поле (якщо стер - не повертається) */
+function mornApply(w){const m=S.settings.morn;if(!mornOn()||!w||w._edit||isWarm(w)||!m||m.d!==w.date)return false;w._mf=w._mf||{};let ch=false;
+ mornKs().forEach(k=>{const en=k==='gSleep'?gmW(w,'gSleep'):mfW(w,k);if(!en||w._mf[k])return;const v=m[k];if(v===''||v==null)return;if(w[k]===''||w[k]==null){w[k]=v;w._mf[k]=1;ch=true}});return ch}
+const mtag=(w,k)=>{const m=S.settings.morn;return w&&w._mf&&w._mf[k]&&m&&m.d===w.date&&String(m[k])===String(w[k])?' <i class="mtag">з ранку</i>':''};
 function warmCard(){if(!warmOn())return'';const ts=S.templates.filter(t=>t.tag===WARM);const any=S.workouts.some(isWarm);if(!ts.length&&!any)return'';const t0=todayStr(),done=mDone(t0),mm=mMonth(t0.slice(0,7)),st=mStreak();
  return`<section class="card stack mcard ${done?'done':''}"><div class="row between"><div class="lbl">Зарядка</div><span class="pill ${done?'p-good':'p-mut'}">${done?'Сьогодні ✓':'Сьогодні ще ні'}</span></div>
+ ${mornOn()&&mornKs().length?`<button class="mrow" data-a="morn-edit"><span class="muted">Ранок</span><span class="mrv">${esc(mornTxt())||'не введено'}</span><span class="mre" aria-hidden="true">✎</span></button>`:''}
  ${warmStatsOn()?`<div class="kv"><span>Серія <b>${st}</b> ${plDays(st)}</span><span>Цей місяць <b>${mm.n}</b> з ${mm.days}</span></div>`:''}
  ${ts.map(t=>{const blk=t.items.find(i=>i.kind==='block');return`<div class="wrow"><b class="mname">${esc(t.name)}</b><div class="muted small">${blk?esc(blockSum(blk)):tplCount(t)}${t.note?' · '+esc(t.note):''}</div><div class="g2">${blk?`<button class="btn pri" data-a="w-timer" data-t="${t.id}">${IC.play} Таймер</button>`:''}<button class="btn" data-a="start" data-t="${t.id}" ${blk?'':'style="grid-column:1/-1"'}>${blk?'Вручну':'Почати запис'}</button></div></div>`}).join('')}
  <p class="muted small" style="margin:0">«Таймер» - веде по черзі: розминка, пауза, основна частина, заминка, і сам зберігає зарядку. «Вручну» - запис без таймера: розминка й заминка з секундоміром або хвилинами, результат блоку вписуєш сам.</p>
@@ -1333,17 +1354,17 @@ function vLog(){if(S.draft)return vDraft();
  return h}
 function phImp(w,k,dg){const r=imputed(w,k);return r.v!=null?'≈ '+nf(r.v,dg):''}
 function warmMeta(){return S.settings.warmMeta===true}
-function preSum(w){const a=[dShort(w.date)];if(num(w.sleep)!=null)a.push('сон '+nf(num(w.sleep),1));if(num(w.well)!=null)a.push('самопоч. '+nf(num(w.well),1));{const b=bwOf(w);if(b)a.push(nf(b,1)+' кг'+(num(w.bw)==null?' ≈':''))}if(w.phase)a.push((PHASES[w.phase]||'').toLowerCase());if(num(w.gReady)!=null)a.push('готовність '+f0(num(w.gReady)));const d=w.diff||(diffOn()?diffSuggest(w).v:'');if(diffOn()&&d)a.push(DIFF[d]+(w.diff?'':' (пропозиція)'));return esc(a.join(' · '))}
-function vDraft(){const w=S.draft;ssMark(w);const mo=k=>mfW(w,k),meta=MF.some(([k])=>mo(k));
+function preSum(w){const a=[dShort(w.date)];if(num(w.sleep)!=null)a.push('сон '+nf(num(w.sleep),1));if(num(w.well)!=null)a.push('самопоч. '+nf(num(w.well),1));{const b=bwOf(w);if(b)a.push(nf(b,1)+' кг'+(num(w.bw)==null?' ≈':''))}if(w.phase)a.push((PHASES[w.phase]||'').toLowerCase());if(num(w.gSleep)!=null&&gmW(w,'gSleep'))a.push('бали сну '+f0(num(w.gSleep)));if(num(w.gReady)!=null)a.push('готовність '+f0(num(w.gReady)));const d=w.diff||(diffOn()?diffSuggest(w).v:'');if(diffOn()&&d)a.push(DIFF[d]+(w.diff?'':' (пропозиція)'));return esc(a.join(' · '))}
+function vDraft(){const w=S.draft;ssMark(w);if(mornApply(w))save();const mo=k=>mfW(w,k),meta=MF.some(([k])=>mo(k));
  // v51: три зони - перед тренуванням / вправи / після тренування
  let h=`<section class="card stack" id="pre-card">
   <div class="wk-name">${esc(wName(w))}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}
   <button class="sechd" data-a="pre-col" aria-expanded="${!isPreCol(w)}"><span class="chev" aria-hidden="true">›</span><span class="lbl">Перед тренуванням</span></button>
   ${isPreCol(w)?`<div class="small muted" id="pre-sum">${preSum(w)}</div>`:`<div class="metrics">
    <label class="field" style="grid-column:1/-1"><span>Дата тренування</span><input class="in" type="date" data-f="w" data-k="date" value="${esc(w.date)}" id="w-date"></label>
-   ${mo('sleep')?`<label class="field"><span>Сон, год</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>`:''}
+   ${mo('sleep')?`<label class="field"><span>Сон, год${mtag(w,'sleep')}</span><input class="in" inputmode="decimal" data-f="w" data-k="sleep" value="${esc(w.sleep)}" placeholder="${phImp(w,'sleep',1)}" id="w-sleep"></label>`:''}
    ${mo('well')?`<label class="field"><span>Самопочуття, 1-10</span><input class="in" inputmode="decimal" data-f="w" data-k="well" value="${esc(w.well)}" placeholder="${phImp(w,'well',1)}" id="w-well"></label>`:''}
-   ${mo('bw')?`<label class="field"><span>Вага тіла, кг</span><input class="in" inputmode="decimal" data-f="w" data-k="bw" value="${esc(w.bw)}" placeholder="${phImp(w,'bw',1)||'≈ '+S.settings.bw}" id="w-bw"></label>`:''}
+   ${mo('bw')?`<label class="field"><span>Вага тіла, кг${mtag(w,'bw')}</span><input class="in" inputmode="decimal" data-f="w" data-k="bw" value="${esc(w.bw)}" placeholder="${phImp(w,'bw',1)||'≈ '+S.settings.bw}" id="w-bw"></label>`:''}
    ${mo('phase')?`<label class="field" style="grid-column:1/-1"><span>Фаза харчування</span>${phaseSel(w.phase||'','w-phase','w-phase')}</label>`:''}
   </div>
   ${gZone(w,'pre')}
@@ -1930,6 +1951,9 @@ function vSet(){const t=S.settings.theme,sy=syState(),rm=restMode();
  +acc('warm','Зарядка',S.settings.warmOn!==false?'показується':'вимкнена',HL(`<label class="chk"><input type="checkbox" data-c="warmon" id="set-warm" ${S.settings.warmOn!==false?'checked':''}>Показувати зарядку</label>
  ${S.settings.warmOn!==false?`<label class="chk"><input type="checkbox" data-c="warmstats" id="set-warmstats" ${warmStatsOn()?'checked':''}>Статистика й аналітика зарядки</label><p class="muted small" style="margin:0">Вимкнено: зникають серія і «N з M» у картці, кнопка «Статистика», перемикач «Тренування / Зарядка» в «Аналітиці» і рядок зарядки в місячному звіті. Записи збираються далі, історія зарядки лишається, основна статистика не змінюється.</p>`:''}
  ${S.settings.warmOn!==false?`<div class="field"><span>Картка зарядки на екрані «Запис»</span><div class="seg"><button class="${S.settings.warmPos==='bottom'?'':'on'}" data-a="warmpos" data-v="top">Зверху</button><button class="${S.settings.warmPos==='bottom'?'on':''}" data-a="warmpos" data-v="bottom">Знизу</button></div></div>`:''}
+ ${S.settings.warmOn!==false?`<label class="chk"><input type="checkbox" data-c="mornon" id="set-mornon" ${mornOn()?'checked':''}>Ранкові дані перед таймером зарядки</label>
+ ${mornOn()?`<div class="stack" style="gap:2px;padding-left:28px"><label class="chk"><input type="checkbox" data-c="mornf" data-k="sleep" ${mornF('sleep')?'checked':''}>Час сну</label><label class="chk"><input type="checkbox" data-c="mornf" data-k="bw" ${mornF('bw')?'checked':''}>Вага</label>${gOn()?`<label class="chk"><input type="checkbox" data-c="mornf" data-k="gSleep" ${mornF('gSleep')?'checked':''}>Бали сну Garmin</label>`:''}</div>`:''}
+ <p class="muted small" style="margin:0">Перед стартом таймера зарядки з’являється вікно «Ранок». Введене підставляється в тренування цього дня (позначка «з ранку»), вагу оновлює в «Моїх параметрах». У статистику зарядки не йде. Забув - тапни рядок «Ранок» на картці зарядки. Бали сну питаються, лише коли увімкнено Garmin.</p>`:''}
  <p class="muted small" style="margin:0">Вимкнена зарядка ховається з «Запису», «Історії» та «Аналітики». Записи і шаблони зберігаються, повернути можна будь-коли.</p>`))
  +acc('iv','Інтервали і звук','Готуйся '+prepS()+' с'+(S.settings.sound!==false?'':' · без звуку'),HL(ivHTML()))
  +acc('an','Аналітика','непрямі ×'+(secW()===1?'1':'0,5'),anHTML())
@@ -2180,7 +2204,7 @@ function draftToItems(w){return w.items.map(it=>it.type==='wu'?{exId:it.exId,set
 function tplOf(it){const o={},W=it.sets.filter(s=>!s.wu),wn=it.sets.length-W.length;if(wn){o.wu=String(wn);o.sets=W.length||1}const my=W.filter(s=>s.st==='myo'),dr=W.filter(s=>s.st==='drop');if(my.length){o.tech='myo';o.techN=String(Math.max(...my.map(s=>(s.mini||[]).length))||3)}else if(dr.length){o.tech='drop';o.techN=String(Math.max(...dr.map(s=>(s.drops||[]).length))||2)}if(o.tech==='drop'&&it.tgt.dropPct)o.dropPct=it.tgt.dropPct;return o}
 
 /* ========== actions ========== */
-function cleanDraft(w){const o=JSON.parse(JSON.stringify(w));delete o._edit;delete o._pc;delete o._po;(o.items||[]).forEach(it=>{delete it._c;delete it._o});ssMark(o);delete o.diffAuto;
+function cleanDraft(w){const o=JSON.parse(JSON.stringify(w));delete o._edit;delete o._mf;delete o._pc;delete o._po;(o.items||[]).forEach(it=>{delete it._c;delete it._o});ssMark(o);delete o.diffAuto;
  o.items=o.items.map(it=>{if(it.type==='cardio'||it.type==='block'||it.type==='wu')return it;it.sets=it.sets.filter(s=>{if(it.type==='hiit')return !!(num(s.work)||num(s.r));const R=repsOf(it,s);return R&&R.tot});it.sets.forEach(s=>{if(s.st!=='myo')delete s.mini;else{s.mini=(s.mini||[]).filter(x=>xr(it,x)>0);if(!s.mini.length){delete s.mini;delete s.st}}if(s.st!=='drop')delete s.drops;else{s.drops=(s.drops||[]).filter(d=>xr(it,d)>0);if(!s.drops.length){delete s.drops;delete s.st}}if(s.wu)delete s.rir});return it}).filter(it=>it.type==='wu'||(it.type==='cardio'||it.type==='block'?itemStats(it,0).has:it.sets.length));if(diffOn()&&!o.diff){const a=diffAutoOf(o);if(a)o.diffAuto=a}return o}
 function sumHTML(w){const st=wStats(w),bw=bwOf(w),o=wuInfo(w),warm=isWarm(w);const L=[];
  const row=(l,v)=>`<span>${l}</span><b>${v}</b>`;
@@ -2562,7 +2586,11 @@ Object.assign(ACT,{
  'bwu-skip'(el){const b=itemBy(el.dataset.i);if(!b)return;b.res=b.res||{};const t=b.res.tm||(b.res.tm={}),k=el.dataset.k;t[k==='cool'?'cskip':'wskip']=true;delete t[k];delete t[k+'T0'];save();render()},
  'bwu-unskip'(el){const b=itemBy(el.dataset.i);if(!b)return;const t=(b.res||{}).tm;if(t)delete t[el.dataset.k==='cool'?'cskip':'wskip'];save();render()},
  'wu-reset'(el){const it=itemBy(el.dataset.i);if(!it)return;it.sec=0;it.t0=null;it.tm=false;it.man=false;save();render()},
- 'w-timer'(el){const t=S.templates.find(x=>x.id===el.dataset.t);if(!t)return;const go=()=>{S.draft=newWorkout(t);save();render();const b=S.draft.items.find(i=>i.type==='block');if(b)tmStart(b.uid)};if(S.draft&&draftHasData())confirmSheet('Зараз триває незбережене тренування. Замінити його зарядкою?','Замінити',go);else go()},
+ 'w-timer'(el){const t=S.templates.find(x=>x.id===el.dataset.t);if(!t)return;const go0=()=>{S.draft=newWorkout(t);save();render();const b=S.draft.items.find(i=>i.type==='block');if(b)tmStart(b.uid)};const go=()=>{if(mornOn()&&mornKs().length&&!mornT()){MORNGO=go0;mornSheet('go')}else go0()};if(S.draft&&draftHasData())confirmSheet('Зараз триває незбережене тренування. Замінити його зарядкою?','Замінити',go);else go()},
+ 'morn-go'(){mornSave();closeSheet(false);const g=MORNGO;MORNGO=null;if(g)g();else render()},
+ 'morn-skip'(){const old=mornT();S.settings.morn=Object.assign({d:todayStr(),at:Date.now()},old||{},{skip:1});save();closeSheet(false);const g=MORNGO;MORNGO=null;if(g)g();else render()},
+ 'morn-edit'(){mornSheet('edit')},
+ 'morn-save'(){mornSave();closeSheet();toast('Ранкові дані збережено')},
  'w-mark'(){const d=todayStr();const q=S.workouts.filter(w=>isWarm(w)&&w.date===d);if(q.length){const quick=q.filter(w=>w.quick);if(!quick.length){toast('Сьогодні вже є записана зарядка. Видалити її можна в історії');return}S.workouts=S.workouts.filter(w=>!(w.quick&&isWarm(w)&&w.date===d))}else{const t=S.templates.find(x=>x.tag===WARM);S.workouts.push({id:uid(),date:d,tplId:t?t.id:null,tplName:t?t.name:'Зарядка',tag:WARM,quick:true,items:[],startedAt:Date.now()})}save();render()},
  'w-stats'(){S.ui.scope='warm';S.ui.tab='stats';S.ui.stab='ov';save();render();window.scrollTo(0,0)},
  'snd-play'(el){audioInit();const k=el.dataset.v;const go=(f,d,ms)=>setTimeout(()=>{SNDOV=k;beep(f,d,true);SNDOV=null},ms);go(1200,.15,0);go(1200,.15,500);go(1200,.15,1000);go(1800,.45,1500)},
@@ -2647,7 +2675,7 @@ document.addEventListener('change',e=>{const el=e.target,c=el.dataset.c;if(el.da
  if(c==='an'){S.settings.an=Object.assign({},S.settings.an||{},{[el.dataset.k]:el.checked});save();render();return}
  if(c==='wuset'){S.settings.wuSets=el.checked;save();render();return}
  if(c==='sett'){S.settings[el.dataset.k]=el.checked;save();render();return}
- if(c==='warmon'){S.settings.warmOn=el.checked;if(!el.checked)S.ui.scope='main';save();render();return}
+ if(c==='mornon'){S.settings.mornOn=el.checked;save();render();return}if(c==='mornf'){(S.settings.mornF=S.settings.mornF||{})[el.dataset.k]=el.checked;save();render();return}if(c==='warmon'){S.settings.warmOn=el.checked;if(!el.checked)S.ui.scope='main';save();render();return}
  if(c==='anc-kind'){const a=ancOf(el.dataset.b);if(a){a.kind=el.value;save();render()}return}
  if(c==='btm-skip'){const b=itemBy(el.dataset.i);if(b){b.res=b.res||{};const t=b.res.tm||(b.res.tm={});t[el.dataset.k]=el.checked;if(el.checked)delete t[el.dataset.k==='wskip'?'warm':'cool'];t.man=true;save();render()}return}
  if(c==='brc-all'){BRC.all=el.checked;brcSheet();return}
