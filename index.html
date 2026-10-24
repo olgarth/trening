@@ -19,7 +19,7 @@
   --bg:#EFF1EE; --surface:#FFFFFF; --surface2:#E4E7E2; --line:#D3D7D0;
   --fg:#15181B; --muted:#5C636A; --faint:#9AA0A6;
   --accent:#1F4FD8; --accent-ink:#FFFFFF; --accent-soft:#DDE5FB;
-  --pr:#C8372B; --good:#25804F; --warn:#B57A06; --bad:#BE3B2A;
+  --pr:#C8372B; --good:#1E7045; --warn:#8A5B00; --bad:#A93322;
   --good-soft:#DCEFE3; --warn-soft:#F6EBCF; --bad-soft:#F7DEDA;
   --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
   --f-body:"Manrope",-apple-system,system-ui,"Segoe UI",sans-serif;
@@ -145,6 +145,12 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .wk-name{font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1.05;text-transform:uppercase}
 .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .metrics>.field>span:first-child{flex:1;display:flex;align-items:flex-end}
+/* v56.5: поля в одному ряду - на одній лінії, незалежно від довжини підпису і підказки під полем (рядки: підпис / поле / підказка) */
+@supports (grid-template-rows:subgrid){
+ .metrics>.field,.g2>.field,.g3>.field{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:4px;align-content:start}
+ .metrics>.field>:first-child,.g2>.field>:first-child,.g3>.field>:first-child{align-self:end}
+ .metrics:has(>.field)>:not(.field),.g2:has(>.field)>:not(.field),.g3:has(>.field)>:not(.field){grid-row:span 3;align-self:end}
+}
 @media (min-width:520px){.metrics{grid-template-columns:repeat(4,1fr)}}
 
 /* exercise card */
@@ -152,14 +158,14 @@ input.in[type=date]::-webkit-date-and-time-value{text-align:left}
 .it-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .it-name{font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.15;min-width:0}
 button.it-name{border:0;background:none;padding:2px 0;margin:0;text-align:left;color:inherit;display:flex;align-items:baseline;gap:0;cursor:pointer;flex:1}
-.it-name .chev{display:inline-block;width:14px;color:var(--faint);font-size:18px;transition:transform .15s;transform:rotate(90deg);flex:none;margin-right:2px}button.it-name[aria-expanded=false] .chev{transform:none}
+.it-name .chev{display:inline-block;width:14px;color:var(--muted);font-size:18px;transition:transform .15s;transform:rotate(90deg);flex:none;margin-right:2px}button.it-name[aria-expanded=false] .chev{transform:none}
 .it.col{gap:6px;padding-block:10px}.it-sum{display:flex;flex-direction:column;gap:2px;padding-left:16px}.it-sum .pill{margin-left:6px}
 .chipb{border:1px solid var(--line);background:var(--surface2);border-radius:8px;font-size:14px;padding:4px 8px;color:var(--fg);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ibi{border:0;background:none;color:var(--accent);font-size:17px;padding:2px 4px;min-height:28px}
-.sechd{border:0;background:none;padding:0;display:flex;align-items:center;gap:2px;color:inherit;text-align:left;min-height:28px}.sechd .chev{display:inline-block;width:14px;color:var(--faint);font-size:16px;transition:transform .15s;transform:rotate(90deg)}.sechd[aria-expanded=false] .chev{transform:none}
+.sechd{border:0;background:none;padding:0;display:flex;align-items:center;gap:2px;color:inherit;text-align:left;min-height:28px}.sechd .chev{display:inline-block;width:14px;color:var(--muted);font-size:16px;transition:transform .15s;transform:rotate(90deg)}.sechd[aria-expanded=false] .chev{transform:none}
 .tsw{align-self:flex-start;padding:0 2px;min-height:26px;font-size:13px;margin-top:-4px}
 .colall{display:flex;justify-content:flex-end;margin:-6px 0 -8px}
-.it-name .n{color:var(--faint);margin-right:6px}
+.it-name .n{color:var(--muted);margin-right:6px}
 .it-name .nm,.wk-name,.tpl b,.hrow .t b{overflow-wrap:break-word;word-break:normal;hyphens:auto;-webkit-hyphens:auto}
 @media (max-width:360px){.it-name{font-size:17px}}
 .it-tools{display:flex;gap:4px;flex:none}.it-tools .ib{width:30px;height:30px;font-size:14px;border-radius:8px}
@@ -179,7 +185,9 @@ button.it-name{border:0;background:none;padding:2px 0;margin:0;text-align:left;c
 .srow.wu .i{color:var(--accent);font-weight:700}
 .srow.wu .cell{background:transparent;border-style:dashed}
 .dseg .sug{outline:2px dashed var(--accent);outline-offset:-4px}
-.glv{font-weight:700;font-size:13px;min-height:16px}.glv:empty{display:none}
+.glv{font-weight:700;font-size:13px;min-height:16px}.glv:empty{display:none}.glv{filter:brightness(.82)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .glv{filter:brightness(1.25)}}
+:root[data-theme=dark] .glv{filter:brightness(1.25)}
 .mrow{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:6px 12px;border:1px dashed var(--line);border-radius:10px;background:none;font-size:14px;color:var(--fg);text-align:left}.mrow .mrv{flex:1;min-width:0;font-weight:600}.mrow .mre{color:var(--accent)}.mtag{font-style:normal;font-size:11px;font-weight:600;color:var(--accent);margin-left:4px}
 .rvrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.xdet>summary{list-style:none;cursor:pointer}.xdet>summary::-webkit-details-marker{display:none}.xdet[open]>summary b{color:var(--accent)}.xbox{border-left:2px solid var(--line);margin:4px 0 8px 2px;padding:2px 0 2px 10px;display:flex;flex-direction:column;gap:4px;font-size:13px}.xh{font-size:12px;font-weight:600}.xr{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.xn{display:flex;flex-direction:column;min-width:0;line-height:1.25}.xn .muted{font-size:11.5px}.xsum{font-variant-numeric:tabular-nums;font-weight:600}.xg{padding:2px 0}.xt{border-top:1px solid var(--line);padding-top:5px;font-weight:600}.rvrow>span:first-child{min-width:0}.rvrow>:last-child{white-space:nowrap;flex-shrink:0;text-align:right}
 .recb{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0}.recb .rmain{flex:1;min-width:0;line-height:1.25}.recb .rlab{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin-bottom:1px}.recb .rtx{font-family:var(--f-display);font-size:17px}
@@ -242,7 +250,7 @@ body.kb .rtbar .rt-l{display:none}body.kb .rtbar .rt-t{font-size:22px}body.kb .r
 .gsub.di .c{text-align:right;font:600 14px var(--f-display);font-variant-numeric:tabular-nums}
 body.rton:not(.kb){padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 body.rton:not(.kb):not(.sheetopen):not(.tmopen) .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
-.srow .i{font-family:var(--f-display);color:var(--faint);font-size:17px;text-align:center}
+.srow .i{font-family:var(--f-display);color:var(--muted);font-size:17px;text-align:center}
 .cell{width:100%;min-width:0;height:42px;border:1px solid var(--line);background:var(--surface2);border-radius:10px;text-align:center;font:600 18px var(--f-display);font-variant-numeric:tabular-nums;padding:0 2px}
 .cell::placeholder{color:var(--faint);font-weight:500}
 .lr{display:grid;grid-template-columns:1fr 1fr;gap:3px}
@@ -527,7 +535,7 @@ const PHASES={deficit:'Дефіцит',maint:'Підтримка',bulk:'Набі
 function phaseSel(cur,c,id){return`<select class="in" data-c="${c}" id="${id}" aria-label="Фаза харчування"><option value="">Не вказано</option>${Object.entries(PHASES).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v}</option>`).join('')}</select>`}
 const TAGS=['Зал','Домашній зал','Дім','Турніки','TRX','HIIT','Кардіо','Зарядка','Інше'];
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='56.4 · 24.10.2026';
+const APPV='56.5 · 24.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -1833,14 +1841,14 @@ function tplDirtyUI(){const b=document.getElementById('tpl-back'),sv=document.ge
 function vTplEdit(t){const ch=tplChanged(),cs=tplCanSave();let h=`<div class="row between" id="tpl-dirty" style="min-height:0">${ch?'<span class="pill p-warn">Є незбережені зміни</span>':''}</div>
  <section class="card stack"><label class="field"><span>Назва</span><input class="in" data-f="tpl" data-k="name" id="tpl-name" value="${esc(t.name)}"></label>
  <div class="g2"><label class="field"><span>Місце / тип</span><select class="in" data-f="tpl" data-k="tag" id="tpl-tag">${TAGS.map(x=>`<option ${x===t.tag?'selected':''}>${x}</option>`).join('')}</select></label>
- <label class="field"><span>Примітка</span><input class="in" data-f="tpl" data-k="note" id="tpl-note" value="${esc(t.note)}" placeholder="Із собою: гуми"></label></div></section>`;
+ <label class="field"><span>Примітка</span><input class="in" data-f="tpl" data-k="note" id="tpl-note" value="${esc(t.note)}" placeholder="Напр.: гуми"></label></div></section>`;
  h+=t.items.map((it,i)=>{if(!WU[it.exId]&&isTCol(it))return tiCollapsed(t,it,i);if(it.kind==='block')return`<div class="ti blk">${tiHead(i,it.name,true)}<div class="it-meta"><span class="pill p-acc">${FMT[it.fmt]}</span><span>${esc(blockSum(it))}</span></div><div class="small">${(it.ex||[]).map(x=>esc(x.name)+' <span class="muted">'+esc(bexTxt(x))+'</span>').join(', ')||'<span class="muted">Вправ немає</span>'}</div><button class="btn" data-a="tb-edit" data-n="${i}">Налаштувати блок</button></div>`;if(WU[it.exId]){const ce=ex(it.exId)||{name:wuRoleLbl(WU[it.exId])};return`<div class="ti" style="border-color:var(--good)">${tiHead(i,ce.name,false)}<button class="lnk tsw" data-a="ti-swap" data-n="${i}">⇄ Замінити вправу</button><label class="field"><span>Опис (порожньо - з каталогу)</span><textarea class="in" data-f="ti" data-n="${i}" data-k="desc" id="ti-d-${i}" placeholder="${esc(ce.desc||'Що робиш: напр. суглобова мобілізація, легке кардіо')}">${esc(it.desc||'')}</textarea></label><span class="muted small">Без ліміту часу. Під час запису - секундомір «Старт» / «Стоп» або хвилини вручну.</span></div>`}const e=ex(it.exId)||{name:'(вправу видалено)',type:'weight'};const type=it.type||e.type;const a=`data-f="ti" data-n="${i}"`;
   let fields;if(type==='hiit')fields=`<div class="g3"><label class="field"><span>Раунди</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Робота, с</span><input class="in" inputmode="numeric" ${a} data-k="work" id="ti-w-${i}" value="${esc(it.work)}"></label><label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}"></label></div>`;
   else if(type==='cardio')fields='';
   else fields=`<div class="g3"><label class="field"><span>Підходи</span><input class="in" inputmode="numeric" ${a} data-k="sets" id="ti-s-${i}" value="${esc(it.sets)}"></label><label class="field"><span>Повтори</span><input class="in" ${a} data-k="reps" id="ti-p-${i}" value="${esc(it.reps)}" placeholder="8-12"></label><label class="field"><span>RIR</span><input class="in" ${a} data-k="rir" id="ti-q-${i}" value="${esc(it.rir)}" placeholder="1-2"></label></div>`;
   const typeSel=STR.includes(e.type)?`<label class="field"><span>Режим</span><select class="in" ${a} data-k="type" id="ti-t-${i}">${STR.map(x=>`<option value="${x}" ${x===type?'selected':''}>${TYPES[x]}${x===e.type?' (осн.)':''}</option>`).join('')}</select></label>`:'';
   return`<div class="ti">${tiHead(i,e.name,true)}<button class="lnk tsw" data-a="ti-swap" data-n="${i}">⇄ Замінити вправу</button>
-   ${fields}<div class="g2">${typeSel}<label class="field" ${typeSel?'':'style="grid-column:1/-1"'}><span>Примітка</span><input class="in" ${a} data-k="note" id="ti-n-${i}" value="${esc(it.note)}" placeholder="на ногу, кут лави..."></label>${STR.includes(type)&&restMode()!=='off'?`<label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}" placeholder="${restStd()||''}"></label>`:''}</div>${STR.includes(type)?tiTech(it,i,type,e):''}${ssOn()&&STR.includes(type)&&(()=>{const nx=t.items.slice(i+1).find(x=>!WU[x.exId]);if(!nx||nx.kind==='block')return false;const ne=ex(nx.exId)||{};return STR.includes(nx.type||ne.type)})()?`<label class="chk"><input type="checkbox" data-c="ti-ss" data-n="${i}" id="ti-ss-${i}" ${it.ssN?'checked':''}>Суперсет з наступною</label>`:''}</div>`}).join('');
+   ${fields}${typeSel}${(()=>{const rs=STR.includes(type)&&restMode()!=='off';return`<div class="g2">${rs?`<label class="field"><span>Відпоч., с</span><input class="in" inputmode="numeric" ${a} data-k="rest" id="ti-r-${i}" value="${esc(it.rest)}" placeholder="${restStd()||''}"></label>`:''}<label class="field" ${rs?'':'style="grid-column:1/-1"'}><span>Примітка</span><input class="in" ${a} data-k="note" id="ti-n-${i}" value="${esc(it.note)}" placeholder="кут, хват..."></label></div>`})()}${STR.includes(type)?tiTech(it,i,type,e):''}${ssOn()&&STR.includes(type)&&(()=>{const nx=t.items.slice(i+1).find(x=>!WU[x.exId]);if(!nx||nx.kind==='block')return false;const ne=ex(nx.exId)||{};return STR.includes(nx.type||ne.type)})()?`<label class="chk"><input type="checkbox" data-c="ti-ss" data-n="${i}" id="ti-ss-${i}" ${it.ssN?'checked':''}>Суперсет з наступною</label>`:''}</div>`}).join('');
  if(!t.items.length)h+=`<p class="empty">У шаблоні ще немає вправ.</p>`;
  return h+`<div class="g2"><button class="btn" data-a="ti-add">+ Додати вправу</button><button class="btn" data-a="tb-add">+ HIIT-блок</button></div><p class="muted small" style="margin:0">Зміни застосуються після «Зберегти шаблон». Натисни назву вправи, щоб замінити її іншою.</p>
  <div class="g2"><button class="btn" data-a="tpl-dup">Копія шаблону</button><button class="btn danger" data-a="tpl-del">Видалити шаблон</button></div>
