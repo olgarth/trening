@@ -528,6 +528,9 @@ select.in{padding-left:8px}
 .tco.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}.tco.on .muted{color:inherit;opacity:.8}
 .sgh{margin:14px 4px 2px}.sgh:first-child{margin-top:0}
 details.how.sub{margin-left:8px}
+/* v57.2.1: «Показати всі групи» у Звіті - правила details.how summary не мають чіпати вкладені рядки груп (смужки, колонки) */
+details.how .gdet>summary{display:grid;font-weight:inherit;min-height:0;justify-content:normal}
+details.how .gdet>summary::after{content:none}
 .colh{all:unset;cursor:pointer;font:inherit;color:inherit;text-decoration:underline dotted;text-underline-offset:3px}
 nav.tabs button{position:relative}
 nav.tabs [data-tab=log][data-run]:not([data-run=""])::after{content:attr(data-run);position:absolute;top:3px;left:calc(50% + 10px);background:var(--accent);color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;line-height:1.3;white-space:nowrap}
@@ -631,7 +634,7 @@ const TAGS=['Зал','Дім','Турніки','TRX','HIIT','Кардіо','За
 /* v56.7: «Тип» замість «Місце / тип»; «Домашній зал» об’єднано із «Зал» (зал - з обладнанням, де б не був; дім - без обладнання) */
 const tagN=t=>t==='Домашній зал'?'Зал':t;
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='57.2 · 25.10.2026';
+const APPV='57.2.1 · 25.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
