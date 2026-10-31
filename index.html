@@ -718,6 +718,27 @@ details.acc>summary{align-items:baseline}
 :root[data-theme="dark"]{--phg:#6D737A;--phb:#6478A6}
 .srow .cell:not(.ori)::placeholder{color:var(--phg);font-weight:400;opacity:1}
 .srow.rph-w .cell[data-k=w]::placeholder,.srow.rph-r .cell[data-k=r]::placeholder,.srow.rph-r .cell[data-k=rl]::placeholder,.srow.rph-r .cell[data-k=rr]::placeholder{color:var(--phb);font-weight:400;opacity:1}
+
+/* v58.1: автоматичне тренування */
+.tpl.auto b .ic,.aplan .pt .ic{color:var(--accent);margin-right:4px}
+.chips.eq .chip.on::before{content:"✓";font-size:12px;margin-right:5px;opacity:.9}
+.psec{display:flex;flex-direction:column;gap:6px}
+.psec>.lbl .muted.n{text-transform:none;letter-spacing:0;font-weight:600;font-size:12px}
+details.how.p{border-top:1px solid var(--line);padding-top:4px}
+details.how.p summary{font-weight:600;font-size:14.5px;min-height:34px}
+details.how.p summary .muted{font-weight:500;margin:0 auto 0 4px}
+details.how.p>div{padding:4px 0 6px}
+.chip[disabled]{opacity:.45}
+.aplan{background:var(--accent-soft);border-radius:12px;padding:9px 12px;display:flex;flex-direction:column;gap:3px}
+.aplan .pt{font-weight:700;font-size:14px;line-height:1.3}
+.aplan .ps{font-size:13px;color:var(--muted)}
+.aplan .ps b{color:var(--fg);font-family:var(--f-display);font-size:15px;font-weight:600}
+.aplan .pl{display:flex;gap:14px;margin:2px 0 -4px -4px}
+.aplan .lnk{padding:4px 4px;min-height:28px;font-size:13.5px}
+.it-foot .lnk.aswap{padding:6px 2px;min-height:40px;font-size:13.5px}
+.in.bad{border-color:var(--warn,#c0392b)}
+.awhy .tips{margin:4px 0 8px;padding-left:18px}
+.awhy .tips li{margin-bottom:5px;font-size:14px}
 </style>
 </head>
 <body>
@@ -829,7 +850,7 @@ const TAGS=['Зал','Дім','Турніки','TRX','HIIT','Кардіо','За
 /* v56.7: «Тип» замість «Місце / тип»; «Домашній зал» об’єднано із «Зал». v57.7 (рішення Олега): «Дім» - тренування вдома з будь-яким домашнім інвентарем (гуми, гиря, гантелі, турнік, TRX), «Зал» - у залі; тег лише фільтрує, на рекомендацію не впливає */
 const tagN=t=>t==='Домашній зал'?'Зал':t;
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.0 · 31.10.2026';
+const APPV='58.1 · 31.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -1675,7 +1696,7 @@ function recSetsAdj(it,w,prev,W,rirs,ra,lo,kind,CTX){if(!setsOn())return null;co
  if(nT>2&&S0+nT*c>11)return mk(nT-1,'A',`${gl}: сьогодні вже ≈${r1(S0)} підх. → ${nT-1} підх.`,`${nT-1} ${pln(nT-1,'підхід','підходи','підходів')} замість ${nT}: ${gl} сьогодні вже ≈${r1(S0)} підх. до цієї вправи, разом було б ≈${r1(S0+nT*c)}; понад ≈11 за тренування на групу майже не додають (Remmert 2025 - оцінка); останній підхід можна пропустити`);
  if(nT>2&&Wk4!=null&&Wk>=20&&Wk-Wk4>=4)return mk(nT-1,'B',`${gl}: тиждень ≈${r1(Wk)} → ${nT-1} підх.`,`${nT-1} ${pln(nT-1,'підхід','підходи','підходів')} замість ${nT}: ${gl} за тиждень ≈${r1(Wk)} підх. - верх зони 12-20 (Baz-Valle 2022) і більше за звичні ≈${r1(Wk4)}; останній підхід можна пропустити`);
  if(nT>=4&&(ct.F[G]||0)>=1&&patOf(it).some(k=>ISO_PAT.includes(k)))return mk(nT-1,'D',`${gl} уже працював → ${nT-1} підх.`,`${nT-1} ${pln(nT-1,'підхід','підходи','підходів')} замість ${nT}: ${gl} уже отримав роботу від ${ct.srcs.join(', ')} (≈${r1(S0)} підх.); на групу за тренування понад ≈11 підходів віддача мала, тож одним підходом менше (Remmert 2025 - оцінка)`);
- if(nT<5&&!MINOR.includes(G)&&kind!=='again'&&kind!=='hold'&&kind!=='up'&&Wk<vLo&&(Wk4==null||Wk4<vLo)){
+ if(nT<5&&!MINOR.includes(G)&&kind!=='again'&&kind!=='hold'&&kind!=='up'&&Wk<vLo&&(Wk4==null||Wk4<vLo)&&!it.auto){/* v58.1: автотренування вже розподілило дефіцит тижня */
   const full=(itm,ww)=>{const L=itm.sets.filter(q=>!q.wu),dn=L.filter(q=>(repsOf(itm,q)||{}).tot);if(!dn.length||dn.length<Math.max(L.length,num(itm.tgt&&itm.tgt.sets)||0))return false;/* виконано весь план */return dn.every(q=>{const v=num(q.rir);return v!=null&&v>=ra})};
   if(!full(prev.item,prev.w))return null;let p2=null;try{p2=prevSessionT(it.exId,prev.w,it.type,false,true)}catch(e){}if(!p2||!full(p2.item,p2.w)||dayDiff(p2.w.date,prev.w.date)>10)return null;
   const pT=num(prev.item.tgt&&prev.item.tgt.sets);if(pT&&W.length>pT&&dayDiff(prev.w.date,d)<7)return null;/* +1 уже був цього тижня */
@@ -2136,6 +2157,239 @@ function calc(){if(CACHE&&CACHE.scope===SCOPE)return CACHE;const ses={},ws=sorte
 /* v58: «Цей тиждень» (пн-нд, сума) і «Цей місяць» (з 1-го числа) */
 const wkMode=()=>S.ui.period==='wk',moMode=()=>S.ui.period==='mo';
 function weekStart(d){const x=new Date(d+'T12:00');return addDays(d,-((x.getDay()+6)%7))}
+
+/* v58.1: автоматичне тренування - дані */
+const AUTO_EQ=[['floor','Власна вага'],['bar','Турнік'],['dips','Бруси'],['db','Гантелі'],['kb','Гиря'],['band','Гума'],['trx','TRX'],['bb','Штанга'],['mach','Тренажери']];
+const BAR_IDS=new Set(['pull','pull_neutral','pull_wide','pull_chin','neg_pull','scap_pull','dead_hang','knee_raise','leg_raise','row_low_bar','gravitron','gravitron_dips']),DIP_IDS=new Set(['dips','l_sit','bench_dips']);
+/* інвентар вправи: що має бути вибране, щоб її запропонувати */
+function eqOf(e){if(!e)return null;const t=e.type,id=e.id,n=e.name||'';
+ if(t==='bw'){if(MACHDEF[id]||e.machP)return'mach';if(id==='bench_dips')return'floor';return BAR_IDS.has(id)||/підтяг|у висі|перекладин/i.test(n)?'bar':DIP_IDS.has(id)||/брус|паралетс/i.test(n)?'dips':'floor'}
+ if(t==='db1'||t==='db2')return isKbEx(t,id)?'kb':'db';if(t==='band')return'band';if(t==='trx')return'trx';
+ if(t==='weight')return(MACHDEF[id]||e.machP)?'mach':'bb';return null}
+/* робочі підходи на групу з понеділка до дати d (збережені) + план чернетки w */
+function weekSets(d,w){const C=calc(),d0=weekStart(d),g={};
+ mainW().forEach(x=>{if(x.date<d0||x.date>d||(w&&x.id===w.id))return;const st=C.wst[x.id];if(!st)return;for(const k in st.groups)g[k]=(g[k]||0)+st.groups[k]});
+ if(w)(w.items||[]).forEach(it=>{if(!STR.includes(it.type))return;const c=musContrib(it).g;const done=it.sets.filter(q=>!q.wu&&(repsOf(it,q)||{}).tot).length;const pl=Math.max(done,num(it.tgt&&it.tgt.sets)||it.sets.filter(q=>!q.wu).length);for(const k in c)g[k]=(g[k]||0)+pl*c[k]});
+ return g}
+/* скільки силових тренувань ще буде цього тижня, разом із сьогоднішнім: звична кількість (медіана 4 тижнів, від 10 тренувань; інакше 3 - оцінка) мінус зроблені */
+function weekSessionsLeft(d){const ws=mainW(),d0=weekStart(d);const done=ws.filter(x=>x.date>=d0&&x.date<d).length;
+ const cnt=[];for(let k=1;k<=4;k++){const a=addDays(d0,-7*k),b=addDays(d0,-7*(k-1));cnt.push(ws.filter(x=>x.date>=a&&x.date<b).length)}
+ const me=ws.length>=10,hist=me?Math.max(1,Math.round(median(cnt))):3,daysLeft=7-((new Date(d+'T12:00').getDay()+6)%7);
+ return{left:Math.max(1,Math.min(daysLeft,hist-done)),hist,done,daysLeft,src:me?'me':'est'}}
+/* відстаючі: середнє за 4 тижні і цей тиждень нижче низу цілі; від 10 тренувань; дрібні групи не беруться */
+function lagGroups(d,w){const C=calc(),ws=mainW();if(ws.length<10)return{ok:false,n:ws.length,list:[]};const d28=addDays(d,-28),s={};
+ ws.forEach(x=>{if(x.date<d28||x.date>=d)return;const st=C.wst[x.id];if(!st)return;for(const k in st.groups)s[k]=(s[k]||0)+st.groups[k]});
+ const lo=gzLo(),W=weekSets(d,w);const list=GROUPS.filter(g=>!MINOR.includes(g)).map(g=>({g,avg:(s[g]||0)/4,wk:W[g]||0})).filter(x=>x.avg<lo&&x.wk<lo).sort((a,b)=>(a.avg-b.avg)||GROUPS.indexOf(a.g)-GROUPS.indexOf(b.g));return{ok:true,n:ws.length,list}}
+/* готовність групи сьогодні (відновлення без Garmin): k - частка обсягу */
+function autoReady(G,R){const r=R&&R[G];if(!r)return{k:1,st:'new'};if(r.st==='ok')return{k:1,st:'ok'};const rho=r.need0?r.left0/r.need0:0;
+ return{k:r.st==='early'?0:rho<.25?1:.5,st:r.st,rho,left:r.left0}}/* early - без прямої роботи; almost - до половини (≤ 4 підходи, без дропів і Myo - qa58 science) */
+/* щільність з моїх записів: секунд на робочий підхід разом із відпочинком (медіана 3600/sph, останні 15 тренувань з тривалістю), перехід між вправами */
+function autoDensity(){const ws=mainW().slice(-15).filter(w=>num(w.dur));const v=[],tr=[];
+ ws.forEach(w=>{let e=null;try{e=wEst(w)}catch(x){e=null}if(e&&e.n>=6&&e.sph>=6&&e.sph<=40)v.push(3600/e.sph);const st=wStats(w);if(st.trans&&st.trans>=20&&st.trans<=300)tr.push(st.trans)});
+ const man=num(S.settings.autoDens);return{set:man&&man>=60&&man<=400?man:v.length>=3?median(v):null,trans:tr.length>=3?median(tr):null,n:v.length,src:man?'man':v.length>=3?'me':'est'}}
+/* хвилини: 5 хв загальної розминки + переходи + розминкові по 60 с + робочі (оцінка науки: багатосуглобові 35 + 150 с, ізоляція 40 + 75 с; з моєю щільністю - за нею);
+   суперсет - спільний відпочинок (×0,64, Zhang 2025: −36%), дроп +20 с на дроп, Myo +20 с на міні */
+function autoTime(items,D){D=D||autoDensity();const tr=D.trans||90;let sec=0,any=false;
+ items.forEach(it=>{if(it.type==='wu'){sec+=300;any=true;return}if(!STR.includes(it.type))return;const ce=autoCls(it)==='c',W=it.sets.filter(q=>!q.wu);sec+=tr+(it.sets.length-W.length)*60;
+  const ps=D.set?D.set*(ce?1.15:.8):(ce?185:115);W.forEach((q,j)=>{let t=j===W.length-1&&!it.ssN?ps*(ce?.19:.35):(it.ssIn||it.ssN)?ps*.64:ps;/* після останнього підходу - перехід замість відпочинку */if(q.st==='drop')t+=20*(q.drops||[]).length;if(q.st==='myo')t+=20*(q.mini||[]).length;sec+=t*(it.uni?1.4:1)})});/* однобічна - обидві сторони ≈ ×1,4 часу (оцінка) */
+ if(!any)sec+=300;return{min:Math.round(sec/60),src:D.src,D}}
+/* v58.1 Е4-Е5 */
+/* v58.1: генератор. Типи і частки прямих підходів (%) - консенсус/оцінка (RP volume landmarks, Helms; РКД про пропорції немає) */
+const AUTO_T={full:['Все тіло',{'Квадрицепс':15,'Біцепс стегна':10,'Сідниці':10,'Груди':15,'Спина':20,'Середня дельта':7,'Біцепс':5,'Трицепс':5,'Ікри':5,'Прес':8}],
+ upper:['Верх',{'Груди':25,'Спина':30,'Середня дельта':12,'Задня дельта':5,'Біцепс':12,'Трицепс':12,'Прес':4}],
+ legs:['Ноги',{'Квадрицепс':33,'Біцепс стегна':22,'Сідниці':22,'Привідні':5,'Ікри':13,'Розгиначі спини':5}],
+ push:['Штовхай',{'Груди':45,'Передня дельта':8,'Середня дельта':15,'Трицепс':27,'Прес':5}],
+ pull:['Тягни',{'Спина':45,'Трапеції':8,'Задня дельта':10,'Біцепс':20,'Розгиначі спини':10,'Передпліччя':7}],
+ sep:['Окремі групи',null],lag:['Відстаючі',null]};
+const AUTO_BIG=['Груди','Спина','Квадрицепс','Біцепс стегна','Сідниці'];
+const autoCap=(g,pr)=>MINOR.includes(g)||g==='Трапеції'?4:AUTO_BIG.includes(g)?(pr?10:8):(pr?8:6);/* стеля за сесію: 10 прямих (Remmert 2025), типово 8 великі / 6 малі / 4 дрібні - консенсус */
+const autoOn=()=>S.settings.autoOn!==false,autoNew=()=>S.settings.autoNew===true,autoWu=()=>S.settings.autoWu!==false&&S.settings.wuSets!==false;
+const autoNov=()=>mainW().length<10||num(S.settings.profExp)===1;
+/* тип з найбільшим дефіцитом серед готових груп - для поради, коли обраний тип не вміщується */
+function autoBestType(cur,R,WK){const lo=gzLo();let best=null,bs=0;['full','upper','legs','push','pull'].forEach(t=>{if(t===cur)return;const sh=AUTO_T[t][1];let sc=0;for(const g in sh){if(MINOR.includes(g)||autoReady(g,R).k===0)continue;sc+=Math.max(0,lo-(WK[g]||0))*sh[g]}if(sc>bs){bs=sc;best=t}});return best}
+/* Е4: скільки прямих підходів на групу. keep - картки, що лишаються в тренуванні (їхні підходи вже враховані) */
+function autoVolume(o,w,D){const d=(w&&w.date)||todayStr(),why=[],R=recovery(w&&w.id),WK=weekSets(d,null),SL=weekSessionsLeft(d),lo=gzLo(),hi=gzHi(),hist=mainW().length>=10;
+ const ps=D&&D.set?D.set:155,N0=Math.min(35,Math.max(6,Math.round((o.dur-5)*60/(ps+30))));/* підходів за час: (хв - 5 розминки) / (підхід з відпочинком + частка переходу) - оцінка T1-T4 */
+ let sh={},lag=null;
+ if(o.type==='sep'){(o.grps||[]).forEach(g=>{sh[g]=AUTO_BIG.includes(g)?3:2})}
+ else if(o.type==='lag'){lag=lagGroups(d,null);if(!lag.ok)return{err:'lag',n:lag.n};const L=lag.list.filter(x=>autoReady(x.g,R).k>0).slice(0,3);if(!L.length)return{err:'nolag'};
+  L.forEach(x=>{sh[x.g]=Math.max(.5,lo-x.avg)});const sup=AUTO_BIG.filter(g=>!sh[g]&&autoReady(g,R).k>0).slice(0,2);sup.forEach(g=>{sh[g]=-2});why.push(`Відстаючі за 4 тижні (від 10 тренувань): ${L.map(x=>`${x.g} ≈${nf(x.avg,1)}/тиж`).join(', ')} - нижче цілі ${lo}-${hi} (Schoenfeld 2017: менше 5 на тиждень дає помітно менше); ${sup.length?'підтримка: '+sup.join(', ')+' по 2 підходи':''}`)}
+ else sh=Object.assign({},AUTO_T[o.type][1]);
+ const prio=(o.type==='lag'?Object.keys(sh).filter(g=>sh[g]>0):(o.prio||[]).filter(g=>sh[g]!=null)).slice(0,o.type==='lag'?3:o.dur<=45?1:2),V={},note={},lim={};
+ const tot=Object.values(sh).filter(v=>v>0).reduce((a,b)=>a+b,0)||1,fixed=Object.values(sh).filter(v=>v<0).reduce((a,b)=>a-b,0),N=Math.max(4,N0-fixed);
+ for(const g in sh)V[g]=sh[g]<0?2:sh[g]/tot*N;const np=Object.assign({},V);
+ if(prio.length&&o.type!=='lag'){let add=0;prio.forEach(g=>{const n=Math.min(autoCap(g,true),V[g]*1.5);add+=n-V[g];V[g]=n});const oth=Object.keys(V).filter(g=>!prio.includes(g)&&sh[g]>0);const pool=oth.reduce((a,g)=>a+V[g],0)||1;oth.forEach(g=>{V[g]=V[g]<1.5?V[g]:Math.max(V[g]*.5,2,V[g]-add*V[g]/pool)});/* дрібні групи не піднімаємо до 2 заради пріоритету */
+  why.push({prio:1,cut:(o.prio||[]).length>prio.length})}
+ const base=Object.assign({},V);
+ /* картки, що лишаються (з записаними підходами), - їхні підходи вже в плані */
+ const kept={};((w&&w.items)||[]).forEach(it=>{if(!STR.includes(it.type))return;const c=musContrib(it).g,n=it.sets.filter(q=>!q.wu).length;for(const g in c)if(c[g]>=1)kept[g]=(kept[g]||0)+n});
+ const small=[];for(const g in V){const pr=prio.includes(g),rd=autoReady(g,R);let n=V[g];lim[g]=autoCap(g,pr);
+  if(rd.k===0&&!o.light){delete V[g];note[g]={t:'rec',x:`${g} ще відновлюється (≈${Math.max(1,Math.round(rd.left||0))} год) - без прямої роботи сьогодні`};continue}
+  if(!o.light){
+   if(!MINOR.includes(g)&&sh[g]>0&&o.type!=='lag'){const Dg=Math.max(0,lo-(WK[g]||0)),need=Math.ceil(Dg/SL.left);if(need>n&&need<=autoCap(g,pr))n=Math.min(need,n+2)}
+   if(!MINOR.includes(g)){const room=hi+2-(WK[g]||0);if(room<2){delete V[g];note[g]={t:'wk',x:`${g}: цього тижня вже ${nf(WK[g]||0,1)} - понад ціль ${lo}-${hi}, сьогодні без прямої роботи`};continue}n=Math.min(n,room);lim[g]=Math.min(lim[g],room)}
+   if(hist){const A=(()=>{const a=addDays(d,-28),C=calc();let t=0;mainW().forEach(x=>{if(x.date>=a&&x.date<d){const st=C.wst[x.id];t+=(st&&st.groups[g])||0}});return t/4})();if(A>=2){const l2=A+(pr?3:2)-(WK[g]||0);lim[g]=Math.min(lim[g],Math.max(2,Math.floor(l2)));if(l2<n){if(l2<2&&!pr){delete V[g];note[g]={t:'g2',x:`${g}: цього тижня вже ${nf(WK[g]||0,1)} при звичних ≈${nf(A,1)} - приріст не більше +2 підходи на тиждень (RP, Enes 2024), сьогодні без прямої роботи`};continue}n=Math.max(2,l2);note[g]={t:'g2',x:`${g}: не більше ніж +${pr?3:2} підходи до звичного тижня (≈${nf(A,1)}) - приріст поступово (RP, Enes 2024)`}}}}
+   if(rd.k<1){n=Math.min(n,4);lim[g]=Math.min(lim[g],4);note[g]={t:'almost',x:`${g} майже відновилась - не більше 4 підходів, без дропів і Myo`}}}
+  n=Math.min(n,autoCap(g,pr))-(kept[g]||0);lim[g]-=(kept[g]||0);if(n<2){if(n>=1.5)n=2;else{delete V[g];if(!kept[g]&&!note[g])small.push(g);continue}}V[g]=Math.round(n)}
+ /* P1/P2: пріоритет має отримати свою частку навіть у короткому тренуванні - забрати з непріоритетних, за потреби прибрати групу з найменшою часткою */
+ if(prio.length&&o.type!=='lag'&&!o.light){const off=[];prio.forEach(g=>{if(V[g]==null)return;let need=Math.min(lim[g]||10,Math.max(3,Math.round(base[g]||0)))-V[g];
+   while(need>0){const c=Object.keys(V).filter(x=>!prio.includes(x)&&V[x]>2).sort((a,b)=>V[b]-V[a]);if(c.length){V[c[0]]--;V[g]++;need--;continue}
+    const sm=Object.keys(V).filter(x=>!prio.includes(x)).sort((a,b)=>(AUTO_BIG.includes(a)-AUTO_BIG.includes(b))||(sh[a]||0)-(sh[b]||0))[0];if(!sm)break;const fr=V[sm];delete V[sm];off.push(sm);const add=Math.min(need,fr);V[g]+=add;need-=add}});
+  if(off.length)why.push(`Щоб пріоритет вмістився в ${o.dur} хв, сьогодні без: ${off.join(', ')} (P2: краще прибрати групу, ніж дати всім по одному підходу)`)}
+ return{V,prio,why,note,SL,WK,N:N0,lag,R,sh,base,lim,kept,np,small}}
+/* бал вправи для групи G (оцінка, qa58 science E1-E6): ефективність, довге положення, стабільність, ціна відновлення; знайомість - окремо */
+const AUTO_LEN_HI=/над головою|французьк|румунськ|згинання ніг сидячи|болгарськ|випад|розведення.*лежачи|похил.*згинан|пуловер|дефіцит|на підвищенні|гуд.?монінг|скандинав/i,AUTO_LEN_LO=/кікбек|шраг|концентрован|розгинання рук на блоці|розгинання.*вниз|махи.*в нахилі/i,AUTO_HEAVY=/^(?!.*гум).*(станов|присідання зі штангою|румунська тяга зі штангою|ривок|поштовх|гуд.?монінг зі штангою)/i;
+const AUTO_AUX=/секунд|прогулянк|птах|переноск|утриманн|ротаці|відведення руки|негативн|лопатков|з допомогою ніг|ізометр|гравітрон|трастер|свінг|ривок|поштовх|довгий цикл|підйом гир|бьорпі|стрибк/i,AUTO_HARD=/скандинав|пістолет|тайсон|на підставці|лучник|на одній руці|драконов/i;
+function autoScore(e,G){const c=musContrib(e).g[G]||0,isP=c>=1,cl=autoCls(e),eq=eqOf(e),small=!AUTO_BIG.includes(G);const n=e.name||'',nov=autoNov();
+ const eff=!isP?.3:(eq==='trx'||eq==='band')?.6:cl==='c'?1:small?1:.8;const len=AUTO_LEN_HI.test(n)?1:AUTO_LEN_LO.test(n)?.2:/жим гантелей лежачи|жим штанги лежачи|жим гантелей на похилій|віджимання на брусах|присідання|тяга верхнього блоку|^(?!.*горизонтальн).*підтягування/i.test(n)?.8:.5;
+ const stab=eq==='mach'?1:AUTO_HEAVY.test(n)?.4:eq==='bb'?.6:/болгарськ|випад|на одній/i.test(n)?.6:.8;const cost=AUTO_HEAVY.test(n)?1:cl!=='c'?.2:eq==='bb'||eq==='mach'?.7:.4;const exp=num(S.settings.profExp)>=2&&!nov;
+ const p0=musGrp(((ex(e.id)||e).prim||[])[0]);
+ const adj=(['db','kb','bb','mach'].includes(eq)?.04:0)-(AUTO_AUX.test(n)?.25:0)-(p0&&p0!==G?.08:0)-(nov&&/підтягування|болгарськ/i.test(n)?.1:0)-(nov&&AUTO_HARD.test(n)?.2:0);/* обтяження - простіша прогресія; допоміжні, переноски, «секунди», підводки - не основний обсяг; вправа - своїй першій групі; новачку - стабільніше (оцінка) */
+ return{sc:.35*eff+.2*len+(exp?.075:nov?.25:.15)*stab+.15*(1-cost)+adj,eff,len,stab,cost,cl,isP}}
+/* кандидати на групу G з інвентарю: знайомі першими (Олег 31.10), далі за балом; не беремо вправи, де основна інша група ще відновлюється (G3) */
+function autoPick(G,eq,excl,opt){opt=opt||{};const d=opt.d||todayStr(),E=new Set(eq),R=opt.R;const L=[];
+ (S.catalog||[]).forEach((e,ix)=>{if(!STR.includes(e.type)||WU[e.id]||excl.has(e.id))return;const q=eqOf(e);if(!q||!E.has(q))return;const cg=musContrib(e).g,c=cg[G]||0;if(c<1)return;
+  const S0=autoScore(e,G);if(opt.maxCost!=null&&S0.cost>opt.maxCost)return;
+  if(R&&!opt.light)for(const g in cg){if(g===G)continue;const k=autoReady(g,R).k;if(k===0&&(cg[g]>=1||S0.cost>.4))return}
+  const F=autoFam(e.id,d);L.push({e,S:S0,F,ix,sc:S0.sc+(F.n?.6+.4*F.f:0)})});
+ L.sort((a,b)=>b.sc-a.sc||b.F.n-a.F.n||a.ix-b.ix);return L}
+const autoSplit=n=>n<=4?[n]:n<=8?[Math.ceil(n/2),Math.floor(n/2)]:[Math.ceil(n/3),Math.ceil((n-Math.ceil(n/3))/2),n-Math.ceil(n/3)-Math.ceil((n-Math.ceil(n/3))/2)];
+/* повтори і запас за класом (W3): для знайомої - як у моєму останньому записі */
+function autoTgt(e,cl,w){const p=prevSessionT(e.id,w,e.type,false,true);if(p&&p.item.tgt&&p.item.tgt.reps)return{reps:p.item.tgt.reps,rir:p.item.tgt.rir||'1-2',fam:true};
+ const n=e.name||'';if(/секунд/i.test(n))return{reps:'30-60',rir:'1-2'};if(/скандинав/i.test(n))return{reps:'4-8',rir:'1-2'};if(cl==='k')return{reps:'12-20',rir:'1-2'};if(cl==='i'||e.type==='band'||e.type==='trx')return{reps:'10-15',rir:'1-2'};if(AUTO_HEAVY.test(n))return{reps:'6-10',rir:'2-3'};return{reps:'8-12',rir:'1-2'}}
+const autoPat=e=>{const P=patOf(e);return P.includes('hinge')?'hinge':P.includes('lunge')?'lunge':P.includes('squat')?'squat':P[0]||e.id};const AUTO_SESS=['hinge','lunge','squat'];/* ці рухи - не більше 2 за тренування (E7) */
+/* Е5: зібрати тренування. w.items - картки, що лишаються */
+function autoGen(o,w){const d=w.date||todayStr(),why=[],D=autoDensity(),V0=autoVolume(o,w,D);if(V0.err)return V0;const V=Object.assign({},V0.V),keep=(w.items||[]).slice(),excl=new Set(keep.map(x=>x.exId)),maxEx=(o.dur<=45?6:o.dur<=75?8:10)-keep.filter(x=>STR.includes(x.type)).length;
+ if(!Object.keys(V).length)return{err:'none',note:V0.note,best:autoBestType(o.type,V0.R,V0.WK)};
+ let plan=null,noEq=new Set(),capB={};const isPr=g=>V0.prio.includes(g);
+ const build=()=>{const used=new Set(excl),pats={},got={};let slots=[],newUsed=0;noEq=new Set();const inT=g=>V[g]!=null,hc=h=>10-(V0.kept[h]||0);capB={};/* сумарно з усіх вправ, де група основна, - не більше 10 за тренування (Remmert 2025); типові 8/6/4 - для прямих підходів групи */
+  /* підходи залишених карток уже віднято в autoVolume */
+  const gs=Object.keys(V).filter(g=>V[g]>=2).sort((a,b)=>(isPr(b)-isPr(a))||(AUTO_BIG.includes(b)-AUTO_BIG.includes(a))||V[b]-V[a]);
+  gs.forEach(g=>{let rem=V[g]-(got[g]||0);if(rem<2)return;/* група вже отримала свій обсяг з вправ інших груп (основний м'яз і там) */
+   const almost=V0.note[g]&&V0.note[g].t==='almost';const C=autoPick(g,o.eq,used,{d,maxCost:almost?.4:null,R:V0.R,light:o.light});if(!C.length){noEq.add(g);return}
+   const fam=C.filter(x=>x.F.n),pool=o.light?fam:fam.length?fam:C;if(!pool.length){noEq.add(g);return}let i=0;
+   while(rem>=2&&i<3){const n=autoSplit(rem)[0];const sess=x=>{const p=autoPat(x.e);return!AUTO_SESS.includes(p)||(pats[p]||0)<2};const free=L=>L.filter(x=>!used.has(x.e.id)&&sess(x));
+    let cand=free(pool);if(!cand.length&&!o.light)cand=free(C);if(!cand.length)break;
+    /* інші основні групи вправи мають бути в плані й мати місце (не «сміттєвий» обсяг на чужу групу) */
+    const fit2=x=>{const c=musContrib(x.e).g;for(const h in c){if(h===g||c[h]<1)continue;if(!inT(h)||(got[h]||0)+n>(V[h]||0)+1)return false}return true};{const nx=cand.filter(x=>!AUTO_AUX.test(x.e.name||''));if(nx.length)cand=nx}/* утримання, прогулянки тощо - лише коли іншого немає */
+    const nC=g==='Біцепс стегна'?0:1;/* біцепс стегна: друга вправа - згинання в коліні (Maeo 2021) */const f2=cand.filter(fit2);if(f2.length&&!(i<=nC&&AUTO_BIG.includes(g)&&f2[0].S.cl!=='c'&&cand.some(x=>x.S.cl==='c')))cand=f2;/* м'яко: не міняти базову вправу на ізоляцію заради чужої групи */
+    /* жорстка стеля: жодна основна група вправи не перевищує свою стелю за тренування (≤ 10, Remmert 2025) */
+    const room=x=>{let m=99;const c=musContrib(x.e).g;for(const h in c){if(h===g||c[h]<1)continue;m=Math.min(m,hc(h)-(got[h]||0))}return m};{const c0=cand;cand=cand.filter(x=>room(x)>=2);if(!cand.length&&c0.length){capB[g]=Object.keys(musContrib(c0[0].e).g).find(h=>h!==g&&musContrib(c0[0].e).g[h]>=1&&hc(h)-(got[h]||0)<2)}}
+    if(i<=nC&&AUTO_BIG.includes(g)){const cc=cand.filter(x=>x.S.cl==='c');if(cc.length)cand=cc}if(g==='Біцепс стегна'&&i===1){const kf=cand.filter(x=>x.S.cl!=='c');if(kf.length)cand=kf}if(g==='Прес'||g==='Ікри'){const kk=cand.filter(x=>x.S.cl==='k');if(kk.length)cand=kk}
+    const stem=e=>(e.name||'').split(' ').slice(0,2).join(' '),angle=e=>/похил/i.test(e.name||'');const prv=slots.filter(x=>x.g===g).map(x=>x.c.e);const nd=L=>L.filter(x=>!prv.some(p=>stem(p)===stem(x.e)&&angle(p)===angle(x.e)));
+    if(i>0){const df=nd(cand);if(df.length)cand=df}
+    let nw=false;if(!o.light&&autoNew()&&newUsed<1&&i>0&&fam.length){const q=nd(free(C.filter(x=>!x.F.n)));if(q.length){cand=q;newUsed++;nw=true}}
+    const c=cand[0];if(!c)break;const nn=Math.min(n,room(c));used.add(c.e.id);const pt=autoPat(c.e);pats[pt]=(pats[pt]||0)+1;const cg=musContrib(c.e).g;for(const h in cg)if(cg[h]>=1)got[h]=(got[h]||0)+nn;
+    slots.push({g,n:Math.max(2,nn),c,i,pr:isPr(g),nw,pg:Object.keys(cg).filter(h=>cg[h]>=1)});rem=V[g]-(got[g]||0);i++}});
+  /* порядок (E9): пріоритет / відстаючі → великі групи типу (багатосуглобові) → ізоляція → дрібні → прес/ікри */
+  {const by={};slots.forEach(x=>(by[x.g]=by[x.g]||[]).push(x));for(const g in by)by[g].slice().sort((a,b)=>((a.c.S.cl==='c'?0:1)-(b.c.S.cl==='c'?0:1))||b.c.S.cost-a.c.S.cost).forEach((x,k)=>x.i=k)}/* у межах групи: базова і важча - першою (присідання зі штангою до жиму ногами) */
+  const rank=x=>(x.pr?0:10)+(AUTO_BIG.includes(x.g)?0:2)+(MINOR.includes(x.g)||x.g==='Трапеції'?3:0)+(x.c.S.cl==='c'?0:x.c.S.cl==='i'?4:8)+x.i*.5;slots.sort((a,b)=>rank(a)-rank(b)||b.c.S.cost-a.c.S.cost);
+  for(let i=1;i<slots.length-1;i++)if(slots[i].g===slots[i-1].g){const j=slots.findIndex((x,k)=>k>i&&x.g!==slots[i].g&&x.c.S.cl===slots[i].c.S.cl&&Math.abs(rank(x)-rank(slots[i]))<1.5);if(j>0){const t=slots[i];slots[i]=slots[j];slots[j]=t}}/* обмін - лише в межах класу (M4) */
+  if(o.type==='full'||o.type==='lag'){const P0=slots.filter(x=>x.pr);slots=slots.filter(x=>!x.pr);const Lw=slots.filter(x=>WT_LEGS.includes(x.g)),Up=slots.filter(x=>!WT_LEGS.includes(x.g)),out=P0.slice();/* пріоритет лишається першим */let tL=P0.length?!WT_LEGS.includes(P0[P0.length-1].g):WT_LEGS.includes((slots[0]||{}).g);while(Lw.length||Up.length){const src=(tL&&Lw.length)||!Up.length?Lw:Up;out.push(src.shift());tL=!tL}slots=out.filter(x=>x.pr||!/Прес|Ікри/.test(x.g)).concat(out.filter(x=>!x.pr&&/Прес|Ікри/.test(x.g)))}
+  return slots.slice(0,Math.max(1,maxEx))};
+ const mk=slots=>{const items=[];const seenG=new Set();const heavy={};slots.forEach(x=>{const e=x.c.e,T=autoTgt(e,x.c.S.cl,w);const first=!seenG.has(x.g);seenG.add(x.g);
+   const q=eqOf(e),ext=['bb','mach','db','kb'].includes(q),hv=AUTO_HEAVY.test(e.name||'')||q==='bb',pt=autoPat(e);const wu=autoWu()&&ext&&x.c.S.cl==='c'&&((first&&AUTO_BIG.includes(x.g))||(hv&&!heavy[pt]))?(repMax(T.reps)<=10?2:1):0;if(hv&&wu)heavy[pt]=1;
+   const it=makeItem(e,{sets:x.n,reps:T.reps,rir:x.c.F.n?T.rir:'3-4',wu});if(o.light){const W=it.sets.filter(q=>!q.wu),k=lightN(x.n);it.sets=it.sets.filter(q=>q.wu).concat(W.slice(0,k))}/* нова вправа - з запасом 3-4; легкий день - рядків за таблицею, план лишається (LD3) */
+   it.auto={g:x.g,cls:x.c.S.cl,why:x.c.F.n?`знайома: ${x.c.F.n} ${pln(x.c.F.n,'раз','рази','разів')} за 8 тижнів`:`нова: ${x.nw?'для різноманіття (перемикач «Іноді нова вправа»)':autoFamAny(x.g,o.eq,d)?'знайомі вправи на групу вже в тренуванні або не підходять сьогодні':'знайомої для групи з цим інвентарем немає'} - запас 3-4, вагу підбери за першим підходом`,len:x.c.S.len};items.push(it)});return items};
+ /* техніки - лише за галочкою (I1-I8); у легкий день - без технік */
+ const techF=items=>{const T=o.tech||{},tw=[];if(o.light)return tw;
+  if(T.ss&&o.dur<75){const pairs=[];for(let i=0;i<items.length-1&&pairs.length<3;i++){const a=items[i],b=items[i+1];if(a.ssN||a.ssIn||b.ssN)continue;const pa=patOf(ex(a.exId)),pb=patOf(ex(b.exId));const ant=CTXANT.some(([x,y])=>(pa.includes(x)&&pb.includes(y))||(pa.includes(y)&&pb.includes(x)));const la=WT_LEGS.includes(a.auto.g),lb=WT_LEGS.includes(b.auto.g),ul=la!==lb;
+    if(la&&lb&&a.auto.cls==='c'&&b.auto.cls==='c')continue;/* дві важкі багатосуглобові на ноги - не в пару */
+    if((ant||(o.type==='full'&&ul))&&!(AUTO_HEAVY.test(a.name)||AUTO_HEAVY.test(b.name))&&a.auto.g!==b.auto.g){a.ssN=true;b.ssIn=true;pairs.push(a.name+' + '+b.name);i++}}if(pairs.length)tw.push(`Суперсети (${pairs.length}): антагоністи або верх/низ - ≈ −36% часу, ріст той самий (Zhang 2025, Burke 2024)`);else tw.push('Суперсети: пар не утворилось - сусідні вправи не антагоністи або обидві важкі на ноги')}
+  const tg=new Set();if((T.drop||T.myo)&&o.dur>=75)tw.push('Техніки при 75+ хв не обов’язкові - часу досить (Iversen 2021: це інструмент економії часу, не кращого росту)');
+  if(T.drop){let n=0;const gs=tg;for(let i=items.length-1;i>=0&&n<2;i--){const it=items[i];if(items.slice(i+1).some(x=>x.auto.g===it.auto.g))continue;if(it.ssN||it.ssIn||gs.has(it.auto.g)||!canDrop(it)||AUTO_HEAVY.test(it.name)||!autoFam(it.exId,d).n||(V0.note[it.auto.g]||{}).t==='almost')continue;if(!['db','kb','mach','band'].includes(eqOf(ex(it.exId))))continue;
+    const W=it.sets.filter(q=>!q.wu),L=W[W.length-1];if(!L)continue;L.st='drop';L.drops=[{},{}];it.tgt.tech='drop';it.tgt.techN=2;gs.add(it.auto.g);n++}tw.push(n?`Дропсети (${n}): останній підхід, −20% двічі - ефект як у звичайних підходів за менший час (Coleman 2022, Sødal 2023)`:'Дропсети: немає знайомої вправи з гантелями, тренажером чи гумою поза суперсетом')}
+  if(T.myo){let n=0;for(let i=1;i<items.length&&n<2;i++){const it=items[i];if(tg.has(it.auto.g))continue;if(it.ssN||it.ssIn||it.auto.cls==='c'||it.tgt.tech||!autoFam(it.exId,d).n||(V0.note[it.auto.g]||{}).t==='almost')continue;const W=it.sets.filter(q=>!q.wu),L=W[W.length-1];if(!L)continue;L.st='myo';L.mini=[{},{},{}];it.tgt.tech='myo';it.tgt.techN=3;tg.add(it.auto.g);n++}tw.push(n?`Myo-повтори (${n}): останній підхід ізолюючої вправи, не першої - ріст як у звичайних, швидше (Prestes 2019, Enes 2021)`:'Myo-повтори: немає знайомої ізолюючої вправи поза суперсетом')}
+  return tw};
+ const TM=items=>autoTime(keep.concat(items),D).min;
+ const fit=()=>{const fl=g=>isPr(g)?Math.max(2,V0.V[g]||0):Math.max(2,Math.ceil((V0.base[g]||0)*.5));const rel=g=>V[g]/Math.max(1,V0.base[g]||1);
+  for(let k=0;k<50;k++){const sl=build(),it=mk(sl),tw=techF(it),t=TM(it);plan={sl,it,t,tw};
+   if(t>o.dur*1.05){/* T6: пропорційно - з групи, що найбільше понад свою частку; великі і пріоритетні - не нижче половини/¾ частки; далі прибрати найменшу групу */
+    let c=Object.keys(V).filter(g=>V[g]>fl(g)).sort((a,b)=>rel(b)-rel(a)||(V0.sh[a]||0)-(V0.sh[b]||0));if(c.length){V[c[0]]--;continue}
+    const sm=Object.keys(V).filter(g=>!isPr(g)).sort((a,b)=>(AUTO_BIG.includes(a)-AUTO_BIG.includes(b))||(V0.sh[a]||0)-(V0.sh[b]||0))[0];if(sm){delete V[sm];continue}
+    c=Object.keys(V).filter(g=>V[g]>2).sort((a,b)=>rel(b)-rel(a));if(c.length){V[c[0]]--;continue}break}
+   if(t<o.dur*.88&&!o.light){const c=Object.keys(V).filter(g=>(V0.sh[g]||0)>0&&!MINOR.includes(g)&&g!=='Трапеції'&&!noEq.has(g)&&V[g]<V0.lim[g]&&V[g]<Math.max(2,Math.ceil((V0.base[g]||0)*1.5))).sort((a,b)=>(isPr(b)-isPr(a))||V[a]/V0.sh[a]-V[b]/V0.sh[b]);
+    if(!c.length){const sg=(V0.small||[]).find(g=>V[g]==null&&!noEq.has(g));if(!sg)break;V[sg]=2;V0.small=V0.small.filter(x=>x!==sg);const t2=(()=>{const x=mk(build());techF(x);return TM(x)})();if(t2>o.dur*1.05){delete V[sg];break}continue}const tot=Object.values(V).reduce((a,b)=>a+b,0);if(tot>=35)break;V[c[0]]++;const t2=(()=>{const x=mk(build());techF(x);return TM(x)})();if(t2>o.dur*1.05){V[c[0]]--;break}continue}
+   break}};
+ fit();let items=plan.it;const tw=plan.tw;
+ if(!items.length||(AUTO_T[o.type]&&AUTO_T[o.type][1]&&Object.keys(AUTO_T[o.type][1]).filter(g=>AUTO_BIG.includes(g)).length&&!items.some(it=>AUTO_BIG.includes(it.auto.g))&&Object.keys(AUTO_T[o.type][1]).filter(g=>AUTO_BIG.includes(g)).every(g=>noEq.has(g))))return{err:'eq',groups:[...noEq]};
+ const t=autoTime(keep.concat(items),D),G={};items.forEach(it=>{const c=musContrib(it).g,n=it.sets.filter(q=>!q.wu).length;for(const h in c)if(c[h]>=1)G[h]=(G[h]||0)+n});
+ const mainG=AUTO_T[o.type]&&AUTO_T[o.type][1]?Object.keys(AUTO_T[o.type][1]).filter(g=>AUTO_T[o.type][1][g]>=10&&!MINOR.includes(g)):null;
+ if(!o.light&&mainG&&(!mainG.some(g=>G[g])||t.min<Math.min(20,o.dur*.4))&&!(AUTO_T[o.type][1]&&Object.keys(AUTO_T[o.type][1]).filter(g=>AUTO_BIG.includes(g)).every(g=>noEq.has(g))))return{err:'none',note:V0.note,best:autoBestType(o.type,V0.R,V0.WK),short:t.min};
+ if(o.light)why.push('Легкий день: усі групи ще відновлюються - знайомі вправи, без технік; рекомендація на картці дасть запас 3-4 і менше підходів (Bell 2023 - консенсус)');
+ const nT=items.reduce((a,it)=>a+it.sets.filter(q=>!q.wu).length,0);why.push(`Обсяг: ${nT} ${pln(nT,'робочий підхід','робочі підходи','робочих підходів')}, ≈${t.min} хв (${D.src==='me'?'за твоєю щільністю з останніх тренувань':D.src==='man'?'за твоїм налаштуванням щільності':'оцінка: підхід 35-40 с, відпочинок 150 с (багатосуглобові) / 75 с (ізоляція), перехід 90 с - Singer 2024, Grgic 2018; з 3 тренувань з тривалістю буде твоя'})`);
+ why.push('Не більше 10 прямих підходів на групу за тренування (Remmert 2025), типово 8 великі / 6 малі / 4 дрібні; щонайменше 2 на групу');
+ if(o.type!=='lag'&&o.type!=='sep')why.push(`Частки груп у «${AUTO_T[o.type][0]}» - консенсус тренерів (оцінка: досліджень, які порівнюють пропорції, немає)`);
+ V0.why.forEach(x=>{if(x&&x.prio){const P=V0.prio.map(g=>noEq.has(g)?`${g} - немає вправ з вибраним інвентарем`:(G[g]||0)>Math.round(V0.np[g]||0)?`${g} ${G[g]} підх. замість ${Math.round(V0.np[g]||0)}`:`${g} ${G[g]||0} підх.`).join(', ');why.push(`Пріоритет: ${P} - першою, інші трохи менше, але не нижче половини і 2 підходів (консенсус: RP, Helms; прямих досліджень спеціалізації немає)${x.cut?'; на '+o.dur+' хв - лише один пріоритет':''}`)}else why.push(x)});
+ for(const g in G){if(MINOR.includes(g))continue;const W=V0.WK[g]||0,Dg=Math.max(0,gzLo()-W),need=Math.ceil(Dg/V0.SL.left);
+  why.push(`${g} ${G[g]}: цього тижня вже ${nf(W,1)} з ${gzLo()}-${gzHi()}, тренувань до кінця тижня ≈${V0.SL.left}${V0.SL.src==='est'?' (оцінка)':''}${need>G[g]&&(AUTO_BIG.includes(g)||isPr(g))?(V0.SL.left<=1?`; до цілі бракує ${nf(Dg,1)} - цього тижня не добрати, це норма (важливий обсяг на тижні в середньому - Schoenfeld 2019)`:`; до цілі бракує ${nf(Dg,1)} - решту в наступних тренуваннях`):''}`)}
+ for(const g in V0.note)why.push(V0.note[g].x);{const TGx=o.type==='sep'?(o.grps||[]):AUTO_T[o.type]&&AUTO_T[o.type][1]?Object.keys(AUTO_T[o.type][1]):[];const miss=TGx.filter(g=>!G[g]&&!V0.note[g]&&!noEq.has(g));const mb=miss.filter(g=>capB[g]);mb.forEach(g=>why.push(`${g}: сьогодні без - ${capB[g].toLowerCase()} вже отримали максимум підходів з інших вправ (не більше 10 за тренування, Remmert 2025)`));miss.splice(0,miss.length,...miss.filter(g=>!capB[g]));if(miss.length)why.push(`Сьогодні без: ${miss.join(', ')} - замало часу на окрему вправу (мінімум 2 підходи на групу); вони отримають обсяг в інші дні`)}noEq.forEach(g=>why.push(`${g}: з вибраним інвентарем немає вправ на цю групу - додай інвентар або вправу вручну`));why.push(...tw);
+ if(!o.light&&t.min<o.dur*.85){const N=Object.values(V0.note),best=autoBestType(o.type,V0.R,V0.WK),bl=best?` Більше користі сьогодні дасть «${AUTO_T[best][0]}».`:'';
+  why.push(N.some(x=>x.t==='rec')?`Вийшло ≈${t.min} хв замість ${o.dur}: частина груп ще відновлюється.${bl}`:N.some(x=>x.t==='g2'||x.t==='wk')?`Вийшло ≈${t.min} хв замість ${o.dur}: цього тижня групи цього типу вже отримали свій обсяг або приріст обмежений +2 підходи на тиждень (RP, Enes 2024).${bl}`:noEq.size?`Вийшло ≈${t.min} хв замість ${o.dur}: для частини груп немає вправ з вибраним інвентарем.`:`Вийшло ≈${t.min} хв замість ${o.dur}: групи цього типу вже на стелі за тренування - більше підходів росту майже не додадуть (Remmert 2025).${bl}`)}
+ why.push('Порядок: пріоритет і великі групи першими, далі ізоляція, прес і ікри наприкінці (Simão 2012, Nunes 2021). Знайомі вправи першими - вага відома з історії');
+ if(autoWu())why.push('Розминкові підходи: 2 перед першою важкою багатосуглобовою на групу (до 10 повторів), 1 - при 10-15 повторах (консенсус NSCA; для 10RM не обов’язкові - Enes 2025)');
+ return{items,est:t.min,G,why,V0}}
+
+/* v58.1 Е6: вікно автоматичного тренування */
+const AUTO_TP=[['full','Все тіло','по 1-2 вправи на ноги, груди, спину, плечі й руки'],['upper','Верх','груди, спина, плечі, руки'],['legs','Ноги','квадрицепс, біцепс стегна, сідниці, ікри'],['push','Штовхай','груди, передня і середня дельта, трицепс'],['pull','Тягни','спина, трапеції, задня дельта, біцепс'],['sep','Окремі групи','обери нижче, що саме тренуєш сьогодні'],['lag','Відстаючі','групи, де за 4 тижні і цей тиждень підходів менше за ціль']];
+let AS=null;
+function autoDef(){const a=S.settings.auto||{};let eq=a.eq;if(!eq||!eq.length){const st=new Set();mainW().slice(-10).forEach(w=>(w.items||[]).forEach(it=>{if(STR.includes(it.type)){const q=eqOf(ex(it.exId)||{id:it.exId,type:it.type,name:it.name});if(q)st.add(q)}}));eq=st.size?[...st]:['floor','db']}
+ let dur=num(a.dur);if(!dur){const v=mainW().slice(-12).map(w=>num(w.dur)).filter(x=>x&&x>=15&&x<=180);dur=v.length>=3?Math.max(30,Math.min(90,Math.round(median(v)/15)*15)):60}
+ return{eq:eq.slice(),dur,type:a.type||'full',prio:(a.prio||[]).slice(),grps:(a.grps||[]).slice(),tech:Object.assign({ss:false,drop:false,myo:false},a.tech||{}),light:null,err:null}}
+const autoTpG=t=>t==='sep'||t==='lag'?null:Object.keys(AUTO_T[t][1]);
+function autoSheet(keep){if(!keep||!AS)AS=autoDef();const a=AS,R=recovery(S.draft&&S.draft.id),nW=mainW().length,dv=mainW().slice(-12).map(w=>num(w.dur)).filter(x=>x&&x>=15&&x<=180);
+ const TG=a.type==='sep'?a.grps:autoTpG(a.type)||[],TGm=TG.filter(g=>!MINOR.includes(g)&&!['Прес','Ікри','Трапеції','Передпліччя'].includes(g)),allEarly=TGm.length>0&&TGm.every(g=>autoReady(g,R).k===0),errN=!!(a.err&&a.err.err==='none');if(allEarly&&a.light==null)a.light=true;if(!allEarly&&!errN)a.light=null;/* легкий день: усі основні групи типу відновлюються (прес, ікри, дрібні - не рахуються) або повне не склалось */
+ const ch=(on,v,l,act,dis)=>`<button class="chip ${on?'on':''}" data-a="${act}" data-v="${v}"${dis?' disabled':''}>${esc(l)}</button>`;
+ const near=allEarly?TG.map(g=>({g,l:(R[g]&&R[g].left0)||0})).sort((x,y)=>x.l-y.l)[0]:null;
+ const tp=AUTO_TP.find(x=>x[0]===a.type)||AUTO_TP[0];
+ const drOk=a.eq.some(q=>['db','kb','bb','mach','band'].includes(q));if(!drOk)a.tech.drop=false;
+ const nTech=['ss','drop','myo'].filter(k=>a.tech[k]).map(k=>({ss:'суперсети',drop:'дропсети',myo:'Myo'}[k]));
+ const err=a.err?({lag:`«Відстаючі» - після 10 тренувань в історії (зараз ${a.err.n}): інакше висновок, що група відстає, ненадійний.`,nolag:'Відстаючих груп немає: за 4 тижні і цей тиждень усі великі групи в цілі. Обери інший тип.',none:`${a.err.short!=null?`Вийшло б лише ≈${a.err.short} хв: групи`:'Групи'} цього типу ще відновлюються або вже отримали обсяг цього тижня.${a.err.best?' Сьогодні краще «'+AUTO_T[a.err.best][0]+'».':''}`,eq:`З вибраним інвентарем немає вправ для «${(AUTO_TP.find(x=>x[0]===a.type)||[])[1]}»${a.err.groups&&a.err.groups.length?' ('+a.err.groups.join(', ').toLowerCase()+')':''}. Додай інвентар: для тяги - турнік, TRX, гуму або гантелі; для ніг - гантелі, гирю чи гуму.`})[a.err.err]||'':'';
+ openSheet(`<h3>Автоматичне тренування</h3><p class="muted small sm0">Складе тренування з твого інвентарю під час, що є. Вправи, підходи і вагу потім міняєш як завжди.</p>
+ ${allEarly||errN?`<div class="bandtotal mwarn small">${allEarly?`<b>Основні групи ще відновлюються</b>${near?` - найближча готова ${esc(near.g.toLowerCase())}, ≈${Math.max(1,Math.round(near.l))} год`:''}. Пропоную легкий день`:'Можна легкий день'}: знайомі вправи, запас 3-4, менше підходів.</div><div class="seg" id="a-light"><button class="${a.light?'on':''}" data-a="a-light" data-v="1">Легкий день</button><button class="${a.light?'':'on'}" data-a="a-light" data-v="0">Усе одно повне</button></div>`:''}
+ <div class="psec"><div class="lbl">Інвентар <span class="muted n">· можна кілька</span></div><div class="chips eq" id="a-eq">${AUTO_EQ.map(([k,l])=>ch(a.eq.includes(k),k,l,'a-eq')).join('')}</div>
+  ${a.eq.length?`<p class="muted small sm0">Запам’ятовується до наступного разу.</p>`:`<div class="bandtotal mwarn small">Обери хоча б один пункт - без інвентарю немає з чого підбирати вправи. Власна вага - це теж інвентар.</div>`}</div>
+ <div class="psec"><div class="lbl">Час, хв</div><div class="chips per" id="a-dur">${[30,45,60,75,90].map(d=>ch(a.dur===d,d,String(d),'a-dur')).join('')}${ch(![30,45,60,75,90].includes(a.dur),'x','Інше','a-dur')}</div>
+  ${![30,45,60,75,90].includes(a.dur)?`<label class="row" style="gap:8px;align-items:center"><input class="in" style="max-width:90px" inputmode="numeric" data-f="adur" id="a-durin" value="${esc(String(a.dur))}"><span class="muted">хв (15-180)</span></label>`:''}
+  <p class="muted small sm0">${dv.length>=3?`Твоя звична тривалість ≈${Math.round(median(dv))} хв (за ${dv.length} тренувань).`:`60 хв ≈ 20 робочих підходів разом із відпочинком.`}</p></div>
+ <div class="psec"><div class="lbl">Що тренуємо</div><div class="chips" id="a-type">${AUTO_TP.map(([k,l])=>ch(a.type===k,k,l,'a-type',k==='lag'&&nW<10)).join('')}</div>
+  <p class="muted small sm0">${a.type==='lag'&&nW<10?`«Відстаючі» - після 10 тренувань в історії (зараз ${nW}).`:esc(tp[1]+': '+tp[2]+'.')}</p>
+  ${a.type==='sep'?`<div class="chips" id="a-grps">${GROUPS.filter(g=>!MINOR.includes(g)).map(g=>ch(a.grps.includes(g),g,g,'a-grp')).join('')}</div>`:''}
+  ${a.dur<=30&&['full','upper'].includes(a.type)?`<div class="bandtotal mwarn small">${a.dur} хв на «${esc(tp[1])}» - по одній вправі на групу по 2 підходи. Краще 45+ хв або вужчий тип. Сформувати все одно можна.</div>`:''}</div>
+ ${a.type!=='lag'&&TG.length>1?`<details class="how p"${a.prio.length?' open':''}><summary>Пріоритет <span class="muted">· ${a.prio.length?esc(a.prio.join(', ')):'без'}</span></summary><div><div class="chips" id="a-prio">${TG.filter(g=>!MINOR.includes(g)).map(g=>ch(a.prio.includes(g),g,g,'a-prio')).join('')}</div><p class="muted small sm0" style="margin-top:6px">${a.dur<=45?'На 45 хв і менше - одна група.':'До двох груп.'} Пріоритетна група - першою і з більшим обсягом (×1,5, не більше 10 підходів), решта - трохи менше, щоб тренування вмістилось у час.</p></div></details>`:''}
+ <details class="how p"${nTech.length?' open':''}><summary>Техніки інтенсивності <span class="muted">· ${nTech.length?nTech.join(', '):'без'}</span></summary><div class="stack" style="gap:6px">
+  <label class="chk"><input type="checkbox" data-a="a-tech" data-v="ss" ${a.tech.ss?'checked':''}>Суперсети</label><p class="muted small sm0" style="margin:-4px 0 2px 26px">Дві вправи по черзі без відпочинку: економлять час (до 3 пар; від 75 хв не потрібні)</p>
+  <label class="chk"><input type="checkbox" data-a="a-tech" data-v="drop" ${a.tech.drop?'checked':''} ${drOk?'':'disabled'}>Дропсети</label><p class="muted small sm0" style="margin:-4px 0 2px 26px">${drOk?'Останній підхід: скинув вагу - і ще раз до запасу 0-1 (до 2 за тренування)':'Потрібні гантелі, гиря, штанга, тренажери або гума: з власною вагою скинути навантаження нема як'}</p>
+  <label class="chk"><input type="checkbox" data-a="a-tech" data-v="myo" ${a.tech.myo?'checked':''}>Myo-повтори</label><p class="muted small sm0" style="margin:-4px 0 2px 26px">Після підходу - короткі міні-підходи по 3-5 повторів (ізоляція, до 2 вправ)</p>
+  <p class="muted small sm0">Більше роботи за той самий час, але й більше втоми: дропи і Myo рахуються в обсяг і відновлення. Лише для знайомих вправ.</p></div></details>
+ ${err?`<div class="bandtotal mwarn small">${esc(err)}</div>`:''}
+ <div class="sheetfoot"><div class="g2"><button class="btn" data-a="close">Скасувати</button><button class="btn pri" data-a="auto-go" ${a.eq.length&&!(a.type==='sep'&&!a.grps.length)&&!(a.type==='lag'&&nW<10)?'':'disabled'}>Сформувати</button></div></div>`,'auto')}
+/* смуга плану в заголовку (лише в автотренуванні) */
+function autoBand(w){const A=w.auto;if(!A)return'';const G={};(w.items||[]).forEach(it=>{if(!it.auto)return;const c=musContrib(it).g,n=it.sets.filter(q=>!q.wu).length;for(const h in c)if(c[h]>=1)G[h]=(G[h]||0)+n});/* як у «Чому так»: кожна основна група вправи */const gs=Object.keys(G).sort((a,b)=>G[b]-G[a]);
+ return`<div class="aplan" id="aplan"><div class="pt"><span><span class="ic" aria-hidden="true">✦</span>Автотренування · ${esc((AUTO_T[A.type]||['']).at(0))}${A.light?' · легке':''} · <b class="num">≈${autoTime(w.items).min}&nbsp;хв</b></span></div>${gs.length?`<div class="ps">${gs.map(g=>`<span class="nw">${esc(g)} <b>${nf(G[g],1)}</b></span>`).join(' · ')} підх.</div>`:''}<div class="pl"><button class="lnk" data-a="auto-why">Чому так</button><button class="lnk" data-a="auto-open">Змінити параметри</button></div></div>`}
+function autoWhySheet(){const w=S.draft;if(!w||!w.auto)return;const A=w.auto,its=(w.items||[]).filter(it=>it.auto);
+ openSheet(`<h3>Чому таке тренування</h3><div class="awhy"><div class="lbl">Що і скільки</div><ul class="tips">${(A.why||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+ <div class="lbl">Вправи</div><ul class="tips">${its.map(it=>`<li><b>${esc(it.name)}</b> - ${esc(it.auto.g)}: ${esc(it.auto.why||'')}</li>`).join('')}</ul>
+ <div class="lbl">Вага</div><ul class="tips"><li>Вага на кожній картці - звичайна рекомендація з твоєї історії (подвійна прогресія, контекст тренування). Для нової вправи - орієнтир за схожою з історії (×0,85), якщо така є, інакше пробний перший підхід із запасом 4 (оцінка).</li></ul></div>
+ <p class="muted small sm0">Це пропозиція. Будь-що міняй на картках; «Змінити параметри» перебудує вправи, у яких ще немає записаних підходів.</p><div class="sheetfoot"><button class="btn pri full" data-a="close">Зрозуміло</button></div>`,'awhy')}
+/* «⇄ Замінити»: наступна за релевантністю вправа на ту саму групу з вибраного інвентарю */
+function autoSwap(u){const w=S.draft;if(!w||!w.auto)return;const i=w.items.findIndex(x=>x.uid===u);if(i<0)return;const old=w.items[i],A=old.auto||{};
+ const excl=new Set(w.items.map(x=>x.exId).concat(A.rej||[]));const R0=recovery(w.id),al=autoReady(A.g,R0).k<1;let C=autoPick(A.g,w.auto.eq,excl,{d:w.date,R:R0,maxCost:al?.4:null,light:w.auto.light});if(w.auto.light)C=C.filter(x=>x.F.n);const C1=C.filter(x=>x.S.cl===A.cls);if(C1.length)C=C1;if(!C.length){toast('Інших вправ на цю групу з твоїм інвентарем немає - обери вручну');itReplace(u);return}
+ const c=C[0],e=c.e,T=autoTgt(e,c.S.cl,w),t=old.tgt||{};const n=old.sets.filter(q=>!q.wu).length||num(t.sets)||3;
+ const q0=eqOf(e),ext=['bb','mach','db','kb'].includes(q0),wu0=old.sets.filter(q=>q.wu).length,wu=ext&&c.S.cl==='c'?(wu0||((AUTO_HEAVY.test(e.name||'')||q0==='bb')&&autoWu()?(repMax(T.reps)<=10?2:1):0)):0;
+ const tc=t.tech==='drop'?(c.F.n&&['db','kb','mach','band'].includes(q0)&&canDrop({exId:e.id,type:e.type})?'drop':''):t.tech==='myo'?(c.F.n&&c.S.cl!=='c'?'myo':''):'';
+ const ni=makeItem(e,{sets:n,reps:T.reps,rir:c.F.n?T.rir:'3-4',wu,tech:tc,techN:tc?t.techN:0});if(tc){const W=ni.sets.filter(q=>!q.wu),L=W[W.length-1];if(L){if(tc==='drop'){L.st='drop';L.drops=[{},{}]}else{L.st='myo';L.mini=[{},{},{}]}}}if(old.ssN)ni.ssN=true;
+ ni.auto={g:A.g,cls:c.S.cl,why:(c.F.n?`знайома: ${c.F.n} ${pln(c.F.n,'раз','рази','разів')} за 8 тижнів`:'нова: запас 3-4, вагу підбери за першим підходом')+' · заміна «'+old.name+'»',rej:(A.rej||[]).concat(old.exId)};
+ w.items.splice(i,1,ni);save();render();toast(`«${old.name}» → «${e.name}»`,()=>{const z=w.items.findIndex(x=>x.uid===ni.uid);if(z>=0)w.items.splice(z,1,old);save();render()})}
+
+function autoFamAny(G,eq,d){return autoPick(G,eq,new Set(),{d}).some(x=>x.F.n)}
+
+/* клас вправи: c - багатосуглобова, i - ізолююча, k - прес/литки (висока кількість повторів) */
+function autoCls(e){const E0=ex(e.exId||e.id)||e,P=patOf(E0);const pg=(E0.prim||e.prim||[]).map(musGrp);if(P.includes('calf')||(P.includes('core')&&pg.includes('Прес')))return'k';if(P.some(p=>ISO_PAT.includes(p))&&!P.some(p=>['squat','hinge','dl','rdl','push','pull','lunge','bridge'].includes(p)))return'i';
+ const pr=(e.prim||[]).map(musGrp).filter(Boolean);return new Set(pr).size>=2||P.some(p=>['squat','hinge','dl','rdl','push','pull','lunge','bridge'].includes(p))?'c':'i'}
+/* знайомість (Олег 31.10): скільки тренувань з цією вправою за 8 тижнів і як давно */
+function autoFam(exId,d){d=d||todayStr();const a=addDays(d,-56);let n=0,last=null;mainW().forEach(w=>{if(w.date<a||w.date>d)return;if((w.items||[]).some(it=>it.exId===exId&&it.sets.some(q=>!q.wu&&(repsOf(it,q)||{}).tot))){n++;last=w.date}});
+ return{n,last,days:last?dayDiff(last,d):null,f:n?Math.min(1,.5+n/12)*(last&&dayDiff(last,d)>28?.7:1):0}}
 const perLbl=()=>wkMode()?`Цей тиждень: пн ${dShort(weekStart(todayStr()))} - нд ${dShort(addDays(weekStart(todayStr()),6))} (ще триває)`:moMode()?`Цей місяць: ${dShort(periodStart())} - ${dShort(todayStr())} (ще триває)`:S.ui.period?`За останні ${S.ui.period} днів: ${dShort(periodStart())} - ${dShort(todayStr())}`:'За всю історію';
 function periodStart(){const p=S.ui.period;if(p==='wk')return weekStart(todayStr());if(p==='mo')return todayStr().slice(0,8)+'01';return p?daysAgo(p):'0000-00-00'}
 function weeksSpan(ws,start){if(!ws.length||wkMode())return 1;/* v58: тиждень - сума, не середнє */const wm=isWarm(ws[0]);const f0=S.workouts.reduce((m,x)=>isWarm(x)===wm&&x.date&&(!m||x.date<m)?x.date:m,'')||ws[0].date;const first=f0>start?f0:start;const days=Math.round((new Date(todayStr()+'T12:00')-new Date(first+'T12:00'))/864e5)+1;/* v56.8: round - перехід на зимовий час дає 23/25 год */return Math.max(1,days/7)}
@@ -2418,7 +2672,7 @@ function preSum(w){const a=[dShort(w.date)],mo=k=>mfW(w,k);if(mo('sleep')&&hm(w.
 function vDraft(){const w=S.draft;ssMark(w);if(mornApply(w))save();const WM=isWarm(w);const mo=k=>mfW(w,k),meta=MF.some(([k])=>mo(k));
  // v51: три зони - перед тренуванням / вправи / після тренування
  let h=`<section class="card stack" id="pre-card">
-  <div class="wk-name">${esc(wName(w))}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}${WM?'':(c=>c?`<div class="wk-tags">${c}</div>`:'')(wtChip(w))}
+  <div class="wk-name">${esc(wName(w))}</div>${w.tplNote?`<div class="hint">${esc(w.tplNote)}</div>`:''}${WM?'':(c=>c?`<div class="wk-tags">${c}</div>`:'')(wtChip(w))}${!WM&&w.auto&&w.items.some(x=>x.auto)?autoBand(w):''}
   ${WM?warmMf(w)+warmPre(w):`<button class="sechd" data-a="pre-col" aria-expanded="${!isPreCol(w)}"><span class="chev" aria-hidden="true">›</span><span class="lbl">Перед тренуванням</span></button>
   ${isPreCol(w)?`<div class="small muted" id="pre-sum">${preSum(w)}</div>`:`<div class="metrics">
    <label class="field" style="grid-column:1/-1"><span>Дата тренування</span><input class="in" type="date" data-f="w" data-k="date" value="${esc(w.date)}" id="w-date"></label>
@@ -2437,7 +2691,9 @@ function vDraft(){const w=S.draft;ssMark(w);if(mornApply(w))save();const WM=isWa
  {const G=ssVisOn()?ssGroups(w):{};h+=w.items.map((it,i)=>{const x=itemHTML(it,i,w.items.length,w),g=G[it.uid];if(!g)return x;
   const pre=g.first?`<button class="ssghd" data-a="ssg-col" data-g="${g.L}" aria-expanded="${!g.col}"><span class="chev" aria-hidden="true">›</span><span>${g.kind} ${g.L}</span><span class="muted">· ${g.n} ${pln(g.n,'вправа','вправи','вправ')}</span></button>`:'';
   return pre+x.replace('<article class="','<article data-ssg="'+g.L+'" class="ssg'+(g.first?' ssg-f':'')+(g.last?' ssg-l':'')+' ')}).join('')}
- if(!w.items.length)h+=`<p class="empty">Вправ немає. Додай першу.</p>`;
+ {const free=!w.tplId&&!w._edit&&!WM&&autoOn()&&!w.items.some(x=>STR.includes(x.type));/* v58.1: автоматичне тренування - лише в довільному */
+ if(free)h+=`<p class="empty">${w.items.length?'Силових вправ ще немає.':'Вправ ще немає.'} Додай сам або доручи застосунку.</p><button class="tpl auto" data-a="auto-open"><span><b><span class="ic" aria-hidden="true">✦</span>Автоматичне тренування</b><small>Підбере вправи і підходи під твій інвентар, час і відновлення; вагу - за твоєю історією. Далі все можна змінити.</small></span><span class="go" aria-hidden="true">›</span></button>`;
+ else if(!w.items.length)h+=`<p class="empty">Вправ немає. Додай першу.</p>`}
  h+=`<div class="g2"><button class="btn" data-a="add-item">+ Додати вправу</button><button class="btn" data-a="blk-add">+ Блок з таймером</button></div>${WM?'':'<button class="btn full lite" data-a="rest-add">+ Відпочинок між частинами</button>'}
  <section class="card stack" id="w-after"><div class="lbl">${WM?'Після зарядки':'Після тренування'}</div>
   ${mo('dur')||mo('srpe')?`<div class="metrics">
@@ -2604,7 +2860,7 @@ function hiitRows(it,prev){const ps=prev&&prev.item.type==='hiit'?prev.item.sets
 function cardioForm(it,prev){const s=it.sets[0]||(it.sets[0]={});const p=prev&&prev.item.sets[0]||{};const f=(it.cf&&it.cf.length?it.cf:['time','dist','kcal','hr']).concat(['rpe']);
  return`<div class="cf">${f.map(k=>`<label class="field"><span>${k==='rpe'?'Важкість, 1-10':CF[k]}</span><input class="cell" inputmode="decimal" data-f="s" data-i="${it.uid}" data-n="0" data-k="${k}" id="cf-${it.uid}-${k}" value="${esc(s[k]??'')}" placeholder="${esc(p[k]??'')}"></label>`).join('')}</div>`}
 function footTxt(it){const st=itemStats(it,bwOf(S.draft||{}));
- if(STR.includes(it.type)){if(!st.has)return'';if((it.type==='bw'&&noKg(it.exId))||(it.type==='trx'&&it.sets.some(isTc)))return`Найкращий підхід <b>${f0(st.score)}</b> повт. · робочих <b>${fH(st.hard)}</b>`;return`1ПМ ≈ <b>${f1(st.score)}</b> ${unitOf(it.type,it.exId)}${it.type!=='trx'||trxModeOf(it.exId)!=='manual'?` · обсяг <b>${f0(st.vol)}</b> кг`:''} · робочих <b>${fH(st.hard)}</b>`}
+ if(STR.includes(it.type)){if(!st.has)return it.auto&&S.draft&&S.draft.auto&&S.draft.items.includes(it)?`<button class="lnk aswap" data-a="auto-swap" data-i="${it.uid}">⇄ Замінити</button>`:'';if((it.type==='bw'&&noKg(it.exId))||(it.type==='trx'&&it.sets.some(isTc)))return`Найкращий підхід <b>${f0(st.score)}</b> повт. · робочих <b>${fH(st.hard)}</b>`;return`1ПМ ≈ <b>${f1(st.score)}</b> ${unitOf(it.type,it.exId)}${it.type!=='trx'||trxModeOf(it.exId)!=='manual'?` · обсяг <b>${f0(st.vol)}</b> кг`:''} · робочих <b>${fH(st.hard)}</b>`}
  if(it.type==='hiit'){if(!st.has)return'Раунди ще не записані';return`Раунд. <b>${st.rounds}</b> · робота <b>${mmss(st.work)}</b> · повт. <b>${st.reps}</b>${st.ton?` · <b>${f0(st.ton)}</b> кг`:''}`}
  if(!st.has)return it.cf&&it.cf.length&&!it.cf.includes('dist')?'Впиши час':'Впиши час або дистанцію';const pace=st.pace?(it.exId==='rower'?`${mmss(st.pace*60/2)} /500 м`:`${mmss(st.pace*60)} /км`):'';return[st.time?`<b>${st.time}</b> хв`:'',st.dist?`<b>${f1(st.dist)}</b> км`:'',pace?`темп <b>${pace}</b>`:''].filter(Boolean).join(' · ')}
 
@@ -3156,6 +3412,12 @@ function advHTML(){const st=S.settings.steps||{};const sf=(k,l,ph)=>`<label clas
  ${hlp('Спочатку поправка за порядок вправ - з досліджень: −5% повторів за кожен важкий підхід на ту саму групу перед вправою. Що більше в тебе порівнянь (та сама вправа і вага, але в іншому місці тренування; RIR вписаний), то більше програма довіряє твоїм даним: при 10 порівняннях дані й наука важать порівну, далі - більше дані. Межі - від 2,5% до 7,5%, одне невдале тренування коефіцієнт не змінює. У «Чому» видно джерело: «за дослідженнями» або «за твоїми записами, N порівнянь»; в Аналітиці → «Твої фактори» - рядок «Порядок вправ». Рахується лише на цьому пристрої. Вимкнено: завжди 5%.<br><b>Приклад:</b> у тебе після важких підходів повтори падають не на 5%, а на 3% → поправка м’якша, і там, де наука зняла б 1 повтор, може не знімати.')}
  <label class="chk"><input type="checkbox" data-c="sett" data-k="ctxFwd" id="set-fwd" ${ctxFwd()?'checked':''}>Свіжіше, ніж минулого разу - крок наперед</label>
  ${hlp('Якщо перед вправою сьогодні менше важкої роботи на її групу, ніж минулого разу (наприклад, біцепс окремим днем замість кінця тренування на все тіло), рекомендація додає повтори там, де минулого разу був запас. Береться половина коефіцієнта (обережність: завищення гірше за заниження), разом не більше +2 повторів і не вище верху діапазону. Вагу наперед не додає: крок ваги - лише після виконаного верху діапазону. Вимкнено: лише текст «можливий +1 повтор».<br><b>Приклад:</b> минулого разу 16 кг × 10, 8 після підтягувань і тяг, сьогодні руки першими → 12, 10 замість 11, 9.')}`:''}
+ <label class="chk"><input type="checkbox" data-c="sett" data-k="autoOn" id="set-autoon" ${autoOn()?'checked':''}>Автоматичне тренування в довільному</label>
+ ${hlp('Рядок «✦ Автоматичне тренування» у порожньому довільному тренуванні. Параметри (інвентар, час, тип, пріоритет, техніки) запам’ятовуються до наступного разу. Вимкнено - рядка немає, усе інше як зараз.')}
+ <label class="chk"><input type="checkbox" data-c="sett" data-k="autoNew" id="set-autonew" ${autoNew()?'checked':''}>Автотренування: іноді нова вправа для різноманіття</label>
+ ${hlp('Типово автотренування бере знайомі вправи: вага відома з історії, техніка відпрацьована. Увімкнено - не більше однієї нової вправи за тренування, другою на групу (Kassiano 2022: варіативність дає помірний ефект).')}
+ <label class="chk"><input type="checkbox" data-c="sett" data-k="autoWu" id="set-autowu" ${autoWu()?'checked':''}>Автотренування: розминкові підходи</label>
+ ${hlp('2 розминкові перед першою важкою багатосуглобовою вправою на групу (до 10 повторів), 1 - при 10-15 повторах; для ізоляції - без розминки (консенсус NSCA).')}
  <label class="chk"><input type="checkbox" data-c="sett" data-k="lightLoad" id="set-lightload" ${lightLoad()?'checked':''}>Легкий день: менше ваги замість менше повторів</label>
  ${hlp('Легкий день знижує втому, але зберігає стимул. Типово - та сама вага з запасом 3-4 повтори (повторів менше). Увімкнено - вага ≈ −10% (щонайменше один крок; обтяження на власну вагу - вдвічі менше, противаги - на крок більше), повтори як минулого разу. Підходів в обох режимах: план 1/2/3/4/5/6 → 1/2/2/3/3/4 - не менше двох, якщо в плані два і більше (консенсус: Bell 2023, Pritchard 2016).<br><b>Приклад:</b> підтягування 2 × 10 → легкий день 2 × 7 з запасом 3-4 (а не 1 × 7).')}
  <label class="chk"><input type="checkbox" data-c="sett" data-k="rirUnk" id="set-rirunk" ${rirUnkOn()?'checked':''}>RIR не вписаний - додавати вагу мінімальним кроком</label>
@@ -3654,7 +3916,7 @@ function uniConv(it,on){if(!!it.uni===!!on)return;it.uni=!!on;const ein=v=>v==nu
 function tplOf(it){const o={},W=it.sets.filter(s=>!s.wu),wn=it.sets.length-W.length;if(wn){o.wu=String(wn);o.sets=W.length||1}const my=W.filter(s=>s.st==='myo'),dr=W.filter(s=>s.st==='drop');if(my.length){o.tech='myo';o.techN=String(Math.max(...my.map(s=>(s.mini||[]).length))||3)}else if(dr.length){o.tech='drop';o.techN=String(Math.max(...dr.map(s=>(s.drops||[]).length))||2)}if(o.tech==='drop'&&it.tgt.dropPct)o.dropPct=it.tgt.dropPct;return o}
 
 /* ========== actions ========== */
-function cleanDraft(w){const o=JSON.parse(JSON.stringify(w));delete o._edit;delete o._rt;delete o._mf;delete o._pc;delete o._po;(o.items||[]).forEach(it=>{delete it._c;delete it._o;delete it.recShow;delete it.brOrig;(it.sets||[]).forEach(q=>{if(q&&q.recAdd)delete q.recAdd});(it.sets||[]).forEach(x=>{if(!x||typeof x!=='object')return;delete x.rf;delete x._lr;[...(x.mini||[]),...(x.drops||[])].forEach(m=>{if(m&&typeof m==='object')delete m._lr})})});ssMark(o);delete o.diffAuto;
+function cleanDraft(w){const o=JSON.parse(JSON.stringify(w));delete o._edit;delete o._rt;delete o._mf;delete o._pc;delete o._po;(o.items||[]).forEach(it=>{delete it._c;delete it._o;delete it.recShow;delete it.brOrig;delete it.auto;(it.sets||[]).forEach(q=>{if(q&&q.recAdd)delete q.recAdd});(it.sets||[]).forEach(x=>{if(!x||typeof x!=='object')return;delete x.rf;delete x._lr;[...(x.mini||[]),...(x.drops||[])].forEach(m=>{if(m&&typeof m==='object')delete m._lr})})});ssMark(o);delete o.diffAuto;if(o.auto)o.auto={type:o.auto.type,dur:o.auto.dur,light:!!o.auto.light,v:1};/* v58.1: в історії - лише тип і час */
  o.items=o.items.map(it=>{if(it.type==='rest'){delete it.t0;return it}if(it.type==='cardio'||it.type==='block'||it.type==='wu')return it;it.sets=it.sets.filter(s=>{if(it.type==='hiit')return !!(num(s.work)||num(s.r));const R=repsOf(it,s);return R&&R.tot});it.sets.forEach(s=>{if(s.st!=='myo')delete s.mini;else{s.mini=(s.mini||[]).filter(x=>xr(it,x)>0);if(!s.mini.length){delete s.mini;delete s.st}}if(s.st!=='drop')delete s.drops;else{s.drops=(s.drops||[]).filter(d=>xr(it,d)>0);if(!s.drops.length){delete s.drops;delete s.st}}if(s.wu)delete s.rir});return it});const keepIt=it=>it.type==='wu'||(it.type==='rest'?num(it.sec)>0:it.type==='cardio'||it.type==='block'?itemStats(it,0).has:it.sets.length);{const nw=o.items.filter(x=>x.type!=='wu');nw.forEach((it,i)=>{if(!keepIt(it)&&nw[i-1]&&nw[i-1].ssN)delete nw[i-1].ssN})}o.items=o.items.filter(keepIt);ssMark(o);if(!o.diff){const a=diffAutoOf(o);if(a)o.diffAuto=a}return o}
 function sumHTML(w,view){const st=wStats(w),bw=bwOf(w),o=wuInfo(w),warm=isWarm(w);const L=[];
  const row=(l,v)=>`<span>${l}</span><b>${v}</b>`;
@@ -3720,6 +3982,24 @@ const ACT={
  'ex-tips'(el){TIPBACK=SHEET==='pick'&&PICK?{cb:PICK,q:($('#pickq')||{}).value||''}:null;tipsSheet(el.dataset.e,el.dataset.i)},
  'tips-back'(){const b=TIPBACK;TIPBACK=null;if(!b)return closeSheet();pickerSheet(b.cb);const q=$('#pickq');if(q&&b.q){q.value=b.q;q.dispatchEvent(new Event('input',{bubbles:true}))}},
  'pick-bench'(el){benchSheet(el.dataset.i)},
+ 'auto-open'(){autoSheet()},
+ 'auto-why'(){autoWhySheet()},
+ 'auto-swap'(el){autoSwap(el.dataset.i)},
+ 'a-eq'(el){const v=el.dataset.v,i=AS.eq.indexOf(v);if(i>=0)AS.eq.splice(i,1);else AS.eq.push(v);AS.err=null;autoSheet(true)},
+ 'a-dur'(el){const v=el.dataset.v;if(v==='x'){if([30,45,60,75,90].includes(AS.dur))AS.dur=50}else AS.dur=+v;if(AS.dur<=45&&AS.prio.length>1)AS.prio=AS.prio.slice(0,1);autoSheet(true)},
+ 'a-type'(el){AS.type=el.dataset.v;AS.prio=AS.prio.filter(g=>(autoTpG(AS.type)||[]).includes(g));AS.err=null;AS.light=null;autoSheet(true)},
+ 'a-grp'(el){const v=el.dataset.v,i=AS.grps.indexOf(v);if(i>=0)AS.grps.splice(i,1);else AS.grps.push(v);AS.prio=AS.prio.filter(g=>AS.grps.includes(g));AS.light=null;autoSheet(true)},
+ 'a-prio'(el){const v=el.dataset.v,i=AS.prio.indexOf(v),mx=AS.dur<=45?1:2;if(i>=0)AS.prio.splice(i,1);else{AS.prio.push(v);while(AS.prio.length>mx)AS.prio.shift()}autoSheet(true)},
+ 'a-tech'(el){const k=el.dataset.v;AS.tech[k]=!AS.tech[k];autoSheet(true)},
+ 'a-light'(el){AS.light=el.dataset.v==='1';autoSheet(true)},
+ 'auto-go'(){const w=S.draft;if(!w||!AS||!AS.eq.length)return;const o=JSON.parse(JSON.stringify(AS));o.light=!!AS.light;
+  const en=[];if(autoWu()&&S.settings.wuSets===undefined){S.settings.wuSets=true;en.push('розминкові підходи')}/* свідомо вимкнене - не вмикаємо */
+  const keep=w.items.filter(it=>!(it.auto&&!it.sets.some(q=>!q.wu&&(repsOf(it,q)||{}).tot)));const w2=Object.assign({},w,{items:keep});
+  const R=autoGen(o,w2);if(R.err){AS.err=R;autoSheet(true);return}
+  if(R.items.some(it=>it.ssN)&&!ssOn()){S.settings.ssOn=true;en.push('суперсети')}if(R.items.some(it=>it.tgt.tech==='drop')&&!dropOn()){S.settings.dropOn=true;en.push('дропсети')}if(R.items.some(it=>it.tgt.tech==='myo')&&!myoOn()){S.settings.myoOn=true;en.push('Myo-повтори')}
+  const wasL=w.auto&&w.auto.light;w.items=keep.concat(R.items);w.auto={type:o.type,dur:o.dur,eq:o.eq,prio:o.prio,tech:o.tech,grps:o.grps,est:R.est,why:R.why,light:o.light,v:1};if(o.light)w.diff='L';else if(wasL&&w.diff==='L')delete w.diff;
+  S.settings.auto={eq:o.eq,dur:o.dur,type:o.type,prio:o.prio,grps:o.grps,tech:o.tech};CACHE=null;save();closeSheet();render();window.scrollTo(0,0);
+  const nA=w.items.filter(it=>it.auto).length;toast(`Сформовано: ${nA} ${pln(nA,'вправа','вправи','вправ')}, ≈${R.est} хв${en.length?'. Увімкнено в Налаштуваннях: '+en.join(', '):''}`)},
  'pick-wtype'(el){WTCTX=el.dataset.t?'t':'w';wtSheet()},
  'bn-set'(el){const it=itemBy(BNCTX);if(!it)return;it.bench=+el.dataset.v;save();closeSheet()},
  'pick-tc'(el){tcSheet(el.dataset.i,+el.dataset.n)},
@@ -4465,7 +4745,7 @@ document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)ret
  if(f==='matcfg'){const c=matCfg(true);c[k]=v;if(k==='n'){const n=Math.round(num(v)||0);if(n>=2&&n<=121){let st=Math.round(matLen()/(n-1)*10)/10;while(st>5&&matCount(st)<n)st=Math.round((st-.1)*10)/10;c.cm=String(Math.max(5,st));const e=document.getElementById('mat-cm');if(e)e.value=nf(num(c.cm),1)}}else if(k==='cm'||k==='len'||k==='z'){const st=num(c.cm);if(c.st==='cm'&&st>=5){c.n=String(matCount(st));const e=document.getElementById('mat-n');if(e)e.value=c.n}}save();const m=document.getElementById('mat-marks');if(m)m.innerHTML=matMarksHTML();const t=document.getElementById('mat-tbl');if(t)t.innerHTML=matTblHTML();return}
  if(f==='txah'){TX.ah=v;TX.manual=false;if(num(v))trxSheet(TXCTX.u,TXCTX.n,true);return}
  if(f==='trxstd'){S.settings.trx.std[k]=v;save();return}
- if(f==='my'){MYSEL[k]=v;MYSEL.anchor=trxAH();const sv=document.activeElement&&document.activeElement.id;myStrapSheet(true);if(sv){const e2=document.getElementById(sv);if(e2){e2.focus();const L=e2.value.length;try{e2.setSelectionRange(L,L)}catch(x){}}}return}if(f==='txkgf'){TX.kgf=v;const it=itemBy(TXCTX.u),bw=bwOf(S.draft||{});const t=document.getElementById('tx-kg');if(t&&it)t.innerHTML=legsKgTxt(trxLegsKg(it,{lg:TX.lg,kgf:v},bw),bw,kgfOk(v,bw),v!==''&&!kgfOk(v,bw));return}if(f==='txkgm'){TX.kgm=v;const it=itemBy(TXCTX.u),bw=bwOf(S.draft||{});const t=document.getElementById('tx-kg');if(t&&it)t.innerHTML=legKgTxt(trxLegKg(it,{w:TX.lvl,assist:TX.assist,man:TX.manual,kgm:v},bw),bw,it);return}
+ if(f==='my'){MYSEL[k]=v;MYSEL.anchor=trxAH();const sv=document.activeElement&&document.activeElement.id;myStrapSheet(true);if(sv){const e2=document.getElementById(sv);if(e2){e2.focus();const L=e2.value.length;try{e2.setSelectionRange(L,L)}catch(x){}}}return}if(f==='adur'){const n=num(v);if(AS&&n&&n>=15&&n<=180){AS.dur=Math.round(n);el.classList.remove('bad')}else el.classList.add('bad');return}if(f==='txkgf'){TX.kgf=v;const it=itemBy(TXCTX.u),bw=bwOf(S.draft||{});const t=document.getElementById('tx-kg');if(t&&it)t.innerHTML=legsKgTxt(trxLegsKg(it,{lg:TX.lg,kgf:v},bw),bw,kgfOk(v,bw),v!==''&&!kgfOk(v,bw));return}if(f==='txkgm'){TX.kgm=v;const it=itemBy(TXCTX.u),bw=bwOf(S.draft||{});const t=document.getElementById('tx-kg');if(t&&it)t.innerHTML=legKgTxt(trxLegKg(it,{w:TX.lvl,assist:TX.assist,man:TX.manual,kgm:v},bw),bw,it);return}
  if(f==='anc'){const a=S.settings.trx.anchors.find(x=>x.id===el.dataset.b);if(a){a[k]=v;save()}return}
  if(f==='band'){const b=band(el.dataset.b);if(!b)return;b[k]=v;if(S.draft)S.draft.items.forEach(it=>(it.sets||[]).forEach(s=>{if(s.band&&s.band.id===b.id)s.band={...b};if(s.bands)s.bands=s.bands.map(x=>x.id===b.id?{...b}:x);if(s.bandsR)s.bandsR=s.bandsR.map(x=>x.id===b.id?{...b}:x)}));save();const st=document.getElementById('bst-'+b.id);if(st){st.textContent=bandMethTxt(b);st.className='small '+(bandMethod(b)?'muted':'');st.style.color=bandMethod(b)?'':'var(--bad)'}const t=document.getElementById('band-total');if(t)t.innerHTML=bandTotalTxt();return}
  if(f==='mach'){if(MSEL){MSEL[k]=v;MSEL.p=''}machTotalUpd();return}
