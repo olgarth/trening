@@ -850,7 +850,7 @@ const TAGS=['Зал','Дім','Турніки','TRX','HIIT','Кардіо','За
 /* v56.7: «Тип» замість «Місце / тип»; «Домашній зал» об’єднано із «Зал». v57.7 (рішення Олега): «Дім» - тренування вдома з будь-яким домашнім інвентарем (гуми, гиря, гантелі, турнік, TRX), «Зал» - у залі; тег лише фільтрує, на рекомендацію не впливає */
 const tagN=t=>t==='Домашній зал'?'Зал':t;
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.1.1 · 31.10.2026';
+const APPV='58.1.2 · 31.10.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -2204,7 +2204,7 @@ const AUTO_T={full:['Все тіло',{'Квадрицепс':15,'Біцепс �
  sep:['Окремі групи',null],lag:['Відстаючі',null]};
 const AUTO_BIG=['Груди','Спина','Квадрицепс','Біцепс стегна','Сідниці'];
 const autoCap=(g,pr)=>MINOR.includes(g)||g==='Трапеції'?4:AUTO_BIG.includes(g)?(pr?10:8):(pr?8:6);/* стеля за сесію: 10 прямих (Remmert 2025), типово 8 великі / 6 малі / 4 дрібні - консенсус */
-const autoOn=()=>S.settings.autoOn!==false,autoNew=()=>S.settings.autoNew===true,autoFew=()=>S.settings.autoFew!==false,autoWu=()=>S.settings.autoWu!==false&&S.settings.wuSets!==false;
+const autoOn=()=>S.settings.autoOn!==false,autoNew=()=>S.settings.autoNew===true,autoFew=()=>S.settings.autoFew===true,autoWu=()=>S.settings.autoWu!==false&&S.settings.wuSets!==false;
 const autoNov=()=>mainW().length<10||num(S.settings.profExp)===1;
 /* тип з найбільшим дефіцитом серед готових груп - для поради, коли обраний тип не вміщується */
 function autoBestType(cur,R,WK){const lo=gzLo();let best=null,bs=0;['full','upper','legs','push','pull'].forEach(t=>{if(t===cur)return;const sh=AUTO_T[t][1];let sc=0;for(const g in sh){if(MINOR.includes(g)||autoReady(g,R).k===0)continue;sc+=Math.max(0,lo-(WK[g]||0))*sh[g]}if(sc>bs){bs=sc;best=t}});return best}
@@ -2262,6 +2262,7 @@ function autoPick(G,eq,excl,opt){opt=opt||{};const d=opt.d||todayStr(),E=new Set
   if(R&&!opt.light)for(const g in cg){if(g===G)continue;const k=autoReady(g,R).k;if(k===0&&(cg[g]>=1||S0.cost>.4))return}
   const F=autoFam(e.id,d);L.push({e,S:S0,F,ix,sc:S0.sc+(F.n?.6+.4*F.f:0)})});
  L.sort((a,b)=>b.sc-a.sc||b.F.n-a.F.n||a.ix-b.ix);return L}
+const AUTO_LUMB=/станов|румунськ|гуд.?монінг|присідання зі штангою|тяга штанги в нахилі/i,autoExCap=e=>AUTO_LUMB.test(e.name||'')?3:4;/* 58.1.2: підходів на одну вправу - до 3 (поперек) / 4, решта - іншою вправою (оцінка) */
 const autoSplitF=n=>n<=5?[n]:n<=10?[Math.ceil(n/2),Math.floor(n/2)]:[Math.ceil(n/3),Math.ceil((n-Math.ceil(n/3))/2),n-Math.ceil(n/3)-Math.ceil((n-Math.ceil(n/3))/2)];/* 58.1.1: менше вправ - до 5 підходів однією вправою */
 const autoSplit=n=>n<=4?[n]:n<=8?[Math.ceil(n/2),Math.floor(n/2)]:[Math.ceil(n/3),Math.ceil((n-Math.ceil(n/3))/2),n-Math.ceil(n/3)-Math.ceil((n-Math.ceil(n/3))/2)];
 /* повтори і запас за класом (W3): для знайомої - як у моєму останньому записі */
@@ -2290,7 +2291,7 @@ function autoGen(o,w){const d=w.date||todayStr(),why=[],D=autoDensity(),V0=autoV
     const stem=e=>(e.name||'').split(' ').slice(0,2).join(' '),angle=e=>/похил/i.test(e.name||'');const prv=slots.filter(x=>x.g===g).map(x=>x.c.e);const nd=L=>L.filter(x=>!prv.some(p=>stem(p)===stem(x.e)&&angle(p)===angle(x.e)));
     if(i>0){const df=nd(cand);if(df.length)cand=df}
     let nw=false;if(!o.light&&autoNew()&&newUsed<1&&i>0&&fam.length){const q=nd(free(C.filter(x=>!x.F.n)));if(q.length){cand=q;newUsed++;nw=true}}
-    const c=cand[0];if(!c)break;const nn=Math.min(n,room(c));used.add(c.e.id);const pt=autoPat(c.e);pats[pt]=(pats[pt]||0)+1;const cg=musContrib(c.e).g;for(const h in cg)if(cg[h]>=1)got[h]=(got[h]||0)+nn;
+    const c=cand[0];if(!c)break;const nn=Math.min(n,room(c),autoExCap(c.e));used.add(c.e.id);const pt=autoPat(c.e);pats[pt]=(pats[pt]||0)+1;const cg=musContrib(c.e).g;for(const h in cg)if(cg[h]>=1)got[h]=(got[h]||0)+nn;
     slots.push({g,n:Math.max(autoFew()&&room(c)>=3?3:2,nn),c,i,pr:isPr(g),nw,pg:Object.keys(cg).filter(h=>cg[h]>=1)});rem=V[g]-(got[g]||0);i++}});
   /* порядок (E9): пріоритет / відстаючі → великі групи типу (багатосуглобові) → ізоляція → дрібні → прес/ікри */
   {const by={};slots.forEach(x=>(by[x.g]=by[x.g]||[]).push(x));for(const g in by)by[g].slice().sort((a,b)=>((a.c.S.cl==='c'?0:1)-(b.c.S.cl==='c'?0:1))||b.c.S.cost-a.c.S.cost).forEach((x,k)=>x.i=k)}/* у межах групи: базова і важча - першою (присідання зі штангою до жиму ногами) */
@@ -2329,7 +2330,7 @@ function autoGen(o,w){const d=w.date||todayStr(),why=[],D=autoDensity(),V0=autoV
  if(!o.light&&mainG&&(!mainG.some(g=>G[g])||t.min<Math.min(20,o.dur*.4))&&!(AUTO_T[o.type][1]&&Object.keys(AUTO_T[o.type][1]).filter(g=>AUTO_BIG.includes(g)).every(g=>noEq.has(g))))return{err:'none',note:V0.note,best:(autoBan(o).size?null:autoBestType(o.type,V0.R,V0.WK)),short:t.min};
  if(o.light)why.push('Легкий день: усі групи ще відновлюються - знайомі вправи, без технік; рекомендація на картці дасть запас 3-4 і менше підходів (Bell 2023 - консенсус)');
  const nT=items.reduce((a,it)=>a+it.sets.filter(q=>!q.wu).length,0);why.push(`Обсяг: ${nT} ${pln(nT,'робочий підхід','робочі підходи','робочих підходів')}, ≈${t.min} хв (${D.src==='me'?'за твоєю щільністю з останніх тренувань':D.src==='man'?'за твоїм налаштуванням щільності':'оцінка: підхід 35-40 с, відпочинок 150 с (багатосуглобові) / 75 с (ізоляція), перехід 90 с - Singer 2024, Grgic 2018; з 3 тренувань з тривалістю буде твоя'})`);
- why.push('Не більше 10 прямих підходів на групу за тренування (Remmert 2025), типово 8 великі / 6 малі / 4 дрібні; щонайменше 2 на групу');if(autoFew())why.push(`Вправ: не більше ${maxEx+keep.filter(x=>STR.includes(x.type)).length} за ${o.dur} хв, по 3+ підходи (перемикач «менше вправ»): менше переходів - більше часу на роботу; ріст визначає кількість підходів на м’яз за тиждень, а не кількість вправ (Schoenfeld 2017), різноманіття - помірний ефект і краще між тренуваннями (Kassiano 2022)`);
+ why.push('Не більше 10 прямих підходів на групу за тренування (Remmert 2025), типово 8 великі / 6 малі / 4 дрібні; щонайменше 2 на групу; на одну вправу - до 4 підходів, важкі на поперек (станова, румунська, присідання зі штангою) - до 3, решта обсягу групи - іншою вправою (після 3-4 підходів віддача падає, втома росте - консенсус Schoenfeld, Helms, RP; оцінка)');if(autoFew())why.push(`Вправ: не більше ${maxEx+keep.filter(x=>STR.includes(x.type)).length} за ${o.dur} хв, по 3+ підходи (перемикач «менше вправ»): менше переходів - більше часу на роботу; ріст визначає кількість підходів на м’яз за тиждень, а не кількість вправ (Schoenfeld 2017), різноманіття - помірний ефект і краще між тренуваннями (Kassiano 2022)`);
  if(o.type!=='lag'&&o.type!=='sep')why.push(`Частки груп у «${AUTO_T[o.type][0]}» - консенсус тренерів (оцінка: досліджень, які порівнюють пропорції, немає)`);
  V0.why.forEach(x=>{if(x&&x.prio){const P=V0.prio.map(g=>noEq.has(g)?`${g} - немає вправ з вибраним інвентарем`:(G[g]||0)>Math.round(V0.np[g]||0)?`${g} ${G[g]} підх. замість ${Math.round(V0.np[g]||0)}`:`${g} ${G[g]||0} підх.`).join(', ');why.push(`Пріоритет: ${P} - першою, інші трохи менше, але не нижче половини і 2 підходів (консенсус: RP, Helms; прямих досліджень спеціалізації немає)${x.cut?'; на '+o.dur+' хв - лише один пріоритет':''}`)}else why.push(x)});
  for(const g in G){if(MINOR.includes(g))continue;const W=V0.WK[g]||0,Dg=Math.max(0,gzLo()-W),need=Math.ceil(Dg/V0.SL.left);
