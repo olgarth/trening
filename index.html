@@ -886,7 +886,7 @@ const TAGS=['Зал','Дім','Турніки','TRX','HIIT','Кардіо','За
 /* v56.7: «Тип» замість «Місце / тип»; «Домашній зал» об’єднано із «Зал». v57.7 (рішення Олега): «Дім» - тренування вдома з будь-яким домашнім інвентарем (гуми, гиря, гантелі, турнік, TRX), «Зал» - у залі; тег лише фільтрує, на рекомендацію не впливає */
 const tagN=t=>t==='Домашній зал'?'Зал':t;
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.7 · 01.11.2026';
+const APPV='58.8 · 01.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -1545,7 +1545,7 @@ function recFor(it,w){if(!recOn()||!STR.includes(it.type)||!w)return null;let pr
  else if(kind==='fix'){if(JUSTx==='floor'&&!VAR&&wt!=null&&(lastW/pW-1>.10+1e-9||lastW-pW>step+1e-9))why.push(`минулого разу крок ${nf(pW,1)} → ${nf(lastW,1)} кг (+${Math.round((lastW/pW-1)*100)}%) завеликий → повертаю ближче до доведених ${nf(pW,1)} кг за оцінкою 1ПМ, не нижче за них`);if(REG&&!VAR)why.unshift(`2 тренування поспіль повтори падають при тій самій вазі, минулого разу всі підходи до відмови → вага ≈ −10% і запас на 1 більший: схоже на накопичену втому (розвантаження - Bell 2023; оцінка)`)}
  else if(kind==='top'){rr=reps.map((r,k)=>rirs[k]!=null&&rirs[k]<ra?Math.max(hi,(r??hi)-Math.ceil(ra-rirs[k]-1e-9)):Math.max(hi,r??hi));why.unshift(`верх діапазону (${hi}) є в усіх підходах, але ${nLow} ${pln(nLow,'підхід','підходи','підходів')} з RIR нижче цілі ${rgT} → та сама вага; зроби ${hi} з запасом хоча б ${nf(ra,1)} - тоді додамо вагу`)}
  else if(kind==='top2'){rr=reps.map((r,k)=>rirs[k]!=null&&rirs[k]<ra?Math.max(hi,(r??hi)-Math.ceil(ra-rirs[k]-1e-9)):Math.max(hi,r??hi));why.unshift(`друге тренування поспіль верх діапазону дається лише з RIR нижче ${nf(ra,1)} → та сама вага, але з RIR ${nf(rb,1)}: якщо ${hi} з таким запасом не виходить, зупинись раніше. Так не накопичується втома від постійної відмови`)}
-  else{/* v58: легкий день - підходи 1/2/3/4/5/6 → 1/2/2/3/3/4 (не менше 2 при плані ≥ 2), зусилля менше, інтенсивність зберігається */ns=lightN(NP);/* v58.5: легкий день - без кроку ваги вгору, навіть коли минулого разу вага була замала */let LUP=false;if(oor==='light'&&LN&&lastW!=null&&!it.neg){const k=why.findIndex(x=>x.includes('вага замала'));if(k>=0)why.splice(k,1);LUP=true;wt=lastW;wts=VAR?wsP.slice():null;oor=''}const nsT=`${ns} ${pln(ns,'підхід','підходи','підходів')}${ns<NP?` замість ${NP}`:''}`;const SRC='розвантаження: Bell et al., 2023; Pritchard 2016 - консенсус, прямих досліджень однієї легкої сесії немає';
+  else{/* v58: легкий день - підходи 1/2/3/4/5/6 → 1/2/2/3/3/4 (не менше 2 при плані ≥ 2), зусилля менше, інтенсивність зберігається */ns=lightN(NP);/* v58.5: легкий день - без кроку ваги вгору, навіть коли минулого разу вага була замала */let LUP=false;if(oor==='light'){const k=why.findIndex(x=>x.includes('вага замала')||x.includes('- навантаження замале')||/ - (гума|рівень|положення|варіант)/.test(x)&&x.includes('замал'));if(k>=0)why.splice(k,1);LUP=true;if(LN&&lastW!=null){wt=lastW;wts=VAR?wsP.slice():null}else verb='';oor=''}/* v58.8: і для гуми, TRX, рівнів - та сама гума / рівень, без кроку */const nsT=`${ns} ${pln(ns,'підхід','підходи','підходів')}${ns<NP?` замість ${NP}`:''}`;const SRC='розвантаження: Bell et al., 2023; Pritchard 2016 - консенсус, прямих досліджень однієї легкої сесії немає';
    const canW=!oor&&LN&&lastW!=null&&step&&(it.neg||lastW>0),rr0=W.map((s,k)=>Math.max(1,Math.floor((reps[k]??lo)+(rirs[k]??rmid)-3.5))),auto4=canW&&!lightLoad()&&Math.min(...rr0)<4;let ldW=canW&&(lightLoad()||auto4);
    const dn=x=>{if(it.neg)return Math.round((x+step)*100)/100;if(it.type==='bw'){const v=Math.floor(x*.5/step+1e-9)*step;return Math.max(0,Math.round(v*100)/100)}const v=Math.round(x*.9/step)*step;return Math.round(Math.max(step,Math.min(x-step,v))*100)/100};if(ldW&&!it.neg&&dn(lastW)>=lastW)ldW=false;/* вага в один крок - знизити нікуди */
    if(ldW){
@@ -1553,8 +1553,8 @@ function recFor(it,w){if(!recOn()||!STR.includes(it.type)||!w)return null;let pr
     why.unshift(`легкий день («менше ваги»${auto4?' - бо з тією самою вагою і запасом 3-4 вийшло б менше 4 повторів':''}): ${it.neg?'противаги більше на '+nf(step,1)+' кг':it.type==='bw'?'обтяження ≈ вдвічі менше':'вага ≈ −10% (щонайменше один крок)'}, повтори як минулого разу, ${nsT} (${SRC})`)}
    else{if(!oor)rr=W.map((s,k)=>{const v=Math.max(1,Math.floor((reps[k]??lo)+(rirs[k]??rmid)-3.5),Math.ceil((reps[k]??lo)*.6-1e-9));return LUP&&reps[k]!=null?Math.min(v,reps[k]):v});/* зниження зусилля не більше ≈ 40% повторів (I-LD: 25-60%) */while(rr.length<NP)rr.push(rr[rr.length-1]);rr=rr.slice(0,ns);
     const bwN=!oor&&it.type==='bw'&&!(LN&&lastW>0)&&Math.min(...rr)<5;
-    if(LUP)why.push(`минулого разу вага замала для ${lo===hi?lo:lo+'-'+hi} повторів, але в легкий день вагу не додаю: та сама вага, менше зусилля; крок ваги - у звичайний день (розвантаження: інтенсивність не підвищують - Bell 2023; оцінка)`);
-    why.unshift(oor?`легкий день: RIR 3-4, ${nsT}`:`легкий день: та сама вага, RIR 3-4 (повторів менше на стільки, щоб лишився запас 3-4), ${nsT} (${SRC})${bwN?'. Якщо виходить менше 5 повторів - краще ті самі повтори з гумою-допомогою або легший варіант':''}`)}}
+    if(LUP){for(let k=why.length-1;k>=0;k--)if(/^(важче: |наступний рівень: |складніше: )/.test(why[k]))why.splice(k,1);why.push(`минулого разу ${LN?'вага замала':'навантаження замале'} для ${lo===hi?lo:lo+'-'+hi} повторів, але в легкий день ${LN?'вагу не додаю':'не ускладнюю (та сама гума, рівень чи положення)'}: ${LN?'та сама вага':'те саме навантаження'}, менше зусилля; крок ${LN?'ваги':'вперед'} - у звичайний день (розвантаження: інтенсивність не підвищують - Bell 2023; оцінка)`)};
+    why.unshift(oor?`легкий день: RIR 3-4, ${nsT}`:`легкий день: ${LN?'та сама вага':'те саме навантаження'}, RIR 3-4 (повторів менше на стільки, щоб лишився запас 3-4), ${nsT} (${SRC})${bwN?'. Якщо виходить менше 5 повторів - краще ті самі повтори з гумою-допомогою або легший варіант':''}`)}}
  let LLw=null,LLu=false;if(kind==='light'&&!other&&diffOn()&&diffOf(w)==='L'){const LL=lightPrev(it.exId,w,it.type);const LS=LL?LL.item.sets.filter(q=>!q.wu&&(repsOf(LL.item,q)||{}).tot):[];if(LS.length){const lu=LL.item.uni,lr=q=>{if(lu){const l=num(q.rl),r=num(q.rr);return l!=null&&r!=null?Math.min(l,r):(l??r)}return num(q.r)};const n=lightN(NP),pad=a=>{a=a.slice(0,n);while(a.length<n)a.push(a[a.length-1]);return a};rr=pad(LS.map(q=>Math.max(1,lr(q)??lo)));ns=n;LLu=true;if(LN&&LS.every(q=>num(q.w)!=null)){LLw=pad(LS.map(q=>num(q.w)));wt=LLw[0]}for(let i=why.length-1;i>=0;i--)if(why[i].startsWith('легкий день'))why.splice(i,1);/* v58: рядок правила легкого дня - не тут, база - минулий легкий */why.unshift(`легкий день: як минулого легкого разу ${dShort(LL.w.date)} (${LS.map(q=>setTxt(LL.item,q,bwOf(LL.w))).join(', ')}), ${n} ${pln(n,'підхід','підходи','підходів')}, RIR 3-4. Орієнтир - твій же легкий день; він не давніший 6 тижнів і не важчий за останнє звичайне тренування`)}}
  /* v57.10.1: піраміда - кожна вага окремо: група підходів з однаковою вагою, що вся дійшла до верху з потрібним RIR, отримує крок (≤ +10%; більше одного кроку - лише за оцінкою 1ПМ і з RIR) */
  if(JMP&&!LLu&&kind!=='light'&&!brk){wt=Math.round((JMP.pw+step)*100)/100;wts=null;rr=W.map(()=>lo);for(let i=why.length-1;i>=0;i--)if(/^(не всі|повтори були|минулого разу всі|верх діапазону|друге тренування)/.test(why[i]))why.splice(i,1);why.unshift(`⚠ минулого разу ${nf(lastW,1)} кг - на ${JMP.pct}% більше, ніж ${nf(JMP.pw,1)} кг до того: схоже на одрук або інший інвентар, перевір запис. Беру ${nf(JMP.pw,1)} кг + крок = ${nf(wt,1)} кг; якщо ${nf(lastW,1)} кг справжні - впиши вагу вручну (оцінка)`);aj(`минулого разу ${nf(lastW,1)} кг замість звичних ${nf(JMP.pw,1)} → беру ${nf(wt,1)} кг, перевір запис · оцінка`,1,'base')}
@@ -3383,7 +3383,7 @@ function signals(ws){const C=calc(),out=[],t=todayStr();
   if(last.score>best*1.005&&last.d>=addDays(t,-14)){if(anOn('sig_pr'))out.push([1,'p-good','Рекорд',o.type==='bw'&&noKg(o.exId)?`${o.label}: ${f0(last.score)} повт. (${pct(last.score/best-1)})`:`${o.label}: 1ПМ ≈ ${f1(last.score)} кг (${pct(last.score/best-1)})`])}
   else if((()=>{const b9s=before.filter(x=>x.d>=addDays(last.d,-90));if(!b9s.length)return false;const best9=Math.max(...b9s.map(x=>x.score)),bL=Math.max(...b9s.map(x=>x.ld??0));const prv=before[before.length-1];/* v57.4: спад - два тренування поспіль нижче 95% і без збільшення навантаження (крок ваги в циклі - не спад) */const best9n=Math.max(...b9s.map(scN));return scN(last)<best9n*.95&&prv&&scN(prv)<best9n*.95&&!((last.ld??0)>bL+1e-9)&&!sesStep(last,prv)&&!sesStall(s)})()){const best9=Math.max(...before.filter(x=>x.d>=addDays(last.d,-90)).map(x=>x.score));if(anOn('sig_drop'))out.push([0,'p-bad','Спад',`${o.label}: ${pct(last.score/best9-1)} від найкращого за 90 днів, два тренування поспіль. Перевір сон, відновлення, техніку.${last.phase==='deficit'?' Фаза: дефіцит, невеликий спад тут очікуваний':''}`])}
   else if(anOn('sig_stall')&&sesStall(s)){out.push([2,'p-warn','Застій',`${o.label}: 4 тренування без нового максимуму. Рекомендація на картці запропонує, що змінити: діапазон повторень, ще один підхід або легкий тиждень`])}});
- const gs=groupSets(ws),wk=weeksSpan(ws,periodStart());if(ws.length>=3&&!wkMode()){/* v58: тиждень ще триває - «мало / не тренуються» хибні */if(anOn('sig_low')){const low=GROUPS.filter(g=>!MINOR.includes(g)&&gs[g]&&gs[g]/wk<5).map(g=>`${g} - ${f1(gs[g]/wk)}`);if(low.length)out.push([3,'p-warn','Мало',`Робочих підходів на тиждень менше 5: ${low.join('; ')}`]);const zero=GROUPS.filter(g=>!MINOR.includes(g)&&!gs[g]);if(zero.length)out.push([4,'p-mut','Не тренуються',zero.join(', ')])}
+ const gs=groupSets(ws),wk=weeksSpan(ws,periodStart());if(ws.length>=3&&!wkMode()){/* v58: тиждень ще триває - «мало / не тренуються» хибні */if(anOn('sig_low')){const low=GROUPS.filter(g=>!MINOR.includes(g)&&gs[g]&&gs[g]/wk<gzLo())/* v58.8: межа - ціль */.map(g=>`${g} - ${f1(gs[g]/wk)}`);if(low.length)out.push([3,'p-warn','Мало',`Робочих підходів на тиждень менше ${gzLo()} (твоя ціль ${gzLo()}-${gzHi()}): ${low.join('; ')}`]);const zero=GROUPS.filter(g=>!MINOR.includes(g)&&!gs[g]);if(zero.length)out.push([4,'p-mut','Не тренуються',zero.join(', ')])}
   const hi=GROUPS.filter(g=>(gs[g]||0)/wk>30).map(g=>`${g} - ${f1(gs[g]/wk)}`);if(hi.length&&anOn('sig_high')&&!wkMode())out.push([3,'p-warn','Багато',`Понад 30 робочих підходів на тиждень: ${hi.join('; ')}. Віддача від кожного наступного підходу вже мала, слідкуй за відновленням`])}
  if(anOn('sig_fat')){const F=[];const chk=(k,lbl,dir,thr,u)=>{if(!mfOn('str',k))return;const v=ws.map(w=>wv(w,k)).filter(x=>x!=null);if(v.length<6)return;const l3=avg(v.slice(-3)),all=avg(v.slice(0,-3)),fk=x=>k==='sleep'?fSl(x):f1(x);if(dir<0?l3<=all-thr:l3>=all+thr)F.push(`${lbl} ${fk(l3)} (зазвичай ${fk(all)})`)};/* v56.8: «зазвичай» - без самих останніх 3 */chk('well','самопочуття',-1,1.5,'');chk('sleep','сон',-1,1,' год');chk('srpe','важкість',1,1.5,'');
   if(F.length)out.push([0,'p-bad','Втома',`Останні 3 тренування в середньому: ${F.join(', ')}. Можливо, час розвантажитися`])}
@@ -3445,7 +3445,9 @@ function stGroups(){const ws=sortedW().filter(w=>w.date>=periodStart());const RB
  <p class="muted small" style="margin:0">Робочий підхід - RIR менше 5 (або RIR не вписаний); RIR 3-4 рахується ×${nf(kRir(),2)}, Myo і дропи - за коефіцієнтами (Налаштування → Типи підходів). Основний м’яз вправи = 1 підхід, допоміжний = ${secW()===1?'1':'0,5'} (у межах групи береться більше значення, щоб, наприклад, найширші й ромбоподібні в одній тязі не дали 2 підходи «Спині»). «доп.» - дрібні групи без цільової зони: зазвичай їм вистачає непрямої роботи. Зелена зона ${gzLo()}-${gzHi()} підходів («оптимально») - твоя ціль обсягу «${VOLT[volT()][2]}» (Налаштування → Рекомендації); шкала закінчується трохи за верхом цілі; понад ціль - світла зона («понад ціль», у «Максимумі» - «високо» понад 20): ріст ще є, але кожен наступний підхід дає менше (Pelland et al., Sports Med 2026); понад 30 «Огляд» покаже сигнал «Багато» - стеж за відновленням. Менше 5 на тиждень - «мало» (здебільшого підтримка), 5-9 - «помірно» (Schoenfeld 2017, Baz-Valle 2022). Це орієнтир, а не норма: дивись і на прогрес 1ПМ. HIIT і кардіо сюди не входять.</p>
  <p class="muted small" style="margin:0">${WK?`Тиждень: ${ws.length} ${pln(ws.length,'тренування','тренування','тренувань')}, пн - сьогодні.`:`Період: ${ws.length} ${pln(ws.length,'тренування','тренування','тренувань')} за ${nf(wk,1)} тиж.`}</p></section>`+RB}
 function monthsList(){const s=new Set(S.workouts.map(w=>w.date.slice(0,7)));s.add(todayStr().slice(0,7));return[...s].sort().reverse()}
-function monthReport(ym){const C=calc();const ws=C.ws.filter(w=>w.date.startsWith(ym));const y=+ym.slice(0,4),m=+ym.slice(5);const dim=new Date(y,m,0).getDate();const isCur=todayStr().startsWith(ym);const days=isCur?+todayStr().slice(8):dim;const wk=Math.max(1,days/7);const start=ym+'-01',base0=addDays(start,-60);
+/* v58.8: тижнів у місяці - від першого запису, якщо він у цьому місяці (раніше - весь місяць: 39 підходів на тиждень замість 47) */
+function repDays(ym,days){const f=(mainW()[0]||{}).date;if(f&&f.startsWith(ym)){const d0=+f.slice(8);return Math.max(1,days-d0+1)}return days}
+function monthReport(ym){const C=calc();const ws=C.ws.filter(w=>w.date.startsWith(ym));const y=+ym.slice(0,4),m=+ym.slice(5);const dim=new Date(y,m,0).getDate();const isCur=todayStr().startsWith(ym);const days=repDays(ym,isCur?+todayStr().slice(8):dim);const wk=Math.max(1,days/7);const start=ym+'-01',base0=addDays(start,-60);
  let vol=0,hard=0;ws.forEach(w=>{vol+=C.wst[w.id].vol;hard+=C.wst[w.id].hard});
  const prog=[];Object.values(C.ses).forEach(o=>{if(!STR.includes(o.type))return;const cur=o.ses.filter(x=>x.d.startsWith(ym)&&x.score);const base0s=o.ses.filter(x=>x.d>=base0&&x.d<start&&x.score);if(!cur.length||!base0s.length)return;const base=base0s.slice(-cur.length);/* v56.8: стільки ж останніх сесій до місяця, скільки в місяці - інакше максимум з більшої кількості завжди вищий */const a=Math.max(...base.map(x=>x.score)),b=Math.max(...cur.map(x=>x.score));prog.push({o,ch:b/a-1,tag:cur[cur.length-1].tag||'Інше',phase:cur[cur.length-1].phase||''})});
  const byTag={};prog.forEach(p=>(byTag[p.tag]=byTag[p.tag]||[]).push(p.ch));
@@ -3469,7 +3471,7 @@ function repLifts(ym){const C=calc(),pv=prevYm(ym),L=[];Object.values(C.ses).for
  return L.sort((a,b)=>b.cur.length-a.cur.length||b.best-a.best)}
 function repSteps(ym){const C=calc();let n=0,up=0;Object.values(C.ses).forEach(o=>{if(!STR.includes(o.type))return;o.ses.forEach((x,i)=>{if(!x.d.startsWith(ym)||!x.score||!i)return;const p=o.ses.slice(0,i).reverse().find(y=>y.score);if(!p)return;n++;if(sesStep(x,p))up++})});return{n,up}}
 function repRir(ws){const b={lo:0,mid:0,hi:0,na:0};ws.forEach(w=>w.items.forEach(it=>{if(!STR.includes(it.type))return;it.sets.forEach(s=>{if(s.wu||!(repsOf(it,s)||{}).tot)return;const r=num(s.rir);if(r==null)b.na++;else if(r<=1.5)b.lo++;else if(r<=3.5)b.mid++;else b.hi++})}));b.n=b.lo+b.mid+b.hi+b.na;return b}
-function repBasic(ym,lim){const ws=sortedW().filter(w=>!isWarm(w)&&w.date.startsWith(ym)&&(!lim||+w.date.slice(8)<=lim));const y=+ym.slice(0,4),m=+ym.slice(5),dim=new Date(y,m,0).getDate(),cur=todayStr().startsWith(ym),days=Math.min(lim||99,cur?+todayStr().slice(8):dim),wk=Math.max(1,days/7);
+function repBasic(ym,lim){const ws=sortedW().filter(w=>!isWarm(w)&&w.date.startsWith(ym)&&(!lim||+w.date.slice(8)<=lim));const y=+ym.slice(0,4),m=+ym.slice(5),dim=new Date(y,m,0).getDate(),cur=todayStr().startsWith(ym),days=repDays(ym,Math.min(lim||99,cur?+todayStr().slice(8):dim)),wk=Math.max(1,days/7);
  const C=calc();let hard=0;ws.forEach(w=>{const s=C.wst[w.id];if(s)hard+=s.hard||0});const rv=k=>avg(ws.map(w=>wv(w,k)).filter(x=>x!=null));/* лише вписані значення, без підстановки */return{ws,wk,hard,g:groupSets(ws),sl:rv('sleep'),wl:rv('well'),dur:rv('dur'),bw:avg(ws.map(w=>num(w.bw)).filter(x=>x!=null)),lim}}
 function dl(a,b,o){o=o||{};if(a==null||b==null||isNaN(a)||isNaN(b))return'';const d=a-b,f=o.f||(x=>nf(x,1));if(Math.abs(d)<(o.eps||.05))return`<span class="dl">= без змін</span>`;const c=o.neutral?'':d>0?' up':' down';return`<span class="dl${c}">${d>0?'▲':'▼'} ${f(Math.abs(d))}${o.lbl?' '+o.lbl:''}</span>`}
 function repCal(ym,ws){const y=+ym.slice(0,4),m=+ym.slice(5),dim=new Date(y,m,0).getDate(),fd=(new Date(y,m-1,1).getDay()+6)%7,T=todayStr(),D={};ws.forEach(w=>{const k=+w.date.slice(8);D[k]=D[k]||(diffOf(w)==='L'?'l':'t');if(diffOf(w)!=='L')D[k]='t'});
@@ -3478,7 +3480,7 @@ function repCal(ym,ws){const y=+ym.slice(0,4),m=+ym.slice(5),dim=new Date(y,m,0)
  return{h:`<div class="rcal">${h}</div>`,ok,nW}}
 function repData(ym){const R=monthReport(ym),pv=prevYm(ym),cur=todayStr().startsWith(ym),dd=+todayStr().slice(8),P=repBasic(pv,cur?dd:0),B=repBasic(ym),L=repLifts(ym),S2=repSteps(ym),RI=repRir(R.ws),cal=repCal(ym,R.ws);
  const maj=(musFull()?GROUPS:SHORT_GROUPS).filter(x=>!MINOR.includes(x)),gv=gr=>(R.groups[gr]||0)/R.wk,pg=gr=>P.ws.length?(P.g[gr]||0)/P.wk:null;
- const low=maj.filter(gr=>gv(gr)<5).sort((a,b)=>gv(a)-gv(b)),srt=maj.slice().sort((a,b)=>gv(a)-gv(b));
+ const low=maj.filter(gr=>gv(gr)<gzLo())/* v58.8: межа «мало» - ціль Олега (Налаштування), а не 5 */.sort((a,b)=>gv(a)-gv(b)),srt=maj.slice().sort((a,b)=>gv(a)-gv(b));
  const early=cur&&(dd<7||B.ws.length<3),pvN=MONG[+pv.slice(5)-1]+(cur?' 1-'+dd:''),upP=(()=>{const a=repLifts(pv).filter(x=>x.st!=='few');return a.length?a.filter(x=>x.st==='up').length:null})();
  return{R,P,B,L,S2,RI,cal,maj,gv,pg,low:early?[]:low,srt,pv,pvN,pvM:MONG[+pv.slice(5)-1],pvL:MONL[+pv.slice(5)-1]+(cur?' за ті самі дні':''),early,cur,upP}}
 const plV=n=>n%10===1&&n%100!==11?'вправи':'вправ',plT=n=>n%10===1&&n%100!==11?'тренування':'тренувань';
@@ -3486,7 +3488,7 @@ function repTips(D){const{R,L,low,RI,P,pvL,early,cur}=D,good=[],fix=[];let next=
  const ups=L.filter(x=>x.st==='up').sort((a,b)=>(a.reps-b.reps)||(b.ch-a.ch)),kn=L.filter(x=>x.st!=='few').length;if(ups.length)good.push(`Сильніший у ${ups.length} з ${kn} ${plV(kn)}: `+ups.slice(0,2).map(x=>`${esc(x.o.label)} +${f0(x.ch*100)}%`).join(', '));
  const nT=R.ws.length,wT=`${nT} ${pln(nT,'тренування','тренування','тренувань')}`;
  if(P.ws.length){const d=nT-P.ws.length;if(d>0)good.push(`${wT} - на ${d} більше, ніж у ${pvL}`);else if(d===0)good.push(`${wT} - як у ${pvL}`);else if(!cur)fix.push(`${wT} - на ${-d} менше, ніж у ${pvL}`)}else if(nT)good.push(`${wT} ${cur?'цього місяця':'за місяць'}`);
- if(low.length)fix.push(`${low.slice(0,4).join(', ')}${low.length>4?' та ще '+(low.length-4):''} - менше 5 підходів на тиждень`);
+ if(low.length)fix.push(`${low.slice(0,4).join(', ')}${low.length>4?' та ще '+(low.length-4):''} - менше ${gzLo()} підходів на тиждень (твоя ціль ${gzLo()}-${gzHi()})`);
  const bad=L.filter(x=>x.st==='down'||x.st==='stall');if(bad.length)fix.push(bad.slice(0,2).map(x=>`${esc(x.o.label)} - ${x.st==='down'?'спад':'застій'}`).join(', '));
  const st=L.find(x=>x.st==='stall');
  if(st)next=`${esc(st.o.label)} стоїть кілька тренувань - спробуй +1 повтор у кожному підході, а коли дійдеш до верху діапазону, +2-5% ваги.`;
@@ -3529,7 +3531,7 @@ function stReport(){const ms=monthsList();const ym=ms.includes(S.ui.month)?S.ui.
  ${repCtx(D)}
  ${Object.keys(R.cardio).length?`<section class="card stack rep"><div class="lbl">Кардіо</div>${Object.entries(R.cardio).map(([n,c])=>`<div class="row between small"><span>${esc(n)} ×${c.n}</span><span class="num">${f0(c.time)} хв${c.dist?' · '+f1(c.dist)+' км':''}${c.kcal?' · '+f0(c.kcal)+' ккал':''}</span></div>`).join('')}</section>`:''}
  ${R.hiit.n?`<section class="card stack rep"><div class="lbl">HIIT</div><div class="small">блоків і вправ: ${R.hiit.n} · ${f1(R.hiit.work/60)} хв роботи${R.hiit.rounds?' · '+R.hiit.rounds+' '+pln(R.hiit.rounds,'раунд','раунди','раундів'):''}${R.hiit.reps?' · '+R.hiit.reps+' повт.':''}</div></section>`:''}
- <button class="btn full" data-a="copy-rep">Скопіювати звіт текстом</button>
+ ${repNew()?`<div class="g2"><button class="btn" data-a="rep-nc">У Нотатки</button><button class="btn" data-a="rep-xl">Excel</button></div><button class="lnk" data-a="copy-rep" style="align-self:center">Скопіювати текстом</button>`:'<button class="btn full" data-a="copy-rep">Скопіювати звіт текстом</button>'}
  <p class="muted small sm0" style="text-align:center">Звіт рахує календарний місяць. «Огляд» і «Групи» - вибраний період.</p>`;
  return h}
 function phaseNote(R){if(!mfOn('str','phase'))return'';const e=Object.entries(R.phases).filter(([k])=>k).sort((a,b)=>b[1]-a[1]);if(!e.length)return'';const dom=e[0][0];
@@ -3750,7 +3752,7 @@ function ivHTML(){return`<label class="field"><span>«Готуйся» пере�
 function mfHTML(){const W=warmOn();return`<div class="mft${W?'':' one'}"><span></span><span class="h">Силові</span>${W?'<span class="h">Зарядка</span>':''}
  ${MF.map(([k,l])=>`<span>${l}</span><input type="checkbox" data-c="mf" data-kind="str" data-k="${k}" id="mf-str-${k}" ${mfOn('str',k)?'checked':''} aria-label="${l}: силові">${W?(mornOn()&&(k==='sleep'||k==='bw')&&mornF(k)?'<span class="muted small" style="text-align:center">ранок</span>':`<input type="checkbox" data-c="mf" data-kind="warm" data-k="${k}" id="mf-warm-${k}" ${mfOn('warm',k)?'checked':''} aria-label="${l}: зарядка">`):''}`).join('')}</div>
  ${hlp('Вимкнене поле зникає із запису, аналітики і кореляцій, введене не стирається.<br><b>Відчуття навантаження</b> (sRPE) - твоя оцінка всього тренування наприкінці (1 - дуже легко, 10 - максимум), × тривалість = «навантаження».<br><b>Приклад:</b> важкість 7 × 60 хв = навантаження 420.')}`}
-function anHTML(){return`${AN_DEF.map(([t,a],i)=>`<details class="anl" data-anl="${i}" ${(S.ui.anl||[]).includes(i)?'open':''}><summary><span>${t}</span><span class="muted small" style="font-weight:600;margin-left:auto">${a.filter(([k])=>anOn(k)).length} з ${a.length}</span></summary>${a.map(([k,l])=>`<label class="chk"><input type="checkbox" data-c="an" data-k="${k}" id="an-${k}" ${anOn(k)?'checked':''}>${l}</label>`).join('')}</details>`).join('')}
+function anHTML(){return`<div class="field"><span>Звіт місяця</span><div class="seg" id="set-repn">${[['old','Текстом'],['new','Нотатки і Excel']].map(([v,l])=>`<button class="${(repNew()?'new':'old')===v?'on':''}" data-a="repn" data-v="${v}">${l}</button>`).join('')}</div></div>${hlp('<b>Нотатки і Excel</b> - у «Звіті» дві кнопки: короткий звіт таблицями для Apple Нотаток і файл Excel (вкладка на місяць, графіки, усі вправи). <b>Текстом</b> - як раніше: одна кнопка копіює звіт простим текстом.')}${AN_DEF.map(([t,a],i)=>`<details class="anl" data-anl="${i}" ${(S.ui.anl||[]).includes(i)?'open':''}><summary><span>${t}</span><span class="muted small" style="font-weight:600;margin-left:auto">${a.filter(([k])=>anOn(k)).length} з ${a.length}</span></summary>${a.map(([k,l])=>`<label class="chk"><input type="checkbox" data-c="an" data-k="${k}" id="an-${k}" ${anOn(k)?'checked':''}>${l}</label>`).join('')}</details>`).join('')}
  ${hlp('Вимкнене тут лише ховається з «Аналітики», дані не змінюються.')}
  <div class="field"><span>Вага непрямих підходів (аналітика і відновлення)</span><div class="seg"><button class="${secW()===1?'on':''}" data-a="secw" data-v="1">×1</button><button class="${secW()===0.5?'on':''}" data-a="secw" data-v="0.5">×0,5</button></div></div>
  ${hlp('Як рахувати непрямі підходи в «Разом»: <b>×1</b> - як прямі, <b>×0,5</b> - як половину (типово: так найкраще пояснюється ріст м’язів у мета-аналізі).<br><b>Приклад:</b> 6 підходів жиму = 6 непрямих трицепсу: ×1 → «Разом» 6, ×0,5 → 3.<br>Джерела: Pelland et al., 2024.')}`}
@@ -4510,6 +4512,10 @@ const ACT={
  'nc-open'(el){ncSheet(el.dataset.s)},
  'nc-mode'(el){const X=ncSrc(el.dataset.s);if(!X)return;(S.settings.ncMode=S.settings.ncMode||{})[X.kind]=el.dataset.v;save();ncSheet(el.dataset.s)},
  'nc-copy'(el){ncCopy(el.dataset.s)},
+ repn(el){S.settings.repNew=el.dataset.v==='new';save();render()},
+ 'rep-nc'(){repSheet('nc')},'rep-xl'(){repSheet('xl')},
+ 'rep-per'(el){(S.settings.repPer=S.settings.repPer||{})[el.dataset.k]=el.dataset.v;save();repSheet(el.dataset.k)},
+ 'rep-go'(el){repGo(el.dataset.k,el.dataset.v)},
  whym(el){S.settings.whyMode=el.dataset.v;save();render()},
  tgtn(el){S.settings.tgtNew=el.dataset.v==='empty'?'empty':'rec';save();render()},
  volt(el){S.settings.volT=el.dataset.v;CACHE=null;save();render()},
@@ -4577,6 +4583,520 @@ function ncSheet(src){const X=ncSrc(src);if(!X)return;const m=ncMode(X.kind);ope
 async function ncCopy(src){const X=ncSrc(src);if(!X)return;const m=ncMode(X.kind),o=ncBuild(X.w,m,X.tpl);closeSheet();const ok=()=>toast('Скопійовано - встав у Нотатки');
  if(!AND&&window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([o.html],{type:'text/html'}),'text/plain':new Blob([o.text],{type:'text/plain'})})]);ok();return}catch(e){}}
  copyText(o.text)}
+
+/* v58.8: звіт «У Нотатки» і Excel - спільна модель. per: 'm' (календарний місяць ym) | '4w' (останні 28 днів) */
+const repNew=()=>!window.__repOld&&S.settings.repNew!==false;
+const RPG=()=>(musFull()?GROUPS:SHORT_GROUPS).filter(g=>!MINOR.includes(g));
+const nfc=(x,d)=>x==null||!isFinite(x)?'-':nf(Math.round(x*Math.pow(10,d||0))/Math.pow(10,d||0),d||0);
+const ddm=d=>d.slice(8,10)+'.'+d.slice(5,7);
+function repModel(per,ym){const C=calc(),T=todayStr();let from,to,ttl;
+ if(per==='4w'){to=T;from=addDays(T,-27);ttl='останні 4 тижні'}else{from=ym+'-01';const dim=new Date(+ym.slice(0,4),+ym.slice(5),0).getDate();to=T.startsWith(ym)?T:ym+'-'+String(dim).padStart(2,'0');ttl=MON[+ym.slice(5)-1].toLowerCase()+' '+ym.slice(0,4)}
+ const ws=mainW().filter(w=>w.date>=from&&w.date<=to),first=(mainW()[0]||{}).date||from,f0=first>from?first:from;
+ const days=Math.round((new Date(to+'T12:00')-new Date(f0+'T12:00'))/864e5)+1,wk=Math.max(1,days/7);
+ const g=groupSets(ws),wsE=new Date(to+'T12:00').getDay()===0?to:addDays(weekStart(to),-1),lw0=addDays(wsE,-6),lwOk=lw0>=f0,lws=ws.filter(w=>w.date>=lw0&&w.date<=wsE),lg=groupSets(lws);/* E5: останній ПОВНИЙ тиждень пн-нд у межах періоду (неповний давав хибне «просіли») */
+ /* 3 тижні перед останнім - для «просіли» */const pws=mainW().filter(w=>w.date>=addDays(lw0,-21)&&w.date<lw0),pg=groupSets(pws),pwk=Math.max(1,Math.min(3,(Math.round((new Date(lw0+'T12:00')-new Date((first>addDays(lw0,-21)?first:addDays(lw0,-21))+'T12:00'))/864e5))/7));
+ let hard=0,dur=[],dh=0;ws.forEach(w=>{const st=C.wst[w.id];hard+=st.hard||0;const d=num(w.dur);if(d){dur.push(d);dh+=st.hard||0}});
+ const lifts=[];Object.values(C.ses).forEach(o=>{if(!STR.includes(o.type))return;const se=o.ses.filter(x=>x.d>=from&&x.d<=to&&x.score&&!x.light);if(se.length<3)return;const a=se[0].score,b=se[se.length-1].score,ch=b/a-1;lifts.push({label:o.label,n:se.length,a,b,ch,st:ch>.05?'up':ch<-.05?'down':'same',reps:scReps(o),ses:se})});
+ lifts.sort((x,y)=>({up:0,same:1,down:2}[x.st]-{up:0,same:1,down:2}[y.st])||y.n-x.n);
+ const RI=repRir(ws);let steps=null;if(per!=='4w')steps=repSteps(ym);
+ const lo=gzLo(),hi=gzHi(),G=RPG(),gv=x=>(g[x]||0)/wk;
+ /* де відстаю: (1) просіли в останньому тижні, (2) найбільший розрив за період, (3) спад сили */const lag=[],early=ws.length<3||days<7;/* як repData.early: замало даних - без висновків */
+ if(!early){G.filter(x=>gv(x)<lo).sort((a,b)=>gv(a)-gv(b)).slice(0,2).forEach(x=>lag.push({g:x,k:'gap',v:gv(x)}));if(lwOk)G.forEach(x=>{if(lag.some(y=>y.g===x))return;const l=lg[x]||0,pv=(pg[x]||0)/pwk;if(l<lo&&pv>=lo&&l<.6*pv)lag.push({g:x,k:'drop',l,pv})})}
+ const exFor=gr=>{const c={};mainW().slice(-30).forEach(w=>w.items.forEach(it=>{if(STR.includes(it.type)&&(musContrib(it).g[gr]||0)>=1)c[it.name]=(c[it.name]||0)+1}));return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||''};
+ return{per,ym,ttl,from:f0,to,ws,wk,g,lg,lw0,wsE,lwOk,early,hard,dur:dur.length?avg(dur):null,mps:dh?dur.reduce((a,b)=>a+b,0)/dh:null,sl:avg(ws.map(w=>wv(w,'sleep')).filter(x=>x!=null)),wl:avg(ws.map(w=>wv(w,'well')).filter(x=>x!=null)),lifts,RI,steps,lo,hi,half:gzHalf(),G,gv,lag,exFor,morn:per!=='4w'&&typeof warmOn==='function'&&warmOn()?mMonth(ym):null}}
+const repMk=v=>{return v<gzHalf()?'↓↓':v<gzLo()?'↓':v<=gzHi()?'✓':'↑'};
+function repNotes(M){const H=[],lo=M.lo,hi=M.hi,G=M.G,td='border:1px solid #000;padding:2px 6px';
+ const tb=(head,rows)=>`<table style="border-collapse:collapse"><tr>${head.map(c=>`<td style="${td}"><b>${esc(c)}</b></td>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td style="${td}">${esc(c)}</td>`).join('')}</tr>`).join('')}</table>`;
+ const n=M.ws.length,lwT=ddm(M.lw0)+'-'+ddm(M.wsE),dRg=M.from>=M.to?ddm(M.to):ddm(M.from)+'-'+ddm(M.to);
+ H.push(`<h1>Звіт: ${esc(M.ttl)}</h1>`);if(!n){H.push(`<p>${dRg}: тренувань немає.</p>`);const html='<div>'+H.join('')+'</div>';return{html,text:html.replace(/<[^>]+>/g,'\n').replace(/\n+/g,'\n').trim()}}
+ H.push(`<p>${dRg} · ${n} ${pln(n,'тренування','тренування','тренувань')} · ціль обсягу: ${lo}-${hi} робочих підходів на групу м’язів за тиждень</p>`);
+ const up=M.lifts.filter(x=>x.st==='up').length,dn=M.lifts.filter(x=>x.st==='down').length,RI=M.RI,pc=k=>RI.n?Math.round(RI[k]/RI.n*100):0;
+ const main=[`<b>${n} ${pln(n,'тренування','тренування','тренувань')}</b>, ≈${nfc(n/M.wk,1)} на тиждень`,`<b>${nfc(M.hard/M.wk,0)} робочих підходів</b> на тиждень у середньому`];
+ if(M.steps&&M.steps.n)main.push(`<b>Кроків уперед: ${M.steps.up} з ${M.steps.n}</b> (${Math.round(M.steps.up/M.steps.n*100)}%) - більше повторів, ваги або той самий підхід легше`);
+ if(M.lifts.length)main.push(`<b>Сильніше в ${up} з ${M.lifts.length} ${pln(M.lifts.length,'вправи','вправ','вправ')}</b> понад шум ±5%${dn?`, спад у ${dn}`:''}`);
+ if(RI.n)main.push(`<b>Зусилля:</b> ${pc('lo')}% підходів - 0-1 повтор у запасі, ${pc('mid')}% - 2-3`);
+ if(M.dur)main.push(`<b>Тривалість ${nfc(M.dur,0)} хв</b>${M.mps?`, ≈${nfc(M.mps,1)} хв на робочий підхід`:''}`);
+ if(M.sl!=null||M.wl!=null)main.push(`<b>${M.sl!=null?(m=>'Сон '+Math.floor(m/60)+' год '+String(m%60).padStart(2,'0')+' хв')(Math.round(M.sl*60)):''}${M.sl!=null&&M.wl!=null?', ':''}${M.wl!=null?'самопочуття '+nfc(M.wl,1)+' з 10':''}</b>`);
+ if(M.morn&&M.morn.n){const fw=S.workouts.filter(w=>isWarm(w)&&w.date>=M.from&&w.date<=M.to).map(w=>w.date).sort()[0];const dd=Math.max(M.morn.n,fw?Math.round((new Date(M.to+'T12:00')-new Date(fw+'T12:00'))/864e5)+1:M.morn.days);main.push(`<b>Ранкова зарядка: ${M.morn.n} ${pln(M.morn.n,'день','дні','днів')} із ${dd}</b>${fw&&fw>M.from?` (з ${ddm(fw)})`:''}`)}
+ H.push('<h2>Головне</h2><ul>'+main.map(x=>`<li>${x}</li>`).join('')+'</ul>');
+ H.push('<h2>М’язи: робочих підходів на тиждень</h2>');H.push(`<p>✓ у цілі ${lo}-${hi} · ↓ нижче цілі · ↓↓ мало (менше ${M.half}) · ↑ понад ціль: ріст ще є, але кожен підхід дає менше</p>`);
+ const hd=['Група',M.per==='4w'?'4 тижні':(t=>t[0].toUpperCase()+t.slice(1))(M.ttl.split(' ')[0])].concat(M.lwOk?[lwT]:[]);H.push(tb(hd,G.map(x=>{const v=M.gv(x),l=M.lg[x]||0,r1=y=>Math.round(y*10)/10;return[x,`${nfc(v,1)} ${repMk(r1(v))}`].concat(M.lwOk?[`${nfc(l,1)} ${repMk(r1(l))}`]:[])})));
+ const isLg=x=>GRP_REG[x]==='Ноги',UP=G.filter(x=>!isLg(x)&&x!=='Прес'),LG=G.filter(isLg),av=a=>a.length?avg(a):0;
+ H.push(`<p><b>Баланс.</b> Верх ${nfc(av(UP.map(M.gv)),1)}, ноги ${nfc(av(LG.map(M.gv)),1)} на групу${M.lwOk?` (${lwT}: верх ${nfc(av(UP.map(x=>M.lg[x]||0)),1)}, ноги ${nfc(av(LG.map(x=>M.lg[x]||0)),1)})`:''}.${M.g['Груди']!=null&&M.g['Спина']!=null?` Груди ${nfc(M.gv('Груди'),1)} : спина ${nfc(M.gv('Спина'),1)}${M.gv('Спина')>=M.gv('Груди')?' - тяг не менше, ніж жимів, це добре':' - жимів більше, ніж тяг: додай тягу'}.`:''}</p>`);
+ if(M.lifts.length){H.push('<h2>Сила: основні вправи</h2>');H.push('<p>1ПМ - розрахунковий максимум на 1 повтор, кг (гантелі - одна гантель). Перше → останнє тренування періоду, лише вправи з 3+ тренувань. Зміна до ±5% - шум.</p>');
+  const L=M.lifts.filter(x=>x.st!=='same').concat(M.lifts.filter(x=>x.st==='same')).slice(0,8);
+  H.push(tb(['Вправа','Було → стало','Зміна'],L.map(x=>[x.label,`${nfc(x.a,x.reps?0:1)} → ${nfc(x.b,x.reps?0:1)}${x.reps?' повторів':''}`,x.st==='up'?'▲ +'+Math.round(x.ch*100)+'%':x.st==='down'?'▼ −'+Math.round(-x.ch*100)+'%':'= шум'])))}
+ const LG2=[],NX=[];M.lag.forEach(x=>{const e=M.exFor(x.g);if(x.k==='drop'){LG2.push(`<b>${x.g} - просідання:</b> ${lwT} ${nfc(x.l,1)} ${Number.isInteger(Math.round(x.l*10)/10)?pln(Math.round(x.l),'робочий підхід','робочі підходи','робочих підходів'):'робочого підходу'}, до цього ≈${nfc(x.pv,1)} на тиждень.`);const N=Math.min(4,Math.ceil(lo-x.l));NX.push(`<b>${x.g}: +${N} ${pln(N,'підхід','підходи','підходів')} на тиждень</b>, по 2-3 за тренування${e?` (${esc(e)})`:''}.<br><i>Чому: менше ${lo} робочих підходів на тиждень дає помітно менший ріст (Schoenfeld 2017); не більше +4 за тиждень - обережно (оцінка).</i>`)}else{LG2.push(`<b>${x.g}: ${nfc(x.v,1)} ${Number.isInteger(Math.round(x.v*10)/10)?pln(Math.round(x.v),'підхід','підходи','підходів'):'підходу'}</b> на тиждень - нижче цілі ${lo}.`);const N=Math.min(4,Math.ceil(lo-x.v));NX.push(`<b>${x.g}: +${N} ${pln(N,'підхід','підходи','підходів')} на тиждень</b>${e?` (${esc(e)})`:''}.<br><i>Чому: найбільший розрив до цілі; більше підходів на тиждень - більший ріст (Schoenfeld 2017; Pelland 2026).</i>`)}});
+ M.lifts.filter(x=>x.st==='down').slice(0,1).forEach(x=>LG2.push(`<b>${esc(x.label)} ▼${Math.round(-x.ch*100)}%:</b> перевір, чи не змінились умови (вага, суперсет, легкий день); ${x.n} ${pln(x.n,'тренування','тренування','тренувань')} - мало для висновку (оцінка).`));
+ if(RI.n&&RI.lo/RI.n>.5)NX.push(`<b>Базові вправи - 1-2 повтори в запасі</b>, 0-1 - лише в ізоляції.<br><i>Чому: зараз ${pc('lo')}% підходів на 0-1. Ріст біля відмови і за 1-3 повтори в запасі майже однаковий, а втоми від відмови більше (Robinson 2024; Refalo 2023).</i>`);
+ if(M.early)H.push('<p><i>Висновки «де відстаю» і «що зробити» - коли в періоді буде щонайменше 3 тренування і тиждень даних.</i></p>');if(LG2.length)H.push('<h2>Де відстаю</h2><ol>'+LG2.slice(0,4).map(x=>`<li>${x}</li>`).join('')+'</ol>');
+ if(NX.length)H.push('<h2>Що зробити наступного тижня</h2><ol>'+NX.slice(0,3).map(x=>`<li>${x}</li>`).join('')+'</ol>');
+ H.push('<h3>Як читати</h3><p><i>Робочий підхід - до відмови лишалось 0-4 повтори (RIR). Підхід, де м’яз допоміжний, рахується як 0,5. 1ПМ = вага × (1 + (повтори + RIR) / 30), формула Еплі. Ціль обсягу - Налаштування → Рекомендації.</i></p><p><i>Джерела: Schoenfeld 2017; Pelland 2026; Refalo 2023; Robinson 2024; Grgic 2020 (шум 1ПМ ±5%).</i></p>');
+ const html='<div>'+H.join('')+'</div>';
+ const text=html.replace(/<br>/g,'\n').replace(/<\/(p|h1|h2|h3|li|tr)>/g,'\n').replace(/<\/td><td[^>]*>/g,'\t').replace(/<li>/g,'- ').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\n{2,}/g,'\n').trim();
+ return{html,text}}
+function repYm(){const ms=monthsList();return ms.includes(S.ui.month)?S.ui.month:ms[0]}
+function repSheet(k){const ym=repYm(),P=(S.settings.repPer||{})[k],mn=MON[+ym.slice(5)-1].toLowerCase()+' '+ym.slice(0,4);
+ if(k==='nc'){const v=P==='4w'?'4w':'m';openSheet(`<h3>Звіт у Нотатки</h3><div class="seg" id="rep-per-nc">${[['m',mn[0].toUpperCase()+mn.slice(1)],['4w','Останні 4 тижні']].map(([x,l])=>`<button class="${v===x?'on':''}" data-a="rep-per" data-k="nc" data-v="${x}">${l}</button>`).join('')}</div><p class="muted small" style="margin:0">Головне, м’язи проти цілі, сила, де відстаю і що зробити наступного тижня. У Нотатках вставиться таблицями.</p><button class="btn pri full" data-a="rep-go" data-k="nc">Скопіювати</button>`,'repnc');return}
+ const v=P==='one'?'one':'all';const canSh=!!(navigator.canShare&&window.File);openSheet(`<h3>Звіт в Excel</h3><div class="seg" id="rep-per-xl">${[['all','Усі місяці'],['one','Лише '+mn]].map(([x,l])=>`<button class="${v===x?'on':''}" data-a="rep-per" data-k="xl" data-v="${x}">${l}</button>`).join('')}</div><p class="muted small" style="margin:0">Вкладки внизу: «Підсумок», місяці, «Вправи», «Пояснення». Таблиці з кольорами і графіки. Відкривається в Excel і Numbers; «Поділитися» - зберегти у Файли або відкрити одразу.</p>${AND||!canSh?'':`<button class="btn pri full" data-a="rep-go" data-k="xl" data-v="share">Поділитися</button>`}<button class="btn ${AND||!canSh?'pri ':''}full" data-a="rep-go" data-k="xl" data-v="save">Зберегти файл</button>`,'repxl')}
+async function repGo(k,how){const ym=repYm(),P=(S.settings.repPer||{})[k];
+ if(k==='nc'){const o=repNotes(repModel(P==='4w'?'4w':'m',ym));closeSheet();await clipHTML(o.html,o.text);return}
+ let bin;{const ms=P==='one'?[ym]:monthsList();if(!mainW().some(w=>ms.some(m=>w.date.startsWith(m)))){toast('За вибраний період тренувань немає');return}}try{const ms=P==='one'?[ym]:monthsList();bin=repXlsx(repXM(ms),{months:ms})}catch(e){toast('Не вдалося зібрати файл Excel');return}
+ const nm='trenuvannia-zvit-'+(P==='one'?ym:todayStr())+'.xlsx',MIME='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';closeSheet();
+ if(AND){if(AND.saveBin){let b='';for(let i=0;i<bin.length;i+=32768)b+=String.fromCharCode.apply(null,bin.subarray(i,i+32768));try{(how==='share'&&AND.shareBin?AND.shareBin:AND.saveBin).call(AND,nm,btoa(b),MIME)}catch(e){toast('Не вдалося зберегти файл')}}else toast('Онови застосунок, щоб зберігати Excel');return}
+ const f=window.File?new File([bin],nm,{type:MIME}):null;if(how==='share'&&f&&navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Звіт тренувань'});return}catch(e){if(e&&e.name==='AbortError')return}}
+ const u=URL.createObjectURL(new Blob([bin],{type:MIME})),a=document.createElement('a');a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast('Файл збережено: '+nm)}
+
+/* v58.8: звіт Excel - генератор xlsx58.js (вбудовано з tools/xlsx58.js; власний OOXML + zip без стиснення, без бібліотек) */
+const XL58=(()=>{
+/* xlsx58.js - мінімальний генератор .xlsx без залежностей (Safari 14+, Chrome, Android WebView).
+zipStore(files)->Uint8Array;xlsxWrite(book)->Uint8Array;repXlsx(M,opts)->Uint8Array*/
+/* zip (store, CRC32, UTF-8 імена) */
+var CRC_T=(function(){var t=new Uint32Array(256);for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(d){var c=-1;for(var i=0;i<d.length;i++)c=CRC_T[(c^d[i])&255]^(c>>>8);return(c^-1)>>>0;}
+function zipStore(files){
+var enc=new TextEncoder(),parts=[],cen=[],off=0,now=new Date();
+var tm=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
+var dd=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
+files.forEach(f=>{
+var nm=enc.encode(f.name),d=typeof f.data==='string'?enc.encode(f.data):f.data,c=crc32(d);
+var h=new DataView(new ArrayBuffer(30)),H=(o,v,w)=>w?h.setUint32(o,v,true):h.setUint16(o,v,true);
+H(0,0x04034b50,1);H(4,20);H(6,0x800);
+H(10,tm);H(12,dd);H(14,c,1);
+H(18,d.length,1);H(22,d.length,1);H(26,nm.length);
+parts.push(new Uint8Array(h.buffer),nm,d);
+var e=new DataView(new ArrayBuffer(46)),E=(o,v,w)=>w?e.setUint32(o,v,true):e.setUint16(o,v,true);
+E(0,0x02014b50,1);E(4,20);E(6,20);E(8,0x800);
+E(12,tm);E(14,dd);E(16,c,1);
+E(20,d.length,1);E(24,d.length,1);E(28,nm.length);E(42,off,1);
+cen.push(new Uint8Array(e.buffer),nm);
+off+=30+nm.length+d.length;
+});
+var cs=0;cen.forEach(a=>{cs+=a.length;});
+var z=new DataView(new ArrayBuffer(22));
+z.setUint32(0,0x06054b50,true);z.setUint16(8,files.length,true);z.setUint16(10,files.length,true);
+z.setUint32(12,cs,true);z.setUint32(16,off,true);
+var all=parts.concat(cen,[new Uint8Array(z.buffer)]),out=new Uint8Array(off+cs+22),p=0;
+all.forEach(a=>{out.set(a,p);p+=a.length;});
+return out;
+}
+/* OOXML */
+function xEsc(s){return String(s).replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g,'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function xCol(c){var s='';c++;while(c){var m=(c-1)%26;s=String.fromCharCode(65+m)+s;c=(c-m-1)/26;}return s;}/* 0-based */
+function xColN(s){var n=0;for(var i=0;i<s.length;i++)n=n*26+s.charCodeAt(i)-64;return n-1;}
+function xSheetName(n){return String(n).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31);}
+function xQ(n){return"'"+n.replace(/'/g,"''")+"'";}/* ім'я аркуша у формулі */
+var OX='http://schemas.openxmlformats.org/',AV='application/vnd.openxmlformats-officedocument.',NS_M=OX+'spreadsheetml/2006/main',NS_R=OX+'officeDocument/2006/relationships';
+var NS_P=OX+'package/2006/relationships',NS_C=OX+'drawingml/2006/chart',NS_A=OX+'drawingml/2006/main';
+var XH='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+function xRels(list){return XH+'<Relationships xmlns="'+NS_P+'">'+list.map((r,i)=>'<Relationship Id="rId'+(i+1)+'" Type="'+NS_R+'/'+r[0]+'" Target="'+r[1]+'"/>').join('')+'</Relationships>';}
+/* стилі: s у клітинці - ключ book.styles або об'єкт {bold,size,color,fill,numFmt,align,valign,wrap,border} */
+function xStyles(book){
+var fonts=[],fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'];
+var borders=['<border><left/><right/><top/><bottom/><diagonal/></border>'],fmts=[],xfs=[],dxfs=[],M={};
+var BI={'General':0,'0':1,'0.00':2,'#,##0':3,'0%':9,'@':49};
+function get(arr,x){var i=arr.indexOf(x);return i<0?arr.push(x)-1:i;}
+function xf(s){
+if(s==null)return 0;
+if(typeof s==='string')s=(book.styles||{})[s]||{};
+var k=JSON.stringify(s);if(M[k]!=null)return M[k];
+var nf=0;if(s.numFmt){nf=BI[s.numFmt];if(nf==null)nf=164+get(fmts,s.numFmt);}
+var fo=get(fonts,'<font>'+(s.bold?'<b/>':'')+'<sz val="'+(s.size||10)+'"/><color rgb="FF'+(s.color||'000000')+'"/><name val="Arial"/><family val="2"/></font>');
+var fi=s.fill?get(fills,'<fill><patternFill patternType="solid"><fgColor rgb="FF'+s.fill+'"/><bgColor indexed="64"/></patternFill></fill>'):0;
+var bo=s.border?get(borders,'<border><left/><right/><top/><bottom style="thin"><color rgb="FF'+s.border+'"/></bottom><diagonal/></border>'):0;
+var al=(s.align||s.valign||s.wrap)?'<alignment'+(s.align?' horizontal="'+s.align+'"':'')+(s.valign?' vertical="'+s.valign+'"':'')+(s.wrap?' wrapText="1"':'')+'/>':'';
+return(M[k]=xfs.push('<xf numFmtId="'+nf+'" fontId="'+fo+'" fillId="'+fi+'" borderId="'+bo+'" xfId="0"'+
+(nf?' applyNumberFormat="1"':'')+(fo?' applyFont="1"':'')+(fi?' applyFill="1"':'')+(bo?' applyBorder="1"':'')+
+(al?' applyAlignment="1">'+al+'</xf>':'/>'))-1);
+}
+xf({});
+function dxf(r){return get(dxfs,'<dxf>'+(r.color?'<font><color rgb="FF'+r.color+'"/></font>':'')+(r.fill?'<fill><patternFill patternType="solid"><bgColor rgb="FF'+r.fill+'"/></patternFill></fill>':'')+'</dxf>');}
+function fmtOf(s){if(typeof s==='string')s=(book.styles||{})[s];return s&&s.numFmt||'General';}
+function xml(){
+function L(t,a){return'<'+t+' count="'+a.length+'">'+a.join('')+'</'+t+'>';}
+return XH+'<styleSheet xmlns="'+NS_M+'">'+
+(fmts.length?L('numFmts',fmts.map((f,i)=>'<numFmt numFmtId="'+(164+i)+'" formatCode="'+xEsc(f)+'"/>')):'')+
+L('fonts',fonts)+L('fills',fills)+L('borders',borders)+
+'<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+L('cellXfs',xfs)+
+'<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'+L('dxfs',dxfs)+
+'<tableStyles count="0" defaultTableStyle="TableStyleMedium9" defaultPivotStyle="PivotStyleLight16"/></styleSheet>';
+}
+return{xf:xf,dxf:dxf,fmtOf:fmtOf,xml:xml};
+}
+function xCellV(c){return c!=null&&typeof c==='object'?c.v:c;}
+/* діаграми: {type:'bar'|'barH'|'line'|'barLine', title, cats, series:[{name, ref, color, dash, line}], at:'A40'|from:{col,row}(0-based), to?, w,h (см), yTitle, yMin, yMax, labels, gap, blanks} */
+function xChart(ch,res){
+function TX(sz,b){return'<c:txPr><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="'+sz+'" b="'+(b?1:0)+'"><a:latin typeface="Arial"/></a:defRPr></a:pPr></a:p></c:txPr>';}
+function title(t,sz,rot){
+return'<c:title><c:tx><c:rich><a:bodyPr'+(rot?' rot="-5400000" vert="horz"':'')+'/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="'+sz+'" b="1"/></a:pPr><a:r><a:rPr lang="uk-UA" sz="'+sz+'" b="1"><a:latin typeface="Arial"/></a:rPr><a:t>'+xEsc(t)+'</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title>';
+}
+function fill(c){return'<a:solidFill><a:srgbClr val="'+c+'"/></a:solidFill>';}
+function cache(r,kind){
+var d=res(r),pts=d.vals.map((v,i)=>v==null||v===''?'':'<c:pt idx="'+i+'"><c:v>'+xEsc(v)+'</c:v></c:pt>').join('');
+if(kind==='s')return'<c:strRef><c:f>'+xEsc(r)+'</c:f><c:strCache><c:ptCount val="'+d.vals.length+'"/>'+pts+'</c:strCache></c:strRef>';
+return'<c:numRef><c:f>'+xEsc(r)+'</c:f><c:numCache><c:formatCode>'+xEsc(d.fmt)+'</c:formatCode><c:ptCount val="'+d.vals.length+'"/>'+pts+'</c:numCache></c:numRef>';
+}
+var catNum=res(ch.cats).vals.every(v=>typeof v==='number');
+var PAL=['4C78A8','F28E2B','59A14F','E15759','B07AA1','76B7B2','EDC948'];
+var horiz=ch.type==='barH',lbl=horiz;
+function ser(s,i){
+var col=s.color||PAL[i%PAL.length],isL=ch.type==='line'||s.line,x='<c:ser><c:idx val="'+i+'"/><c:order val="'+i+'"/><c:tx><c:v>'+xEsc(s.name||'')+'</c:v></c:tx>';
+if(isL)x+='<c:spPr><a:ln w="'+(s.dash?25400:22225)+'" cap="rnd">'+fill(col)+(s.dash?'<a:prstDash val="dash"/>':'')+'<a:round/></a:ln></c:spPr>'+
+(s.dash||ch.type!=='line'?'<c:marker><c:symbol val="none"/></c:marker>':'<c:marker><c:symbol val="circle"/><c:size val="5"/><c:spPr>'+fill(col)+'<a:ln>'+fill(col)+'</a:ln></c:spPr></c:marker>');
+else x+='<c:spPr>'+fill(col)+'</c:spPr><c:invertIfNegative val="0"/>';
+if(lbl&&!isL)x+='<c:dLbls><c:numFmt formatCode="0.0" sourceLinked="0"/><c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>'+TX(800)+'<c:dLblPos val="outEnd"/><c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>';
+x+='<c:cat>'+cache(ch.cats,catNum?'n':'s')+'</c:cat><c:val>'+cache(s.ref,'n')+'</c:val>';
+return x+(isL?'<c:smooth val="0"/>':'')+'</c:ser>';
+}
+var TK='<c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/>',AX='<c:axId val="5001"/><c:axId val="5002"/>',bars=[],lines=[];
+ch.series.forEach((s,i)=>{(ch.type==='line'||s.line?lines:bars).push(ser(s,i));});
+var plot='';
+if(bars.length)plot+='<c:barChart><c:barDir val="'+(horiz?'bar':'col')+'"/><c:grouping val="clustered"/><c:varyColors val="0"/>'+bars.join('')+'<c:gapWidth val="'+(horiz?60:80)+'"/>'+AX+'</c:barChart>';
+if(lines.length)plot+='<c:lineChart><c:grouping val="standard"/><c:varyColors val="0"/>'+lines.join('')+'<c:marker val="1"/>'+AX+'</c:lineChart>';
+var ln='<c:spPr><a:ln w="9525">'+fill('BFBFBF')+'</a:ln></c:spPr>';
+var cat='<c:catAx><c:axId val="5001"/><c:scaling><c:orientation val="'+(horiz?'maxMin':'minMax')+'"/></c:scaling><c:delete val="0"/><c:axPos val="'+(horiz?'l':'b')+'"/>'+
+(catNum?'<c:numFmt formatCode="'+xEsc(res(ch.cats).fmt)+'" sourceLinked="0"/>':'')+TK+ln+TX(800)+
+'<c:crossAx val="5002"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>';
+var val='<c:valAx><c:axId val="5002"/><c:scaling><c:orientation val="minMax"/>'+(ch.yMax!=null?'<c:max val="'+ch.yMax+'"/>':'')+'<c:min val="'+(ch.yMin!=null?ch.yMin:0)+'"/></c:scaling><c:delete val="0"/><c:axPos val="'+(horiz?'t':'l')+'"/>'+
+(horiz?'':'<c:majorGridlines><c:spPr><a:ln w="6350">'+fill('E0E0E0')+'</a:ln></c:spPr></c:majorGridlines>')+(ch.yTitle?title(ch.yTitle,900,1):'')+
+'<c:numFmt formatCode="General" sourceLinked="0"/>'+TK+(horiz?ln:'<c:spPr><a:ln><a:noFill/></a:ln></c:spPr>')+TX(800)+
+'<c:crossAx val="5001"/><c:crosses val="autoZero"/><c:crossBetween val="between"/></c:valAx>';
+var leg=ch.series.length>1?'<c:legend><c:legendPos val="b"/><c:overlay val="0"/>'+TX(800)+'</c:legend>':'';
+return XH+'<c:chartSpace xmlns:c="'+NS_C+'" xmlns:a="'+NS_A+'" xmlns:r="'+NS_R+'"><c:roundedCorners val="0"/><c:chart>'+
+(ch.title?title(ch.title,1200)+'<c:autoTitleDeleted val="0"/>':'<c:autoTitleDeleted val="1"/>')+'<c:plotArea><c:layout/>'+plot+cat+val+'</c:plotArea>'+leg+
+'<c:plotVisOnly val="1"/><c:dispBlanksAs val="'+(ch.blanks||'gap')+'"/></c:chart><c:spPr>'+fill('FFFFFF')+'<a:ln w="9525">'+fill('D9D9D9')+'</a:ln></c:spPr>'+TX(900)+'</c:chartSpace>';
+}
+function xlsxWrite(book){
+var st=xStyles(book),sst=[],sIdx={},files=[],ct=[],wbRels=[],defs=[],nChart=0,nDr=0;
+var sheets=book.sheets.map(s=>Object.assign({},s,{name:xSheetName(s.name)}));
+function sstI(t){t=String(t);if(sIdx[t]==null)sIdx[t]=sst.push(t)-1;return sIdx[t];}
+function res(ref){/* 'Аркуш'!$A$1:$A$9 -> значення і формат */
+var m=/^(?:'((?:[^']|'')+)'|([^!]+))!\$?([A-Z]+)\$?(\d+)(?::\$?([A-Z]+)\$?(\d+))?$/.exec(ref);
+if(!m)throw new Error('ref '+ref);
+var nm=(m[1]||m[2]).replace(/''/g,"'"),sh=sheets.filter(s=>s.name===nm)[0],vals=[],fmt='General';
+var c1=xColN(m[3]),r1=+m[4]-1,c2=m[5]?xColN(m[5]):c1,r2=m[6]?+m[6]-1:r1;
+for(var r=r1;r<=r2;r++)for(var c=c1;c<=c2;c++){
+var cell=sh&&sh.rows[r]&&sh.rows[r][c];vals.push(xCellV(cell));
+if(cell&&cell.s&&fmt==='General')fmt=st.fmtOf(cell.s);
+}
+return{vals:vals,fmt:fmt};
+}
+sheets.forEach((sh,si)=>{
+var n=si+1,rels=[],maxC=0,data='';
+sh.rows.forEach((row,r)=>{
+if(!row)return;
+var cells='';
+row.forEach((c,ci)=>{
+if(c===undefined)return;
+var o=c!==null&&typeof c==='object'?c:{v:c},v=o.v,s=st.xf(o.s),a='<c r="'+xCol(ci)+(r+1)+'"'+(s?' s="'+s+'"':'');
+if(typeof v==='number'&&!isFinite(v))v=null;
+maxC=Math.max(maxC,ci);
+if(o.f!=null){var f='<f>'+xEsc(String(o.f).replace(/^=/,''))+'</f>';cells+=v==null?a+'>'+f+'</c>':typeof v==='number'?a+'>'+f+'<v>'+v+'</v></c>':a+' t="str">'+f+'<v>'+xEsc(v)+'</v></c>';}
+else if(v==null||v==='')cells+=a+'/>';
+else if(typeof v==='number')cells+=a+'><v>'+v+'</v></c>';
+else cells+=a+' t="s"><v>'+sstI(v)+'</v></c>';
+});
+var h=sh.rowH&&sh.rowH[r+1];
+data+='<row r="'+(r+1)+'"'+(h?' ht="'+h+'" customHeight="1"':'')+'>'+cells+'</row>';
+});
+var fz=sh.freeze&&/^([A-Z]+)(\d+)$/.exec(sh.freeze),view='<sheetView showGridLines="0"'+(si?'':' tabSelected="1"')+' workbookViewId="0">';
+if(fz){
+var xs=xColN(fz[1]),ys=+fz[2]-1,pane=xs&&ys?'bottomRight':ys?'bottomLeft':'topRight';
+view+='<pane'+(xs?' xSplit="'+xs+'"':'')+(ys?' ySplit="'+ys+'"':'')+' topLeftCell="'+sh.freeze+'" activePane="'+pane+'" state="frozen"/><selection pane="'+pane+'" activeCell="'+sh.freeze+'" sqref="'+sh.freeze+'"/>';
+}
+view+='</sheetView>';
+var cols=(sh.colW||[]).map((w,i)=>w?'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>':'').join('');
+var pr=1,cf=(sh.cf||[]).map(g=>{
+return'<conditionalFormatting sqref="'+g.ref+'">'+g.rules.map(r=>{
+return'<cfRule type="'+(r.type||'cellIs')+'" dxfId="'+st.dxf(r)+'" priority="'+(pr++)+'"'+(r.op?' operator="'+r.op+'"':'')+'>'+
+[].concat(r.f).map(f=>'<formula>'+xEsc(f)+'</formula>').join('')+'</cfRule>';
+}).join('')+'</conditionalFormatting>';
+}).join('');
+if(sh.filter)defs.push('<definedName name="_xlnm._FilterDatabase" localSheetId="'+si+'" hidden="1">'+xEsc(xQ(sh.name)+'!'+sh.filter.replace(/([A-Z]+)(\d+)/g,'$$$1$$$2'))+'</definedName>');
+var drw='';
+if(sh.charts&&sh.charts.length){
+nDr++;var dRels=[],anchors='';
+sh.charts.forEach((ch,i)=>{
+nChart++;dRels.push(['chart','../charts/chart'+nChart+'.xml']);
+files.push({name:'xl/charts/chart'+nChart+'.xml',data:xChart(ch,res)});
+ct.push(['/xl/charts/chart'+nChart+'.xml',AV+'drawingml.chart+xml']);
+var fr=ch.from;if(ch.at){var am=/^([A-Z]+)(\d+)$/.exec(ch.at);fr={col:xColN(am[1]),row:+am[2]-1};}
+function pt(t,p){return'<xdr:'+t+'><xdr:col>'+p.col+'</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>'+p.row+'</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:'+t+'>';}
+var gf='<xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="'+(i+2)+'" name="Chart '+(i+1)+'"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm><a:graphic><a:graphicData uri="'+NS_C+'"><c:chart xmlns:c="'+NS_C+'" r:id="rId'+(i+1)+'"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/>';
+anchors+=ch.to?'<xdr:twoCellAnchor editAs="oneCell">'+pt('from',fr)+pt('to',ch.to)+gf+'</xdr:twoCellAnchor>'
+:'<xdr:oneCellAnchor>'+pt('from',fr)+'<xdr:ext cx="'+Math.round((ch.w||16)*360000)+'" cy="'+Math.round((ch.h||9)*360000)+'"/>'+gf+'</xdr:oneCellAnchor>';
+});
+files.push({name:'xl/drawings/drawing'+nDr+'.xml',data:XH+'<xdr:wsDr xmlns:xdr="'+OX+'drawingml/2006/spreadsheetDrawing" xmlns:a="'+NS_A+'" xmlns:r="'+NS_R+'">'+anchors+'</xdr:wsDr>'});
+files.push({name:'xl/drawings/_rels/drawing'+nDr+'.xml.rels',data:xRels(dRels)});
+ct.push(['/xl/drawings/drawing'+nDr+'.xml',AV+'drawing+xml']);
+rels.push(['drawing','../drawings/drawing'+nDr+'.xml']);drw='<drawing r:id="rId'+rels.length+'"/>';
+}
+var dim=sh.rows.length?'A1:'+xCol(maxC)+sh.rows.length:'A1';
+files.push({name:'xl/worksheets/sheet'+n+'.xml',data:XH+'<worksheet xmlns="'+NS_M+'" xmlns:r="'+NS_R+'"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="'+dim+'"/><sheetViews>'+view+'</sheetViews><sheetFormatPr defaultRowHeight="13.8"/>'+
+(cols?'<cols>'+cols+'</cols>':'')+'<sheetData>'+data+'</sheetData>'+(sh.filter?'<autoFilter ref="'+sh.filter+'"/>':'')+cf+
+'<pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="'+(sh.landscape?'landscape':'portrait')+'" fitToWidth="1" fitToHeight="'+(sh.fitH!=null?sh.fitH:1)+'"/>'+drw+'</worksheet>'});
+if(rels.length)files.push({name:'xl/worksheets/_rels/sheet'+n+'.xml.rels',data:xRels(rels)});
+ct.push(['/xl/worksheets/sheet'+n+'.xml',AV+'spreadsheetml.worksheet+xml']);
+wbRels.push(['worksheet','worksheets/sheet'+n+'.xml']);
+});
+wbRels.push(['styles','styles.xml'],['sharedStrings','sharedStrings.xml']);
+var wb=XH+'<workbook xmlns="'+NS_M+'" xmlns:r="'+NS_R+'"><workbookPr/><bookViews><workbookView activeTab="0"/></bookViews><sheets>'+
+sheets.map((s,i)=>'<sheet name="'+xEsc(s.name)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('')+'</sheets>'+
+(defs.length?'<definedNames>'+defs.join('')+'</definedNames>':'')+'<calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>';
+var ss=XH+'<sst xmlns="'+NS_M+'" count="'+sst.length+'" uniqueCount="'+sst.length+'">'+sst.map(t=>'<si><t xml:space="preserve">'+xEsc(t)+'</t></si>').join('')+'</sst>';
+ct.push(['/xl/workbook.xml',AV+'spreadsheetml.sheet.main+xml'],['/xl/styles.xml',AV+'spreadsheetml.styles+xml'],
+['/xl/sharedStrings.xml',AV+'spreadsheetml.sharedStrings+xml']);
+var types=XH+'<Types xmlns="'+OX+'package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'+
+ct.map(c=>'<Override PartName="'+c[0]+'" ContentType="'+c[1]+'"/>').join('')+'</Types>';
+return zipStore([{name:'[Content_Types].xml',data:types},
+{name:'_rels/.rels',data:XH+'<Relationships xmlns="'+NS_P+'"><Relationship Id="rId1" Type="'+NS_R+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+{name:'xl/workbook.xml',data:wb},{name:'xl/_rels/workbook.xml.rels',data:xRels(wbRels)},
+{name:'xl/styles.xml',data:st.xml()},{name:'xl/sharedStrings.xml',data:ss}].concat(files));
+}
+/* звіт застосунку */
+function rD(s){var a=s.split('-');return Date.UTC(+a[0],a[1]-1,+a[2]);}
+var rS=t=>new Date(t).toISOString().slice(0,10);
+var rSer=s=>(rD(s)-Date.UTC(1899,11,30))/864e5;
+var rDM=(s,y)=>s.slice(8,10)+'.'+s.slice(5,7)+(y?'.'+s.slice(0,4):'');
+function rMonday(s){var t=rD(s);return rS(t-((new Date(t).getUTCDay()+6)%7)*864e5);}
+var rAdd=(s,n)=>rS(rD(s)+n*864e5);
+var rnd1=v=>Math.round(v*10)/10;
+function rHM(v){if(v==null)return null;var h=Math.floor(v);return(h+Math.round((v-h)*100)/60)/24;}
+var rSum=a=>a.reduce((t,x)=>t+x,0);
+var rAvg=a=>a.length?rSum(a)/a.length:'-';
+function rL(c){return xCol(c-1);}/* 1-based */
+function rSh(name){
+var s={name:name,rows:[],colW:[],rowH:{},cf:[],charts:[]};
+s.put=(r,c,v,st)=>{var row=s.rows[r-1]||(s.rows[r-1]=[]);row[c-1]=v!==null&&typeof v==='object'?Object.assign({s:st},v):st?{v:v,s:st}:v;};
+s.head=(r,cols)=>{cols.forEach((t,i)=>{s.put(r,1+i,t,RZ.H);});s.rowH[r]=28;};
+s.title=(t,sub)=>{s.put(1,1,t,RZ.T);s.put(2,1,sub,RZ.SUB);s.rowH[1]=22;};
+return s;
+}
+var RZ={T:{bold:1,size:16},SUB:{color:'666666'},SEC:{bold:1,size:12},H:{bold:1,fill:'E8ECF2',wrap:1,valign:'center',border:'C9CED6'},
+WARN:{bold:1,color:'B45309'},B:{bold:1},WRAP:{wrap:1,valign:'top'},BT:{bold:1,valign:'top'}};
+var rNF=(f,x)=>Object.assign({numFmt:f},x||{});
+var R_MON=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+var R_TYPES={weight:'Штанга / тренажер',db1:'1 гантель',db2:'2 гантелі',bw:'Власна вага',band:'Гума',trx:'TRX'};
+var R_WT={full:'Все тіло',upper:'Верх',legs:'Ноги',grp:'Окремі групи'};
+var R_ST={up:'▲ росте',same:'= стабільно',down:'▼ спад',stall:'застій',few:'замало даних (<3)'};
+var R_SHORT={'Жим гантелей на похилій лаві':'Жим на похилій','Тяга гантелей з упором грудьми на лаву':'Тяга з упором','Румунська тяга з двома гантелями':'Румунська тяга',
+'Болгарські спліт-присідання з гантелями':'Болгарські','Махи гантелей у сторони':'Махи в сторони'};
+var rShort=l=>{var w=l.split(' ');return R_SHORT[l]||(l.length<=20?l:w.slice(0,w[1].length<=2?3:2).join(' '));};
+function rZone(sh,ref,lo,hi,half){
+sh.cf.push({ref:ref,rules:[{op:'lessThan',f:''+half,fill:'F8D7D3'},{op:'lessThan',f:''+lo,fill:'FCEBC9'},
+{op:'between',f:[''+lo,''+hi],fill:'D7EFD9'},{op:'greaterThan',f:''+hi,fill:'DCE8F7'}]});
+}
+function rArrowCF(sh,col,a,b){
+sh.cf.push({ref:col+a+':'+col+b,rules:[{type:'expression',f:'LEFT('+col+a+',1)="▲"',fill:'D7EFD9'},{type:'expression',f:'LEFT('+col+a+',1)="▼"',fill:'F8D7D3'}]});
+}
+var R_GS=['замало даних','↓↓ мало','↓ нижче цілі','✓ у цілі','↑ понад ціль'],rStatus=(n,a,lo,hi,half)=>R_GS[n<3?0:a<half?1:a<lo?2:a<=hi?3:4];
+/* opts: {months:['2026-11','2026-10'] | '2026-11', today:'2026-11-01', lifts:[назви для «Сила» на «Підсумку»], morning:'текст'} */
+function repXlsx(M,opts){
+opts=opts||{};
+var LO=M.lo,HI=M.hi,HALF=M.half,VN={min:'Мінімум',mod:'Помірний',max:'Максимум'}[M.volT]||M.volT;
+var today=opts.today||(function(){var d=new Date();return rS(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));})();
+var MS=[].concat(opts.months||Object.keys(M.months)).sort().reverse();
+var ALL=M.workouts.slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+var first=ALL.length?ALL[0].date:today;
+MS=MS.filter(ym=>ALL.some(w=>w.date.slice(0,7)===ym));
+if(!MS.length)throw new Error('Немає тренувань за вибраний період');
+var minor=M.minor||[],ORDER=M.groupsList.filter(g=>minor.indexOf(g)<0);
+var UP=ORDER.filter(g=>['Груди','Спина','Плечі','Руки'].indexOf(M.reg[g])>=0),LEGS=ORDER.filter(g=>M.reg[g]==='Ноги');
+ORDER=UP.concat(LEGS,ORDER.filter(g=>UP.indexOf(g)<0&&LEGS.indexOf(g)<0));
+var SES={};M.ses.forEach(o=>{SES[o.label]=o;});
+function mInfo(ym){
+var y=+ym.slice(0,4),mo=+ym.slice(5,7),last=rS(Date.UTC(y,mo,0)),end=last<today?last:today,st=ym+'-01';
+if(first>st)st=first;
+var days=(rD(end)-rD(st))/864e5+1;
+return{name:R_MON[mo-1]+' '+y,start:st,end:end,B6:Math.round(Math.max(1,days/7)*1000)/1000,cur:end===today&&last!==today};
+}
+var info={};MS.forEach(ym=>{info[ym]=mInfo(ym);});
+var P0=info[MS[MS.length-1]].start,P1=info[MS[0]].end;
+var WP=ALL.filter(w=>w.date>=P0&&w.date<=P1);
+var tN=n=>n+' '+(n%10===1&&n%100!==11?'тренування':'тренувань');
+var NOTE={color:'666666'};
+/* місяць */
+function month(ym){
+var I=info[ym],sh=rSh(I.name),o=M.months[ym]||{},W=WP.filter(w=>w.date.slice(0,7)===ym);
+var n=W.length,r0=19,r1=r0+n-1,B6=I.B6;
+sh.title(I.name+(I.cur?' (триває)':''),rDM(I.start)+'-'+rDM(I.end,1)+' · ціль обсягу «'+VN+'»: '+LO+'-'+HI+' робочих підходів на групу за тиждень · ці дані порахував застосунок');
+if(I.cur&&n<3)sh.put(3,1,'Місяць тільки почався ('+tN(n)+'): висновки про групи і силу - після першого тижня і 3 тренувань.',RZ.WARN);
+sh.put(4,1,'Ключові цифри',RZ.SEC);
+var hard=W.map(w=>rnd1(w.hard)),dur=W.filter(w=>w.dur!=null).map(w=>w.dur);
+var dW=W.filter(w=>w.dur>0),sH=rSum(dW.map(w=>rnd1(w.hard)));
+var rir=o.rir||{},D='D'+r0+':D'+r1,E='E'+r0+':E'+r1;
+var K=[['Тренувань',{f:'COUNTA(A'+r0+':A'+r1+')',v:n},'0'],
+['Тижнів у періоді',B6,'0.0'],
+['Робочих підходів на тиждень',{f:'SUM('+E+')/B6',v:rSum(hard)/B6},'0'],
+['Середня тривалість, хв',{f:'IFERROR(AVERAGE('+D+'),"-")',v:rAvg(dur)},'0'],
+['Хв на робочий підхід',{f:'IFERROR(SUMIF('+D+',">0")/SUMIFS('+E+','+D+',">0"),"-")',v:sH?rSum(dW.map(w=>w.dur))/sH:'-'},'0.0'],
+['Тоннаж, т',{f:'SUM(F'+r0+':F'+r1+')/1000',v:rSum(W.map(w=>Math.round(w.vol)))/1000},'0.0'],
+['Самопочуття, з 10',{f:'IFERROR(AVERAGE(G'+r0+':G'+r1+'),"-")',v:rAvg(W.filter(w=>w.well!=null).map(w=>w.well))},'0.0'],
+['Сон, год:хв',{f:'IFERROR(AVERAGE(H'+r0+':H'+r1+'),"-")',v:rAvg(W.filter(w=>w.sleep!=null).map(w=>rHM(w.sleep)))},'[h]:mm'],
+['Підходів з 0-1 у запасі',rir.n?rir.lo/rir.n:0,'0%'],['Ціль від, підходів',LO,'0'],['Ціль до, підходів',HI,'0']];
+K.forEach((k,i)=>{sh.put(5+i,1,k[0]);sh.put(5+i,2,k[1],rNF(k[2],{bold:1,align:'right'}));});
+sh.put(r0-2,1,'Тренування',RZ.SEC);
+sh.head(r0-1,['Тренування','Дата','Тип','Хв','Робочі підходи','Тоннаж, кг','Самопо- чуття','Сон','Готовність Garmin','sRPE','Форма дня, %']);
+var FM=[null,rNF('dd.mm',{align:'left'}),null,'0','0.0','#,##0','0','[h]:mm','0','0','0'];
+W.forEach((w,i)=>{
+[w.name,rSer(w.date),(R_WT[w.wtype]||'')+(w.diff==='L'?' · легке':''),w.dur,rnd1(w.hard),Math.round(w.vol),w.well,rHM(w.sleep),w.gReady,w.srpe,w.perf?Math.round(w.perf):null]
+.forEach((v,j)=>{if(v!=null)sh.put(r0+i,1+j,v,typeof FM[j]==='string'?rNF(FM[j]):FM[j]);});
+});
+/* групи по тижнях */
+var gr0=r1+3,wks=[];
+W.forEach(w=>{var k=rMonday(w.date);if(wks.indexOf(k)<0)wks.push(k);});wks.sort();
+sh.put(gr0,1,'М’язи: робочих підходів на тиждень',RZ.SEC);
+var lab=wks.map(k=>{var a=k>I.start?k:I.start,e=rAdd(k,6),b=e<I.end?e:I.end;return a!==b?a.slice(8)+'-'+rDM(b):rDM(a);});
+sh.head(gr0+1,['Група'].concat(lab,['Середнє','Стан']));
+var nw=wks.length,cZ=1+nw,cAvg=cZ+1;
+ORDER.forEach((g,i)=>{
+var r=gr0+2+i,vs=wks.map(k=>rnd1(rSum(W.filter(w=>rMonday(w.date)===k).map(w=>w.groups[g]||0))));
+sh.put(r,1,g);vs.forEach((v,j)=>{sh.put(r,2+j,v,rNF('0.0'));});
+var a=rSum(vs)/B6,A=rL(cAvg)+r;
+sh.put(r,cAvg,{f:'SUM(B'+r+':'+rL(cZ)+r+')/$B$6',v:a},rNF('0.0',{bold:1}));
+sh.put(r,cAvg+1,{f:'IF($B$5<3,"'+R_GS[0]+'",IF('+A+'<'+HALF+',"'+R_GS[1]+'",IF('+A+'<$B$14,"'+R_GS[2]+'",IF('+A+'<=$B$15,"'+R_GS[3]+'","'+R_GS[4]+'"))))',v:rStatus(n,a,LO,HI,HALF)});
+});
+var gE=gr0+1+ORDER.length;
+if(n>=3)rZone(sh,'B'+(gr0+2)+':'+rL(cAvg)+gE,'$B$14','$B$15',HALF);
+sh.put(gE+1,1,'Колір: червоний - менше '+HALF+', жовтий - нижче цілі, зелений - у цілі '+LO+'-'+HI+', синій - понад ціль. Допоміжний м’яз = 0,5 підходу.',NOTE);
+/* сила */
+var s0=gE+4,lifts=o.lifts||[],rk={up:0,same:1,stall:1,down:2,few:3};
+sh.put(s0,1,'Сила: 1ПМ по вправах (перше → останнє тренування місяця)',RZ.SEC);
+sh.head(s0+1,['Вправа','Трену- вань','Перший','Останній','Найкращий','Одиниці','Зміна','Стан']);
+var some=lifts.some(x=>x.st!=='few');
+var L2=(some?lifts.filter(x=>x.st!=='few'):lifts.slice(0,5)).slice().sort((a,b)=>rk[a.st]-rk[b.st]||b.n-a.n);
+L2.forEach((x,i)=>{
+var r=s0+2+i,s=((SES[x.label]||{}).ses||[]).filter(q=>q.score&&q.d.slice(0,7)===ym);
+var f0=s.length?rnd1(s[0].score):rnd1(x.best),fl=s.length?rnd1(s[s.length-1].score):rnd1(x.best),nf=x.reps?'0':'0.0';
+sh.put(r,1,x.label);sh.put(r,2,x.n);sh.put(r,3,f0,rNF(nf));sh.put(r,4,fl,rNF(nf));sh.put(r,5,rnd1(x.best),rNF(nf));
+sh.put(r,6,x.reps?'повтори':'кг');
+sh.put(r,7,{f:'IF(B'+r+'<2,"-",D'+r+'/C'+r+'-1)',v:x.n<2?'-':fl/f0-1},rNF('+0%;-0%;0%',{align:'right'}));
+sh.put(r,8,R_ST[x.st]||x.st);
+});
+var sE=s0+1+L2.length;
+if(L2.length)rArrowCF(sh,'H',s0+2,sE);
+sh.put(sE+1,1,(some?'Тут - вправи з 3+ тренуваннями ('+L2.length+' з '+lifts.length+'); усі - на аркуші «Вправи». ':'Ще жодна вправа не має 3 тренувань у місяці - показано перші '+L2.length+'. ')+
+'1ПМ = вага × (1 + (повтори + RIR) / 30), Еплі. Гантелі - одна гантель; бруси, турнік - з вагою тіла. Зміна до ±5% - шум (Grgic 2020). Висновок - від 3 тренувань.',NOTE);
+var Q=xQ(xSheetName(I.name))+'!',ch0=sE+3;
+sh.charts.push({type:'barH',title:'Підходів на тиждень (ціль '+LO+'-'+HI+')',cats:Q+'$A$'+(gr0+2)+':$A$'+gE,
+series:[{name:'Середнє',ref:Q+'$'+rL(cAvg)+'$'+(gr0+2)+':$'+rL(cAvg)+'$'+gE,color:'4C78A8'}],at:'A'+ch0,w:16,h:9});
+if(n>=2)sh.charts.push({type:'bar',title:'Робочі підходи за тренування',cats:Q+'$B$'+r0+':$B$'+r1,series:[{name:'Робочі підходи',ref:Q+'$E$'+r0+':$E$'+r1,color:'59A14F'}],at:'A'+(ch0+19),w:16,h:7});
+sh.colW=[34,9,13,7,9,10,13,9,10,7,9];
+sh.freeze='B4';
+return{sh:sh,Q:Q,r0:r0,r1:r1,n:n,hard:rSum(hard),vol:rSum(W.map(w=>Math.round(w.vol)))/1000,dur:dur};
+}
+var MO=MS.map(month);
+/* Підсумок */
+var sh=rSh('Підсумок'),days=(rD(P1)-rD(P0))/864e5+1,B6=Math.round(days/7*1000)/1000;
+sh.title('Щоденник тренувань: підсумок',rDM(P0)+'-'+rDM(P1,1)+' · усі тренування, крім ранкової зарядки · ціль «'+VN+'»: '+LO+'-'+HI+' підходів на групу за тиждень');
+sh.put(4,1,'Ключові цифри',RZ.SEC);
+var sum=k=>rSum(MO.map(k)),durA=[].concat.apply([],MO.map(m=>m.dur));
+var stp={up:0,n:0},morn=0;
+MS.forEach(ym=>{var o=M.months[ym]||{};if(o.steps){stp.up+=o.steps.up;stp.n+=o.steps.n;}if(o.morning)morn+=o.morning.n||0;});
+var K=[['Тренувань',{f:MO.map(m=>m.Q+'B5').join('+'),v:sum(m=>m.n)},'0'],
+['Тижнів',B6,'0.0'],
+['Робочих підходів на тиждень',{f:'('+MO.map(m=>m.Q+'B7*'+m.Q+'B6').join('+')+')/B6',v:sum(m=>m.hard)/B6},'0'],
+['Тоннаж, т',{f:MO.map(m=>m.Q+'B10').join('+'),v:sum(m=>m.vol)},'0.0'],
+['Середня тривалість, хв',{f:'IFERROR(AVERAGE('+MO.map(m=>m.Q+'D'+m.r0+':D'+m.r1).join(',')+'),"-")',v:rAvg(durA)},'0'],
+['Кроків уперед',stp.up+' з '+stp.n,'@']];
+if(opts.morning||morn)K.push(['Ранкова зарядка',opts.morning||morn+' днів','@']);
+K.forEach((k,i)=>{sh.put(5+i,1,k[0]);sh.put(5+i,2,k[1],rNF(k[2],{bold:1,align:'left'}));});
+var wks=[];WP.forEach(w=>{var k=rMonday(w.date);if(wks.indexOf(k)<0)wks.push(k);});wks.sort();
+var g0=14,nU=UP.length,nL=LEGS.length;
+sh.put(g0,1,'Робочих підходів на тиждень по групах (тижні пн-нд)',RZ.SEC);
+sh.head(g0+1,['Група'].concat(wks.map(k=>rDM(k))));
+var GV=ORDER.map((g,i)=>{
+var r=g0+2+i;sh.put(r,1,g);
+return wks.map((k,j)=>{var v=rnd1(rSum(WP.filter(w=>rMonday(w.date)===k).map(w=>w.groups[g]||0)));sh.put(r,2+j,v,rNF('0.0'));return v;});
+});
+var gE=g0+1+ORDER.length;
+rZone(sh,'B'+(g0+2)+':'+rL(1+wks.length)+gE,LO,HI,HALF);
+var t0=gE+2;sh.put(t0,1,'По тижнях',RZ.SEC);
+sh.head(t0+1,['Тиждень','Тренувань','Робочі підходи','Хвилин','Верх, на групу','Ноги, на групу','Ціль від']);
+wks.forEach((k,j)=>{
+var r=t0+2+j,ww=WP.filter(w=>rMonday(w.date)===k),c=rL(2+j);
+var col=GV.map(row=>row[j]);
+[rDM(k),ww.length,rnd1(rSum(ww.map(w=>w.hard))),rSum(ww.map(w=>w.dur||0)),
+{f:'AVERAGE('+c+(g0+2)+':'+c+(g0+1+nU)+')',v:rSum(col.slice(0,nU))/nU},
+{f:'AVERAGE('+c+(g0+2+nU)+':'+c+(g0+1+nU+nL)+')',v:rSum(col.slice(nU,nU+nL))/nL},LO]
+.forEach((v,i)=>{sh.put(r,1+i,v,i?rNF(['0','0','0','0','0.0','0.0','0'][i]):null);});
+});
+var tE=t0+1+wks.length,lw=wks[wks.length-1];
+sh.put(tE+1,1,'Верх - '+UP.join(', ').toLowerCase()+'; ноги - '+LEGS.join(', ').toLowerCase()+'.'+(rAdd(lw,6)>P1?' Тиждень '+rDM(lw)+' - до '+rDM(P1)+' включно.':''),NOTE);
+/* сила, % від першого */
+var cand=M.ses.map(o=>({o:o,s:o.ses.filter(q=>q.score&&q.d>=P0&&q.d<=P1)}));
+var LF=opts.lifts?opts.lifts.map(l=>cand.filter(c=>c.o.label===l&&c.s.length)[0]).filter(Boolean)
+:cand.filter(c=>!c.o.reps&&c.s.length>=2).sort((a,b)=>b.s.length-a.s.length||(a.o.label<b.o.label?-1:1)).slice(0,5);
+var dates=[];LF.forEach(c=>{c.s.forEach(q=>{if(dates.indexOf(q.d)<0)dates.push(q.d);});});dates.sort();
+var p0=tE+3,pE=p0+1+dates.length,pv=[];
+sh.put(p0,1,'Сила: 1ПМ, % від першого тренування (100 = перший раз)',RZ.SEC);
+sh.head(p0+1,['Дата'].concat(LF.map(c=>rShort(c.o.label))));
+dates.forEach((d,i)=>{
+var r=p0+2+i;sh.put(r,1,rSer(d),rNF('dd.mm',{align:'left'}));
+LF.forEach((c,j)=>{var q=c.s.filter(x=>x.d===d)[0];if(q){var v=rnd1(q.score/c.s[0].score*100);pv.push(v);sh.put(r,2+j,v,rNF('0'));}});
+});
+sh.put(pE+1,1,'Порожньо - вправи цього дня не було. Легкі тренування не беруться. Зміна до ±5% - шум.',NOTE);
+var Q="'Підсумок'!";
+sh.charts.push({type:'barLine',title:'Підходів на групу за тиждень: верх і ноги',yTitle:'підходів',cats:Q+'$A$'+(t0+2)+':$A$'+tE,at:'A'+(pE+3),w:16,h:8,
+series:[{name:'Верх, на групу',ref:Q+'$E$'+(t0+2)+':$E$'+tE,color:'4C78A8'},{name:'Ноги, на групу',ref:Q+'$F$'+(t0+2)+':$F$'+tE,color:'F28E2B'},
+{name:'Ціль від',ref:Q+'$G$'+(t0+2)+':$G$'+tE,color:'59A14F',dash:1,line:1}]});
+if(LF.length&&dates.length){
+var mn=Math.min.apply(null,pv),mx=Math.max.apply(null,pv);
+sh.charts.push({type:'line',title:'Сила: 1ПМ, % від першого разу',cats:Q+'$A$'+(p0+2)+':$A$'+pE,at:'A'+(pE+20),w:16,h:9,blanks:'span',
+yMin:Math.floor(mn/5)*5-5,yMax:Math.ceil(mx/5)*5+5,
+series:LF.map((c,j)=>({name:rShort(c.o.label),ref:Q+'$'+rL(2+j)+'$'+(p0+2)+':$'+rL(2+j)+'$'+pE}))});
+}
+sh.colW=[30,11,11,11,11,11,10].concat(wks.map(()=>10)).slice(0,Math.max(7,1+wks.length));
+sh.freeze='B4';
+/* Вправи */
+var ex=rSh('Вправи');
+ex.title('Усі силові вправи',rDM(P0)+'-'+rDM(P1,1)+' · 1ПМ (кг) або найкращий підхід (повтори) · легкі тренування не беруться');
+ex.head(4,['Вправа','Тип','Трену- вань','Перше','Останнє','Перший','Останній','Найкращий','Одиниці','Найкращий підхід','Зміна','Стан']);
+var EX=cand.filter(c=>c.s.length).sort((a,b)=>b.s.length-a.s.length||(a.o.label<b.o.label?-1:a.o.label>b.o.label?1:0));
+EX.forEach((c,i)=>{
+var r=5+i,s=c.s,b=s.reduce((m,q)=>q.score>m.score?q:m),nf=rNF(c.o.reps?'0':'0.0'),u=c.o.reps?'повтори':'кг';
+var F=rnd1(s[0].score),G=rnd1(s[s.length-1].score),Kv=s.length<2?'-':G/F-1,th=c.o.reps?0.1:0.05,TH='IF(I'+r+'="повтори",0.1,0.05)';
+[c.o.label,R_TYPES[c.o.type]||c.o.type,s.length,rSer(s[0].d),rSer(s[s.length-1].d),F,G,rnd1(b.score),u,b.best,
+{f:'IF(C'+r+'<2,"-",G'+r+'/F'+r+'-1)',v:Kv},
+{f:'IF(C'+r+'<3,"'+R_GS[0]+'",IF(K'+r+'>'+TH+',"'+R_ST.up+'",IF(K'+r+'<-'+TH+',"'+R_ST.down+'","'+R_ST.same+'")))',v:s.length<3?R_GS[0]:Kv>th?R_ST.up:Kv<-th?R_ST.down:R_ST.same}]
+.forEach((v,j)=>{ex.put(r,1+j,v,j===3||j===4?rNF('dd.mm'):j>=5&&j<=7?nf:j===10?rNF('+0%;-0%;0%',{align:'right'}):null);});
+});
+var rE=4+EX.length;
+if(EX.length){rArrowCF(ex,'L',5,rE);ex.filter='A4:L'+rE;}
+ex.put(rE+2,1,'Зміна - останнє тренування проти першого. Шум: ±5% для кг, ±10% для повторів (+1 повтор ≈ +10%). У застосунку («Звіт») зміна за місяць рахується так само, між місяцями - за двома найкращими тренуваннями.',NOTE);
+ex.colW=[34,15,8,8,8,9,9,10,9,18,8,15];ex.freeze='B5';ex.landscape=1;
+/* Пояснення */
+var ps=rSh('Пояснення');
+ps.title('Як читати звіт','Терміни і джерела. Порада без джерела позначена «оцінка».');
+ps.head(4,['Термін','Що це']);
+[['Робочий підхід','Підхід, де до відмови лишалось менше 5 повторів (RIR 0-4) або RIR не вписаний. RIR 3-4 рахується з коефіцієнтом (Налаштування → Типи підходів). Розминка не рахується.'],
+['Підходів на групу','Основний м’яз вправи = 1 підхід, допоміжний = 0,5. Сума за тиждень. Ціль обсягу - Налаштування → Рекомендації (зараз «'+VN+'» '+LO+'-'+HI+').'],
+['Зони','Менше '+HALF+' - мало; '+HALF+'-'+(LO-0.1).toFixed(1).replace('.',',')+' - нижче цілі (переважно підтримка); '+LO+'-'+HI+' - у цілі; понад '+HI+' - ріст ще є, але кожен підхід дає менше (Schoenfeld 2017; Baz-Valle 2022; Pelland 2026).'],
+['1ПМ','Розрахунковий максимум на 1 повтор: вага × (1 + (повтори + RIR) / 30), формула Еплі з урахуванням запасу. Гантелі - на одну гантель; бруси і турнік - з вагою тіла.'],
+['Шум','Зміна 1ПМ до ±5% - звичайне коливання між днями (Grgic 2020); RIR ми оцінюємо з похибкою близько 1 повтору (Halperin 2022).'],
+['RIR (запас)','Скільки повторів лишалось до відмови. Для росту м’язів - 0-3; відмова в базових вправах дає більше втоми і довше відновлення (Refalo 2023; Robinson 2024; Morán-Navarro 2017).'],
+['Кроки уперед','Тренування вправи, де стало більше повторів, більша вага або той самий підхід з більшим запасом. Прогресивне навантаження - основа росту (ACSM 2009).'],
+['Форма дня, %','Середнє 1ПМ у тренуванні проти твого звичайного (медіана) у тих самих вправах: 100 - як зазвичай. Оцінка.'],
+['Хв на робочий підхід','Тривалість / робочі підходи. Разом з відпочинком і розминкою. 3-4 хв - типово для відпочинку 2-3 хв між підходами (оцінка).'],
+['Готовність Garmin','Власна оцінка Garmin (0-100), методика закрита - для висновків потрібно щонайменше 10-15 тренувань із цим значенням (оцінка).'],
+['Джерела','Schoenfeld et al., J Sports Sci 2017 · Baz-Valle et al., J Hum Kinet 2022 · Pelland et al., Sports Med 2026 (препринт SportRxiv 2024) · Robinson et al., Sports Med 2024 · Refalo et al., Sports Med 2023 · Morán-Navarro et al., Eur J Appl Physiol 2017 · Grgic et al., J Sport Health Sci 2020 · Halperin et al., Sports Med 2022 · ACSM Position Stand, Med Sci Sports Exerc 2009']]
+.forEach((t,i)=>{ps.put(5+i,1,t[0],RZ.BT);ps.put(5+i,2,t[1],RZ.WRAP);ps.rowH[5+i]=15*Math.max(2,Math.floor(t[1].length/70)+1);});
+ps.colW=[22,80];ps.freeze='A5';
+return xlsxWrite({title:'Щоденник тренувань: звіт',sheets:[sh].concat(MO.map(m=>m.sh),[ex,ps])});
+}
+return{repXlsx,xlsxWrite,zipStore}})();const repXlsx=(M,o)=>XL58.repXlsx(M,o);
+
+/* дані для Excel (та сама форма, що й у генераторі звіту) */
+function repXM(months){const C=calc(),out={},ws=C.ws.filter(w=>!isWarm(w)),warm=C.ws.filter(w=>isWarm(w));
+ out.volT=volT();out.lo=gzLo();out.hi=gzHi();out.half=gzHalf();out.groupsList=(musFull()?GROUPS:SHORT_GROUPS);out.minor=MINOR;out.reg=GRP_REG;out.today=todayStr();
+ out.workouts=ws.map(w=>{const s=C.wst[w.id];return{id:w.id,date:w.date,name:wName(w),tag:w.tag,dur:num(w.dur),hard:s.hard,vol:s.vol,exn:s.exn,srpe:num(w.srpe),well:num(w.well),sleep:wv(w,'sleep'),gReady:num(w.gReady),gSleep:num(w.gSleep),gLoad:num(w.gLoad),diff:diffOf(w),wtype:wtypeOf(w),groups:s.groups,perf:C.perf?C.perf[w.id]:null,rest:s.rest,items:w.items.filter(it=>it.type!=='wu'&&it.type!=='rest').map(it=>{const st=itemStats(it,bwOf(w));return{n:it.name,t:it.type,hard:st.hard||0,sets:(it.sets||[]).filter(q=>!q.wu).length}})}});
+ out.warm=warm.map(w=>({date:w.date,dur:num(w.dur)}));
+ const wk={};ws.forEach(w=>{const k=weekStart(w.date);(wk[k]=wk[k]||[]).push(w)});out.weeks=Object.keys(wk).sort().map(k=>({ws:k,n:wk[k].length,hard:wk[k].reduce((t,w)=>t+C.wst[w.id].hard,0),g:groupSets(wk[k])}));
+ out.ses=Object.values(C.ses).filter(o=>STR.includes(o.type)).map(o=>({k:o.k,label:o.label,type:o.type,exId:o.exId,reps:scReps(o),ses:o.ses.map(x=>({d:x.d,score:x.score,light:!!x.light,hard:x.hard,sets:x.sets,vol:x.vol,best:x.bestTxt&&String(x.bestTxt).replace(/ повт\./g,' повторів').replace(/вл\. вага/g,'власна вага'),ld:x.ld,rmx:x.rmx}))}));
+ out.months={};(months||monthsList()).forEach(ym=>{const D=repData(ym);const T=repTips(D);out.months[ym]={n:D.R.ws.length,wk:D.R.wk,hard:D.R.hard,vol:D.R.vol,groups:D.R.groups,dur:D.R.dur,sl:D.R.sl,wl:D.R.wl,lifts:D.L.map(x=>({label:x.o.label,n:x.cur.length,ch:x.ch,how:x.how,st:x.st,best:x.best,reps:x.reps})),steps:D.S2,rir:D.RI,cal:{ok:D.cal.ok,nW:D.cal.nW},low:D.low,tips:T,morning:D.R.morning,B:{sl:D.B.sl,wl:D.B.wl,dur:D.B.dur}}});
+ out.allGroups=groupSets(ws);out.allWk=weeksSpan(ws,'0000-00-00');out.allRir=repRir(ws);out.steps=0;return out}
+
+async function clipHTML(html,text){if(!AND&&window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([text],{type:'text/plain'})})]);toast('Скопійовано - встав у Нотатки');return}catch(e){}}copyText(text)}
 
 /* ========== HIIT BLOCKS ========== */
 const FMT={int:'Інтервали',emom:'EMOM',amrap:'AMRAP',circ:'Кола'};
