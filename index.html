@@ -405,7 +405,7 @@ body.rton:not(.kb):not(.sheetopen):not(.tmopen) .toast{bottom:calc(150px + env(s
 
 /* band rows */
 .bandrow{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
-.gbrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}.gbrow .gbn{flex:1 1 auto;min-width:0}.gbl{margin:2px 0 4px}.gbdot{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(128,128,128,.7)}
+.gbrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}.gbrow .gbn{flex:1 1 auto;min-width:0}.gbl{margin:2px 0 4px}.invl{display:flex;align-items:flex-start;gap:8px;width:100%;min-height:44px;margin:4px 0;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);font:inherit;color:var(--fg);text-align:left}.invl .lt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.2}.invl .lt b{font-weight:600;font-size:15px;line-height:20px}.invl .ic{height:20px;display:flex;align-items:center;flex:none}.invl .ar{align-self:center}.invl .lt small{color:var(--muted);font-size:13px}.invl .ar{color:var(--muted);transition:transform .15s}.invl.open .ar{transform:rotate(90deg)}.invl.warn{background:var(--warn-soft,#F6EBCF);border-color:transparent}.invw{width:22px;text-align:center;font-weight:700;font-size:18px;flex:none}.invsvg{flex:none;display:block;--grip:#8B9096;--pst:rgba(0,0,0,.38)}body.dark .invsvg,[data-theme=dark] .invsvg{--pst:rgba(255,255,255,.42)}.invx{border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;margin:-6px 0 6px;padding:8px 10px;display:flex;flex-direction:column;gap:6px}.invx p{margin:0}.invpic{display:flex;justify-content:center}.invset{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}.invset .t{display:flex;align-items:center;gap:8px}.invset .t b{flex:1}.invset small{color:var(--muted);font-size:13px;line-height:1.35}.invhdr{display:grid;grid-template-columns:1.3fr .8fr 1fr 44px;gap:6px;align-items:center;margin-top:6px}.invplr{display:grid;grid-template-columns:44px 1fr 14px 1fr 44px;gap:6px;align-items:center;margin-top:6px}.invhdr .ib,.invplr .ib{width:44px;height:44px}.invsw{width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center}.invsw span{width:22px;height:22px;border-radius:5px;border:1px solid rgba(128,128,128,.7)}.invcp{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;padding:6px 0}.invcp>button[data-v^='#']{width:36px;height:36px;border-radius:7px;border:1px solid rgba(128,128,128,.7)}.invcp>button.on{outline:2px solid var(--accent);outline-offset:2px}.invtok{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.invtok span{min-width:38px;padding:3px 6px;text-align:center;border-radius:6px;background:var(--surface2);font-variant-numeric:tabular-nums;font-size:14px}.invtok span.on{background:var(--accent);color:var(--accent-ink)}.invopt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px}.invopt.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.invopt .rd{width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex:none}.invopt.on .rd{border-color:var(--accent);background:radial-gradient(var(--accent) 45%,transparent 50%)}.invopt .ot{display:flex;flex-direction:column;min-width:0}.invopt small{color:var(--muted);font-size:13px;line-height:1.35}.gbdot{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(128,128,128,.7)}
 .bandrow:first-child{border-top:0}
 .bandrow.on{background:var(--accent-soft);border-radius:10px;padding:10px;margin-inline:-4px}
 .bandrow .l1{display:flex;gap:8px;align-items:center}
@@ -934,7 +934,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.28.2 · 13.11.2026';
+const APPV='58.29 · 13.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -1543,8 +1543,17 @@ function gbApply(it,x){const tW=it.sets.filter(q=>!q.wu);x=x&&x.b.length?gbSnap(
  if(GBX.j<0){it.sets.forEach(q=>{if(q.wu)return;const done=(repsOf(it,q)||{}).tot;if(done){if(!('bx' in q))q.bx=it.bx?JSON.parse(JSON.stringify(it.bx)):null}else delete q.bx});if(x)it.bx=x;else delete it.bx}
  else{const q=tW[GBX.j];if(!q)return;if(gbSig(x)===gbSig(it.bx))delete q.bx;else q.bx=x}
  GBC.clear();const k=stpRefill(it);save();closeSheet();render();toast(k?'Гуми змінено - вписане рекомендацією перераховано':x?'Гуми: '+gbLbl(x):'Без гуми')}
-function stpSheet(u){const it=itemBy(u);if(!it)return;STPCTX=u;const cur=num(it.stp),g=(S.settings.steps||{}),df=num(g.db)||2,CH=STPCH;
- openSheet(`<h3>${esc(it.name)}: крок ваги</h3>
+let STPMODE=null;
+function stpSheet(u,mode){const it=itemBy(u);if(!it)return;STPCTX=u;const cur=num(it.stp),g=(S.settings.steps||{}),df=num(g.db)||2,CH=STPCH;const invOk=invOn()&&(it.type==='db1'||it.type==='db2');if(mode)STPMODE=mode;else STPMODE=invOk&&invOf(it)?'set':'step';
+ if(invOk&&STPMODE==='set'){const one=it.type==='db1',L=invList(),cs=invOf(it),RC=S.draft&&S.draft.items.includes(it)?recFor(it,S.draft):null,rw=RC&&RC.inv?RC.inv.ws[0]:null;
+  openSheet(`<h3>Гантелі</h3><p class="muted small" style="margin:-6px 0 0">${esc(it.name)}</p>
+ <div class="seg"><button data-a="stp-mode" data-v="step">Крок</button><button class="on" data-a="stp-mode" data-v="set">Набір</button></div>
+ ${L.length?L.map(x=>{const M=invReachC(x,one?1:2),ks=[...M.keys()];return`<button class="invopt ${cs&&cs.id===x.id?'on':''}" data-a="inv-pick" data-v="${x.id}" aria-pressed="${!!(cs&&cs.id===x.id)}"><span class="rd" aria-hidden="true"></span><span class="ot"><b>${esc(x.name||'Набір')}</b><small>грифи ${esc(invHdTxt(x))} · диски ${(x.pl||[]).map(p=>'<span class="nw">'+p.n+'×'+nf(+p.w,2)+'</span>').join(', ')} · <span class="nw">${one?'одна':'на дві'} до ${ks.length?nf(ks[ks.length-1],2):'-'} кг</span></small></span></button>`}).join(''):'<p class="muted small" style="margin:0">Наборів ще немає - додай: «+ Новий набір».</p>'}
+ <button class="btn" data-a="inv-new">+ Новий набір</button>
+ ${cs?`<div class="field"><span>Що можна зібрати ${one?'на одну гантель':'на 2 гантелі, кг на кожну'}${rw!=null?' (рекомендація '+nf(rw,2)+')':''}</span><div class="invtok">${[...invReachC(cs,one?1:2).keys()].filter(k=>k>2).map(k=>`<span class="${k===rw?'on':''}">${nf(k,2)}</span>`).join('')}</div></div>`:''}
+ ${hlp('Рекомендація радитиме лише вагу, яку можна зібрати з набору: на дві гантелі - порівну, по однаковому диску на кожен бік, і щоб диски влазили на гриф. Набір запам’ятовується для вправи; в іншому місці вибери інший. «Крок» - для готових гантелей (вибір кроку прибирає набір з картки).')}
+ <div class="sheetfoot"><div class="g2"><button class="btn" data-a="inv-go">Мій інвентар</button><button class="btn pri" data-a="close">Готово</button></div></div>`,'stp');return}
+ openSheet(`<h3>${invOk?'Гантелі':esc(it.name)+': крок ваги'}</h3>${invOk?`<p class="muted small" style="margin:-6px 0 0">${esc(it.name)}</p>`:''}${invOk?'<div class="seg"><button class="on" data-a="stp-mode" data-v="step">Крок</button><button data-a="stp-mode" data-v="set">Набір</button></div>':''}
  <div class="chips">${CH.map(a=>`<button class="chip ${cur===a?'on':''}" data-a="stp-set" data-v="${a}">${nf(a,2)} кг</button>`).join('')}</div>
  <label class="field"><span>Свій крок, кг</span><input class="in" inputmode="decimal" data-f="stp" id="stp-in" value="${cur!=null&&!CH.includes(cur)?nf(cur,2):''}" placeholder="напр. 1,5"></label>
  ${hlp(`Різниця між сусідніми гантелями в цьому залі. Запам’ятовується для вправи: наступного разу візьметься цей самий; в іншому залі - зміни тут. Рекомендація ходить кроками від твоєї минулої ваги: 14,5 кг і крок 2 → 12,5 або 16,5. Що вписала рекомендація (кнопка «У клітинки»), перераховується одразу; вписане руками - ні. Без вибору - загальний крок з Налаштувань (${nf(df,2)} кг).`)}
@@ -1613,6 +1622,154 @@ function gbVirt(items,f){const ch=[];const g={C:CACHE,EP,FPS,DIRTY,FPD,WSET,ISET
  try{items.forEach(i=>{const u=gbU(i);i.sets.forEach(q=>{const x=gbOf(i,q);if(!x)return;const v=num(q.w);if(v==null)return;const K=gbKg(x).k/u;ch.push([q,q.w]);q.w=String(Math.round(Math.max(0,v+K)*100)/100)})});
   window.__noMemo=true;CACHE=null;GBV=true;return f()}
  finally{GBV=false;GBM=false;ch.forEach(([q,v])=>{q.w=v});CACHE=g.C;EP=g.EP;FPS=g.FPS;DIRTY=g.DIRTY;FPD=g.FPD;WSET=g.WSET;ISET=g.ISET;MEMW=g.MEMW;MEMI=g.MEMI;MEMR=g.MEMR;RVC=g.RVC;FWC=g.FWC;TAGC=g.TAGC;TAGK=g.TAGK;RVCM.clear();g.RV.forEach((v,k)=>RVCM.set(k,v));for(const k in RIRC)delete RIRC[k];Object.assign(RIRC,g.RI);if(g.nm===undefined)delete window.__noMemo;else window.__noMemo=g.nm}}
+/*INV-ALG-START*/
+/* Набір s={hd:[{w,n,lk,fit:{n,w}}], pl:[{w,n,c,t}]}: hd.n - пар грифів; fit - «влазить на бік: n дисків по w кг».
+   Вага - у цілих сотих кг, товщина - мм. */
+const INVT={0.25:6,0.5:10,1:13,1.25:14,1.5:16,2:19,2.5:21,3:24,4:28,5:32,6:36,7.5:42,8:44,10:50};/* типова товщина диска, мм (оцінка) */
+const invU=x=>Math.round((+x||0)*100);
+const invThk=(w,t)=>{if(+t>0)return+t;if(INVT[w])return INVT[w];const ks=Object.keys(INVT).map(Number).sort((a,b)=>a-b);let k=ks[0];ks.forEach(x=>{if(x<=w)k=x});return Math.round(INVT[k]*Math.sqrt(w/k))};
+const INVMAX=8;/* дисків на бік без «влазить» - більше на гантель не надіти (оцінка) */
+function invNorm(s){const pl=(s.pl||[]).filter(p=>invU(p.w)>0&&(p.n|0)>0).map(p=>({u:invU(p.w),n:p.n|0,w:+p.w,t:invThk(+p.w,p.t)})).sort((a,b)=>b.u-a.u);
+ const tOf=w=>{const p=pl.find(q=>q.u===invU(w));return p?p.t:invThk(+w)};
+ const hd=(s.hd||[]).map((h,i)=>({i,u:invU(h.w)+2*invU(h.lk),n:2*(+h.n||0),w:+h.w,lk:+h.lk||0,len:h.fit&&+h.fit.n>0?h.fit.n*tOf(h.fit.w||(pl[0]&&pl[0].w)||2):Infinity})).filter(h=>h.n>0&&h.u>0);
+ const ord=hd.slice().sort((a,b)=>a.len-b.len||a.u-b.u);hd.forEach(h=>h.rk=ord.indexOf(h));return{pl,hd}}
+const invCmp=(a,b)=>{for(let i=0;i<Math.max(a.length,b.length);i++){const x=a[i]||0,y=b[i]||0;if(x!==y)return x-y}return 0};
+/* усі розкладки одного боку: k[i] дисків типу i */
+function invVecs(N,lim,maxLen){const V=[],k=[];(function go(i,s,l,c){if(i===N.pl.length){V.push({k:k.slice(),s,l,c});return}const p=N.pl[i];for(let a=0;a<=lim[i];a++){if(c+a>INVMAX||l+a*p.t>maxLen)break;k[i]=a;go(i+1,s+a*p.u,l+a*p.t,c+a)}})(0,0,0,0);return V}
+const invLay=(N,k)=>{const L=[];N.pl.forEach((p,i)=>{for(let j=0;j<k[i];j++)L.push(p.w)});return L};
+/* Map: вага однієї гантелі, кг → {T, hd:[індекси рядків грифів], L:[розкладка на бік (від руків'я) гантелі 1, 2], cost}.
+   used - уже зайняте (п.4): {pl:{u:шт}, hd:{i:шт}} */
+function invReach(s,nDb,used){const N=invNorm(s),free=N.pl.map(p=>p.n-(((used||{}).pl||{})[p.u]||0)),hav=N.hd.map(h=>h.n-(((used||{}).hd||{})[h.i]||0));
+ const out=new Map(),put=(T,c,v)=>{const q=out.get(T);if(!q||invCmp(c,q.cost)<0)out.set(T,Object.assign(v,{T:T/100,cost:c}))};
+ const maxLen=Math.max(0,...N.hd.map(h=>h.len));const V=invVecs(N,free.map(f=>Math.max(0,Math.floor(f/2))),maxLen);
+ if(nDb===1){N.hd.forEach((h,j)=>{if(hav[j]<1)return;V.forEach(v=>{if(v.l>h.len)return;put(h.u+2*v.s,[h.rk,v.c,...v.k.map(x=>-x),j],{hd:[h.i],L:[invLay(N,v.k)]})})})}
+ else{const by=new Map();V.forEach(v=>{if(!by.has(v.s))by.set(v.s,[]);by.get(v.s).push(v)});const PR=[];
+  for(let a=0;a<N.hd.length;a++)for(let b=a;b<N.hd.length;b++){if(a===b?hav[a]<2:(hav[a]<1||hav[b]<1))continue;
+   const lo=N.hd[a].u<=N.hd[b].u?N.hd[a]:N.hd[b],hi=lo===N.hd[a]?N.hd[b]:N.hd[a],dd=hi.u-lo.u;if(dd%2)continue;PR.push({a,b,lo,hi,d:dd/2})}
+  /* 1) однакові гантелі (та сама розкладка) - найчастіше і найпростіше */
+  PR.forEach(({a,b,lo,hi,d})=>{if(d)return;V.forEach(v=>{if(v.l>lo.len||v.l>hi.len)return;for(let i=0;i<N.pl.length;i++)if(2*v.k[i]>Math.floor(free[i]/2))return;
+   put(lo.u+2*v.s,[0,lo.rk+hi.rk,2*v.c,...v.k.map(k=>-2*k),a,b],{hd:[lo.i,hi.i],L:[invLay(N,v.k),invLay(N,v.k)]})})});
+  /* 2) різні розкладки (різні грифи або залишки дисків) - лише для ваг, яких однаковими не зібрати */
+  PR.forEach(({a,b,lo,hi,d})=>{V.forEach(v1=>{if(v1.l>lo.len)return;const T=lo.u+2*v1.s,q=out.get(T/1);if(q&&q.cost[0]===0)return;
+   (by.get(v1.s-d)||[]).forEach(v2=>{if(v2.l>hi.len)return;for(let i=0;i<N.pl.length;i++)if(v1.k[i]+v2.k[i]>Math.floor(free[i]/2))return;
+    const df=v1.k.reduce((x,k,i)=>x+Math.abs(k-v2.k[i]),0);
+    put(T,[df,lo.rk+hi.rk,v1.c+v2.c,...v1.k.map((k,i)=>-(k+v2.k[i])),a,b],{hd:[lo.i,hi.i],L:[invLay(N,v1.k),invLay(N,v2.k)]})})})})}
+ return new Map([...out.entries()].sort((x,y)=>x[0]-y[0]).map(([k,v])=>[k/100,v]))}
+/*INV-ALG-END*/
+/* v58.29 «Мій інвентар»: набірні гантелі. Набір S.settings.inv[] = {id,name,k:'db',hd:[{w,n,lk,fit:{n,w}}],pl:[{w,n,c,t}]}; картка it.inv (id), it.invN (назва для історії).
+   Рекомендація: recFor (обгортка) → invSnap - вага лише з досяжних для набору (invReach), вгору - одна сходинка (ближчі за 2% - лише інший гриф), понад +15% - та сама вага і повтори,
+   вниз - найближча не вища; вища за рекомендацію без набору - повторів менше (≈2,5% ваги ≈ 1 повтор, Nuzzo 2024; оцінка); сусідні підходи ≤5% - однакова нижча. Без набору - без змін */
+let INVC=new Map();
+function invReachC(s,n){const k=JSON.stringify([s.hd,s.pl,n]);let r=INVC.get(k);if(!r){r=invReach(s,n);if(INVC.size>40)INVC.clear();INVC.set(k,r)}return r}
+const invOn=()=>S.settings.invOn!==false&&!window.__invOld;
+const invList=()=>Array.isArray(S.settings.inv)?S.settings.inv:[];
+const invById=id=>invList().find(x=>x&&x.id===id)||null;
+function invOf(it){if(!invOn()||!it||!(it.type==='db1'||it.type==='db2')||!it.inv)return null;return invById(it.inv)}
+function invClear(it){if(it&&it.inv){delete it.inv;delete it.invN;const m=S.settings.invMem;if(m)delete m[it.exId];GBC.clear();BORC.clear()}}
+function invMap(it){const s=invOf(it);if(!s)return null;const M=invReachC(s,it.type==='db2'?2:1);return M.size?M:null}
+function invFl(M,x){let b=null;for(const k of M.keys()){if(k<=x+1e-9)b=k;else break}return b}
+function invCl(M,x){for(const k of M.keys())if(k>=x-1e-9)return k;return null}
+/* наступна сходинка: найменша ≥ x+2%; у межах 2% від неї - з найменшою «ціною» (коротші грифи, менше дисків) */
+function invUp(M,x){const ks=[...M.keys()],c=ks.find(k=>k>=x*1.02-1e-9);if(c==null)return null;return ks.filter(k=>k>=c-1e-9&&k<=c*1.02+1e-9).reduce((a,b)=>invCmp(M.get(b).cost,M.get(a).cost)<0?b:a,c)}
+/* назва грифа за довжиною посадки серед типів набору: короткі / довгі (один тип - без назви) */
+function invHdName(s,i){const N=invNorm(s);if(N.hd.length<2)return'';const h=N.hd.find(x=>x.i===i);if(!h)return'';const L=[...new Set(N.hd.map(x=>x.len))].sort((a,b)=>a-b);if(L.length<2)return'гриф '+nf(h.w,2);return h.len===L[0]?'короткі':h.len===L[L.length-1]?'довгі':'середні'}
+function invSnap(it,w,R){const M=invMap(it),s=invOf(it);if(R&&s&&!M){const t=`з набору «${s.name||'Набір'}» на ${it.type==='db2'?'дві гантелі':'гантель'} нічого не зібрати (перевір грифи й диски) - вага кроком`;R.why.unshift(t);R.whyS.unshift('base');return R}
+ if(!R||!M||R.other||(R.wt==null&&!R.wts))return R;
+ const ws=((R.src&&R.src.ws)||[]).filter(x=>x!=null);const lastW=ws.length?(()=>{const c={};ws.forEach(x=>c[x]=(c[x]||0)+1);return+Object.keys(c).sort((a,b)=>c[b]-c[a]||b-a)[0]})():null;
+ const mm=String(it.tgt&&it.tgt.reps||'').match(/(\d+)(?:\s*[-–]\s*(\d+))?/),lo=mm?+mm[1]:null,hi=mm?+(mm[2]||mm[1]):null;const mx=[...M.keys()].pop();
+ const notes=new Set();const rp=(R.src&&R.src.rp)||[],sw=(R.src&&R.src.ws)||[];const pR=k=>rp[Math.min(k,rp.length-1)];
+ const holdW=lw=>M.has(lw)?lw:(invFl(M,lw)??invCl(M,lw));
+ /* один підхід: вага з набору і повтори; held - вага та сама, повтори минулого разу +1 (до верх + 2) */
+ const one=(x,lw,r,k)=>{const held=()=>{const p=pR(k);return{w:holdW(lw),r:p!=null&&hi!=null?Math.min(hi+2,p+1):r,h:1}};
+  if(x==null)return{w:x,r};if(lw==null){const v=invFl(M,x)??invCl(M,x);return{w:v,r}}
+  if(x>lw+1e-9){const u=invUp(M,lw),f=invFl(M,x);if(u==null){notes.add(`важчої за ${nf(holdW(lw),1)} кг з набору не зібрати - вага та сама, ростуть повтори`);return held()}
+   const t=f!=null&&f>=u?f:u;if(t>x+1e-9&&t>lw*1.15+1e-9){notes.add(`наступна вага з набору ${nf(t,1)} кг (+${f0((t/lw-1)*100)}%) - завеликий стрибок → вага та сама, ростуть повтори; додай у набір менші диски (оцінка)`);return held()}
+   if(t>x+1e-9){const d=Math.ceil((t-x)/x/.025-1e-9),r2=Math.max(1,r-d);if(lo!=null&&r2<lo){notes.add(`${nf(t,1)} кг з набору дало б менше ${lo} повторів - вага та сама, ростуть повтори (оцінка)`);return held()}return{w:t,r:r2,cut:d}}
+   if(t<x-1e-9){const d=Math.floor((x-t)/x/.025+1e-9);return{w:t,r:hi!=null?Math.max(r,Math.min(hi,r+d)):r+d,add:d}}return{w:t,r}}
+  if(x<lw-1e-9){const f=invFl(M,x);return{w:f!=null?f:invCl(M,x),r}}
+  return{w:holdW(lw),r}};
+ const x0=R.wt,xs=R.wts?R.wts.slice():null,n=xs?xs.length:Math.max(1,(R.rr||[]).length);let cut=0,add=0;
+ const res=[];for(let k=0;k<n;k++){const x=xs?xs[k]:x0,lw=sw[k]!=null?(xs?sw[k]:lastW):lastW,r=(R.rr||[])[Math.min(k,(R.rr||[]).length-1)];const o=one(x,xs?lw:lastW,r,k);res.push(o);if(o.cut)cut=Math.max(cut,o.cut);if(o.add)add=Math.max(add,o.add)}
+ if(xs){R.wts=res.map(o=>o.w);for(let k=1;k<R.wts.length;k++){const a=R.wts[k-1],b=R.wts[k];if(a!=null&&b!=null&&a!==b&&Math.abs(a-b)/Math.max(a,b)<=.05+1e-9){const m=Math.min(a,b);R.wts[k-1]=m;R.wts[k]=m}}if(x0!=null)R.wt=R.wts[0]}
+ else{const ws1=[...new Set(res.map(o=>o.w))];if(ws1.length===1)R.wt=ws1[0];else{R.wts=res.map(o=>o.w);R.wt=R.wts[0]}}
+ if(R.rr&&R.rr.length)R.rr=R.rr.map((r,k)=>res[Math.min(k,res.length-1)].r);
+ const W1=R.wts?R.wts.slice():[R.wt];const wTx=R.wts?R.wts.map(x=>nf(x,1)).join('/'):nf(R.wt,1);
+ const rT=R.wts?R.rr.join('/'):(()=>{const a=Math.min(...R.rr),b=Math.max(...R.rr);return a===b?String(a):a+'-'+b})();
+ R.txt=R.txt.replace(/^[\d,\/]+(?= кг)/,wTx).replace(/×([  ])[\d\/-]+/,(m0,sp)=>'×'+sp+rT);
+ const was=xs?xs.map(x=>nf(x,1)).join('/'):x0!=null?nf(x0,1):'';const chg=was!==wTx;const e0=M.get(W1[0]);const gn=e0?[...new Set(e0.hd.map(i=>invHdName(s,i)).filter(Boolean))].map(t=>/^гриф /.test(t)?t:t+' грифи').join(' + '):'';
+ const skip=lastW!=null&&R.wt!=null&&R.wt>lastW?[...M.keys()].filter(k=>k>lastW+1e-9&&k<lastW*1.02-1e-9):[];const held=res.some(o=>o.h);
+ const t=`з набору «${s.name||'Набір'}»: ${wTx} кг${gn?' ('+gn+')':''}${chg?` замість ${was} кг (такої ваги з набору не зібрати)`:''}${skip.length?`; ${skip.map(x=>nf(x,1)).join(', ')} кг - лише інший гриф, не крок`:''}${cut?`; повторів на ${cut} менше`:''}${add?`; повторів на ${add} більше`:''}${cut||add?' (≈2,5% ваги ≈ 1 повтор - Nuzzo 2024; оцінка)':''}${notes.size?'; '+[...notes].join('; '):''}`;
+ R.why.unshift(t);R.whyS.unshift('base');if(chg||held)R.adj=[{t,r:false,sec:'base'}].concat(R.adj||[]);
+ R.inv={id:s.id,name:s.name,ws:W1};return R}
+function recFor(it,w){const R=recForB(it,w);return R&&invOf(it)?invSnap(it,w,R):R}
+
+/* v58.29 Е2: інтерфейс «Мого інвентаря» - кольори і товщина дисків, картинка гантелі (дзеркально), рядок у картці, вікна */
+const INVPAL={0.25:'#B8BEC4',0.5:'#8C939A',1:'#3FA66A',1.25:'#2E8B57',1.5:'#1FA2A0',2:'#2F6FDB',2.5:'#7E57C2',3:'#E3B505',4:'#F08A24',5:'#D33A2C',6:'#A3203A',7.5:'#6B2D5C',8:'#4A1E2C',10:'#2B7A3B',15:'#E3B505',20:'#1F5BB5',25:'#C62828'};
+const INVSW=['#8C939A','#3FA66A','#2E8B57','#1FA2A0','#2F6FDB','#7E57C2','#E3B505','#F08A24','#D33A2C','#A3203A','#4A1E2C','#2B2F33','#F2F2F2'];
+const invPl=(s,w)=>(s.pl||[]).find(p=>Math.abs(+p.w-w)<1e-9)||{w};
+const invCol=(s,w)=>{const c=invPl(s,w).c;if(c)return c;const P=Object.assign({},INVPAL,S.settings.invCol||{});if(P[w])return P[w];const ks=Object.keys(P).map(Number).sort((a,b)=>a-b);let k=ks[0];ks.forEach(x=>{if(x<=w)k=x});return P[k]};
+const invTk=(s,w)=>invThk(w,invPl(s,w).t);
+const invLen=(s,i)=>{const h=invNorm(s).hd.find(x=>x.i===i);return h?h.len:Infinity};
+const invMir=(L,sp)=>{if(!L.length)return'без дисків';const j=sp?' + ':'+';return`${L.slice().reverse().map(x=>nf(x,2)).join(j)} ━ ${L.map(x=>nf(x,2)).join(j)}`};
+const invLt=L=>L.length?L.map(x=>nf(x,2)).join(' + '):'без дисків';
+function invSVG(L,s,hi,o){o=o||{};let k=o.k||.3;const big=!!o.big;if(o.max){const need=x=>2*(L.reduce((a,w)=>a+Math.max(2,invTk(s,w)*x)+.8,0)+3)+34;while(k>.25&&need(k)>o.max)k-=.02}const pw=w=>Math.max(2,invTk(s,w)*k),ph=w=>Math.min(46,(13+9*Math.sqrt(w)))*(big?1.15:.82);
+ const len=invLen(s,hi),used=L.reduce((a,w)=>a+pw(w)+.8,0),sl=big&&isFinite(len)?Math.max(used,len*k)+3:used+3,grip=big?30:18;
+ const mh=ph(Math.max(...L,2)),W=Math.ceil(2*sl+grip+4),Hh=Math.ceil(mh+(big?20:2)),cy=(Hh-(big?20:0))/2,x0=W/2;
+ let g=`<svg width="${W}" height="${Hh}" viewBox="0 0 ${W} ${Hh}" aria-hidden="true" class="invsvg">`;
+ g+=`<rect x="${x0-sl-grip/2}" y="${cy-1.6}" width="${2*sl+grip}" height="3.2" rx="1.6" fill="var(--grip)"/><rect x="${x0-grip/2+2}" y="${cy-3.2}" width="${grip-4}" height="6.4" rx="2" fill="var(--grip)" opacity=".85"/>`;
+ [-1,1].forEach(d=>{let x=x0+d*(grip/2+1.5);L.forEach(w=>{const ww=pw(w),hh=ph(w),rx=d>0?x:x-ww;g+=`<rect x="${rx.toFixed(1)}" y="${(cy-hh/2).toFixed(1)}" width="${ww.toFixed(1)}" height="${hh.toFixed(1)}" rx="${Math.min(2.5,ww/3).toFixed(1)}" fill="${invCol(s,w)}" stroke="var(--pst)" stroke-width="1"/>`;x+=d*(ww+.8)});
+  if(big)g+=`<text x="${x0+d*(grip/2+sl/2)}" y="${Hh-4}" text-anchor="middle" font-size="${L.length>4?11:12}" font-weight="600" fill="var(--fg)">${(d<0?L.slice().reverse():L).map(x=>nf(x,2)).join(L.length>4?'+':' + ')||'-'}</text>`});
+ return g+'</svg>'}
+/* розкладка на кілька підходів: спільний початок від руків'я лишається, міняються зовнішні */
+function invPlan(Ls){const out=[];let core=Ls[0]||[];Ls.forEach(L=>{let j=0;while(j<core.length&&j<L.length&&core[j]===L[j])j++;core=core.slice(0,j)});Ls.forEach(L=>out.push({L,core,out:L.slice(core.length)}));return out}
+let INVOPEN=new Set();
+/* рядок під рекомендацією: компактно; тап - картинка з підписами */
+function invLine(it,RC){const s=invOf(it);if(!s)return'';const M=invMap(it);if(!M)return`<div class="small muted invl0">З набору «${esc(s.name)}» нічого не зібрати - перевір грифи й диски (Налаштування → Мій інвентар)</div>`;
+ const one=it.type==='db1',tw=it.sets.filter(q=>!q.wu),typed=tw.map(q=>num(q.w)).filter(x=>x!=null&&x>0);
+ const bad=typed.find(x=>!M.has(x));if(bad!=null){const lo=invFl(M,bad),hi=invCl(M,bad);return`<button class="invl warn" data-a="inv-tog" data-i="${it.uid}"><span class="ic"><span class="invw" aria-hidden="true">!</span></span><span class="lt"><b>${nf(bad,2)} кг з набору не зібрати</b><small>найближче ${[lo,hi].filter(x=>x!=null).map(x=>nf(x,2)).join(' або ')} · клітинку не змінено</small></span></button>`}
+ const ws=RC&&RC.inv?RC.inv.ws.filter(x=>x!=null):typed.length?typed:[];if(!ws.length)return'';const u=[...new Set(ws)].filter(x=>M.has(x));if(!u.length)return'';
+ const R=u.map(w=>M.get(w)),dif=!one&&R[0].L.length>1&&R[0].L[0].join()!==R[0].L[1].join(),P=invPlan(R.map(r=>r.L[0])),hl=invHdName(s,R[0].hd[0]),open=INVOPEN.has(it.uid);
+ const m0=invMir(P[0].L),t1=u.length===1?(dif?'гантелі різні, вага однакова':P[0].L.length>4?P[0].L.map(x=>nf(x,2)).join('+'):m0):`${u.map(x=>nf(x,2)).join(' → ')}: зовні ${P.map(x=>x.out.map(y=>nf(y,2)).join('+')||'-').join(' → ')}`;
+ const t2=[u.length===1&&!dif&&P[0].L.length>4?'від руків’я':dif||one?'':'на кожну',hl?(one?hl.replace(/і$/,'ий').replace('довгий','довгий'):hl)+(one?' гриф':' грифи'):''].filter(Boolean).join(' · ')||'на гантель';
+ let h=`<button class="invl${open?' open':''}" data-a="inv-tog" data-i="${it.uid}" aria-expanded="${open}"><span class="ic">${invSVG(P[0].L,s,R[0].hd[0],{k:P[0].L.length>4?.22:.3})}</span><span class="lt"><b>${t1}</b><small>${t2}</small></span><span class="ar" aria-hidden="true">›</span></button>`;
+ if(open){const hw=i=>nf(((s.hd[i]||{}).w||0)+2*((s.hd[i]||{}).lk||0),2);const cnt=Ls=>{const m={};Ls.forEach(l=>l.forEach(w=>m[w]=(m[w]||0)+2));return Object.keys(m).sort((a,b)=>b-a).map(w=>`${m[w]} з ${invPl(s,+w).n||'?'} по ${nf(+w,2)} кг`).join(', ')};let x='';
+  if(dif)R[0].L.forEach((L,j)=>{x+=`<div class="invpic">${invSVG(L,s,R[0].hd[j],{k:.62,big:1,max:300})}</div><p class="small" style="text-align:center;margin:0"><b>Гантель ${j+1}: ${nf(u[0],2)} кг</b> = гриф ${hw(R[0].hd[j])} + (${invLt(L)}) × 2</p>`});
+  else u.forEach((w,i)=>{const L=P[i].L;x+=`<div class="invpic">${invSVG(L,s,R[i].hd[0],{k:.62,big:1,max:300})}</div><p class="small" style="text-align:center;margin:0"><b>${u.length>1?'Підходи '+ws.map((q,j)=>q===w?j+1:null).filter(Boolean).join(', ')+': ':''}${nf(w,2)} кг</b> = гриф ${hw(R[i].hd[0])} + (${invLt(L)}) × 2 боки</p>`});
+  h+=`<div class="invx">${x}${hl?`<p class="small muted">${one?'Гриф':'Грифи'}: ${hl} (${hw(R[0].hd[0])} кг)${/довг/.test(hl)?' - важча вага влазить лише на довгі':', довгі лишаються для важчого'}.</p>`:''}<p class="small muted">${u.length===1?(dif?'Гантелі різні, бо однаковими не вистачає дисків. ':one?'':'Обидві гантелі однаково. ')+'Між підходами нічого не перевішувати.':`Біля руків’я весь час: ${invLt(P[0].core)}; між підходами міняються лише зовнішні: ${P.map(x=>invLt(x.out)).join(' → ')}.`}</p><p class="small muted">З набору: ${cnt(dif?R[0].L:one?[R[0].L[0]]:[R[0].L[0],R[0].L[0]])}. Важчі диски - біля руків’я. Кожна вправа рахується так, ніби інші гантелі розібрані.</p></div>`}
+ return h}
+/* короткий опис набору */
+const invShort=n=>{const f=String(n||'').trim().split(/[\s(]/)[0]||n||'';return f.length>14?f.slice(0,13)+'…':f};
+const invHdTxt=x=>(x.hd||[]).map(h=>`${h.n} ${pln(+h.n||0,'пара','пари','пар')} × ${nf(+h.w+2*(+h.lk||0),2)}`+((x.hd||[]).length>1?' ('+invHdName(x,(x.hd||[]).indexOf(h))+')':'')).join(', ');
+function invSum(x){const k2=[...invReachC(x,2).keys()],k1=[...invReachC(x,1).keys()];return{k2,k1,max2:k2.length?k2[k2.length-1]:null,max1:k1.length?k1[k1.length-1]:null}}
+/* Налаштування → «Мій інвентар» */
+function invSetHTML(){const L=invList();return`<label class="chk"><input type="checkbox" data-c="sett" data-k="invOn" id="set-inv" ${invOn()?'checked':''}>Набірні гантелі: радити лише вагу, яку можна зібрати (набір вибирається в чипі «⚙&nbsp;Крок» картки)</label>
+ ${L.map(x=>{const S2=invSum(x),M=invReachC(x,2),ks=[...M.keys()],top=ks.length?M.get(ks[Math.floor(ks.length/2)]):null;return`<button class="invset" data-a="inv-ed" data-v="${x.id}"><span class="t">${top?invSVG(top.L[0],x,top.hd[0],{k:.2}):''}<b>${esc(x.name||'Набір')}</b><span class="muted" aria-hidden="true">›</span></span><small>Грифи ${esc(invHdTxt(x))} · диски ${(x.pl||[]).map(p=>'<span class="nw">'+p.n+'×'+nf(+p.w,2)+'</span>').join(', ')}<br><span class="nw">Дві гантелі: до ${S2.max2!=null?nf(S2.max2,2):'-'} кг</span> · <span class="nw">одна: до ${S2.max1!=null?nf(S2.max1,2):'-'} кг</span></small></button>`}).join('')}
+ <button class="btn full" data-a="inv-new">+ Набір гантелей</button>
+ <p class="muted small" style="margin:0">Запиши свої набори: грифи (вага разом із замками, скільки пар, скільки найважчих дисків влазить на бік) і скільки дисків кожної ваги. У картці вправи (чип «⚙ Крок» → «Набір») вибери набір - рекомендація радитиме лише вагу, яку можна зібрати, і покаже, які диски надіти: важчий диск - товщий. Кожна вправа рахується так, ніби інші гантелі розібрані.</p>`}
+let INVED=null,INVCP=-1;
+function invSumHTML(x){const S2=invSum(x),N=invNorm(x),top=N.pl[0],W=[];
+ const R1=(x.pl||[]).filter(p=>(p.n|0)>0&&(p.n|0)%4).map(p=>`Диски по ${nf(+p.w,2)} кг: ${(p.n|0)%4} шт.`);if(R1.length)W.push(`${R1.join(', ')} - лише для однієї гантелі`);
+ if(N.hd.length>1)for(let a=0;a<N.hd.length;a++)for(let b=a+1;b<N.hd.length;b++){const dd=Math.abs(N.hd[a].u-N.hd[b].u)/100;if(dd&&!(x.pl||[]).some(p=>Math.abs(+p.w-dd/2)<1e-9))W.push(`Грифи ${nf(N.hd[a].u/100,2)} і ${nf(N.hd[b].u/100,2)} не в пару: потрібні диски по ${nf(dd/2,2)} кг`)}
+ const gaps=[];for(let i=1;i<S2.k2.length;i++){const p0=S2.k2[i-1],d=S2.k2[i]-p0;if(p0>3&&d>p0*.15)gaps.push(nf(p0,2)+' → '+nf(S2.k2[i],2))}if(gaps.length)W.push(`Великі стрибки ваги: ${gaps.join(', ')} - там ростуть повтори`);
+ const per=N.hd.map(h=>{const r=invReach(Object.assign({},x,{hd:x.hd.map((q,i)=>i===h.i?q:Object.assign({},q,{n:0}))}),2),ks=[...r.keys()];if(!ks.length)return'';const nm=invHdName(x,h.i);return`${nm?nm[0].toUpperCase()+nm.slice(1):'Дві гантелі'} (${nf(h.u/100,2)} кг): до ${nf(ks[ks.length-1],2)} кг`}).filter(Boolean);
+ return`${per.join('<br>')}${per.length?'<br>':''}Одна гантель: до <b>${S2.max1!=null?nf(S2.max1,2):'-'} кг</b><div class="small muted" style="margin-top:6px">На дві гантелі, кг на кожну</div><div class="invtok">${S2.k2.filter(k=>k>(N.hd.length?Math.max(...N.hd.map(h=>h.u))/100+1e-9:0)).map(k=>`<span>${nf(k,2)}</span>`).join('')||'<span>-</span>'}</div>${W.map(t=>`<div class="small" style="color:var(--warn,#8A5B00);margin-top:6px">${esc(t)}</div>`).join('')}`}
+
+function invNumC(x){const y=JSON.parse(JSON.stringify(x));y.hd=(y.hd||[]).map(h=>Object.assign(h,{w:num(h.w)||0,n:num(h.n)||0,lk:num(h.lk)||0}));y.pl=(y.pl||[]).map(p=>Object.assign(p,{w:num(p.w)||0,n:Math.round(num(p.n)||0),t:num(p.t)||undefined}));return y}
+function invEdSheet(){const x=INVED;if(!x)return;const xn=invNumC(x),N=invNorm(xn),top=N.pl[0];
+ const fi=(cls,k,i,v,ph,lab,im)=>`<input class="in ${cls}" inputmode="${im||'decimal'}" data-f="inved" data-k="${k}" data-i="${i}" value="${esc(v==null?'':String(v).replace('.',','))}" placeholder="${ph||''}" aria-label="${lab}">`;
+ openSheet(`<h3>Набір гантелей</h3>
+ <label class="field"><span>Назва (напр. місце)</span><input class="in" data-f="inved" data-k="name" id="inv-name" value="${esc(x.name||'')}" placeholder="А (Максимовичі)"></label>
+ <div class="field"><span>Грифи</span><div class="invhdr muted small"><span>Вага з замками, кг</span><span>Пар</span><span>Влазить на бік</span><span></span></div>
+ ${(x.hd||[]).map((h,i)=>`<div class="invhdr">${fi('','hw',i,h.w,'1,5','Вага грифа з замками, кг')}${fi('','hn',i,h.n,'1','Пар грифів','numeric')}${fi('','hf',i,h.fit&&h.fit.n||'','-','Скільки найважчих дисків влазить на бік','numeric')}<button class="ib del" data-a="inv-hdel" data-v="${i}" aria-label="Прибрати гриф">✕</button></div>`).join('')}
+ <button class="btn" data-a="inv-hadd">+ Гриф</button></div>
+ <p class="muted small" style="margin:0">«Влазить» - скільки дисків по ${top?nf(top.w,2):'-'} кг (найважчих) влазить на один бік разом із замком. Решту застосунок рахує за товщиною дисків. Порожньо - без обмеження (до 8 дисків).</p>
+ <div class="field"><span>Диски: вага × скільки всього в наборі</span>
+ ${(x.pl||[]).map((p,i)=>`<div class="invplr"><button class="invsw" data-a="inv-cp" data-v="${i}" aria-label="Колір і товщина диска"><span style="background:${invCol(x,+p.w)}"></span></button>${fi('','pw',i,p.w,'2','Вага диска, кг')}<span class="muted" aria-hidden="true">×</span>${fi('','pn',i,p.n,'18','Скільки дисків','numeric')}<button class="ib del" data-a="inv-pdel" data-v="${i}" aria-label="Прибрати диск">✕</button>${INVCP===i?`<div class="invcp">${INVSW.map(c=>`<button class="${invCol(x,+p.w)===c?'on':''}" data-a="inv-cc" data-v="${c}" style="background:${c}" aria-label="Колір ${c}"></button>`).join('')}<button class="chip" data-a="inv-cc" data-v="">Типовий</button><label class="field" style="flex-basis:100%"><span>Товщина, мм (типова для ${nf(+p.w,2)} кг - ${invThk(+p.w)}, оцінка)</span>${fi('','pt',i,p.t||'',String(invThk(+p.w)),'Товщина диска, мм','numeric')}</label></div>`:''}</div>`).join('')}
+ <button class="btn" data-a="inv-padd">+ Диск</button></div>
+ <div class="bandtotal" id="inv-sum">${invSumHTML(xn)}</div>
+ <div class="sheetfoot"><div class="g2"><button class="btn danger" data-a="inv-del" ${invById(x.id)?'':'disabled'}>Видалити</button><button class="btn pri" data-a="inv-save">Зберегти</button></div></div>`,'inv')}
+function invEdUpd(){const t=document.getElementById('inv-sum');if(t&&INVED)t.innerHTML=invSumHTML(INVED)}
+function invEdRe(){const y=document.querySelector('#sheetHost .sheet');const sc=y?y.scrollTop:0;invEdSheet();const y2=document.querySelector('#sheetHost .sheet');if(y2)y2.scrollTop=sc}
 /* v58.28.1 «Схожа вправа»: вправа без власної історії бере минулий раз схожої (явні пари SIMX, оригінал копії cpOf; для власної ваги, гум, TRX - також simEx того самого типу і руху).
    Історію схожої на час розрахунку видаємо за цю вправу (exId), решта (зони, ціль, хват) - від цієї вправи; кеші - як у gbVirt. Перемикач S.settings.borOn (Тонке → Нові вправи) */
 const borOn=()=>S.settings.borOn!==false&&!window.__borOld;
@@ -1622,7 +1779,7 @@ function borDonor(it,w){if(!borOn()||!it||!STR.includes(it.type)||it.neg)return 
  if(!EQF[it.type]){const pp=patOf(e);simEx(it.exId).forEach(x=>{if(x.type===it.type&&patOf(x).some(p=>pp.includes(p)))C.push(x.id)})}
  for(const d of C){if(d!==it.exId&&exHistBefore(d,it.type,w))return d}return null}
 let BORC=new Map();
-function recFor(it,w){const d=w?borDonor(it,w):null;if(!d)return recFor1(it,w);
+function recForB(it,w){const d=w?borDonor(it,w):null;if(!d)return recFor1(it,w);
  const key=EP+'|'+todayStr()+'|'+d+'|'+JSON.stringify([it,w.id,w.date,w.diff,w.bw,(w.items||[]).map(i=>i===it?0:[i.exId,i.type,(i.sets||[]).length,(i.sets||[]).filter(q=>(repsOf(i,q)||{}).tot).length]),S.settings.bands,S.settings.gumWt,S.settings.bandK,S.settings.health,S.settings.lightLoad]);
  const cl=R=>R&&JSON.parse(JSON.stringify(R));const c=BORC.get(it.uid);if(c&&c.k===key)return cl(c.R);
  const ch=[];const g={C:CACHE,EP,FPS,DIRTY,FPD,WSET,ISET,MEMW,MEMI,MEMR,RVC,FWC,TAGC,TAGK,RV:new Map(RVCM),RI:Object.assign({},RIRC),nm:window.__noMemo,GC:new Map(GBC)};let R=null,dd='';
@@ -2133,7 +2290,7 @@ function gobMerge(){const O='kb_goblet',N='goblet';const C=S.catalog||[];const k
  if(k){if(!g){const se=seedCatalog().find(e=>e.id===N);g=se||Object.assign({},k,{id:N});C.splice(C.indexOf(k),0,g)}if(k.fav)g.fav=true;const mt=String(k.myTips||'').trim();if(mt&&!String(g.myTips||'').includes(mt))g.myTips=(String(g.myTips||'').trim()?g.myTips.trim()+'\n':'')+mt;S.catalog=C.filter(e=>e!==k)}
  const nm=(g||ex(N)||{}).name||'Гоблет-присідання (гантель або гиря)';const fx=o=>{if(o.exId!==O)return;o.exId=N;if(o.name!=null)o.name=nm};
  (S.templates||[]).concat(S.workouts||[],S.draft?[S.draft]:[],S.ui&&S.ui.tplEd&&S.ui.tplEd.t?[S.ui.tplEd.t]:[],S.ui&&S.ui.editTpl&&typeof S.ui.editTpl==='object'?[S.ui.editTpl]:[]).forEach(x=>{if(x)exWalk(x.items,fx)});
- const st=S.settings||{};['machMem','stepMem','rangeNo'].forEach(m=>{const M=st[m];if(M&&typeof M==='object'&&O in M){if(!(N in M))M[N]=M[O];delete M[O]}});
+ const st=S.settings||{};['machMem','stepMem','rangeNo','invMem'].forEach(m=>{const M=st[m];if(M&&typeof M==='object'&&O in M){if(!(N in M))M[N]=M[O];delete M[O]}});
  if(st.tgtNo&&typeof st.tgtNo==='object')Object.keys(st.tgtNo).forEach(key=>{if(key===O||key.endsWith('|'+O)){const nk=key.slice(0,-O.length)+N;if(!(nk in st.tgtNo))st.tgtNo[nk]=st.tgtNo[key];delete st.tgtNo[key]}});
  return true}
 function fix(){const d=defaults(),sv=S.seedV||1;(S.templates||[]).concat(S.workouts||[],S.draft?[S.draft]:[],S.ui&&S.ui.tplEd&&S.ui.tplEd.t?[S.ui.tplEd.t]:[],S.ui&&S.ui.editTpl&&typeof S.ui.editTpl==='object'?[S.ui.editTpl]:[]).forEach(x=>{if(x&&x.tag)x.tag=tagN(x.tag)});(S.workouts||[]).concat(S.draft?[S.draft]:[]).forEach(restShift);(S.catalog||[]).forEach(convEx);(S.workouts||[]).concat(S.draft?[S.draft]:[]).forEach(w=>(w.items||[]).forEach(it=>{if(!it||it.type==='block'||it.kind==='block'||it.type==='rest'||it.type==='wu'||it.prim)return;/* v58.12: «Відпочинок» має sec - секунди (рядок), не м'язи; раніше ламав читання даних */const e=(S.catalog||[]).find(x=>x.id===it.exId);if(e&&e.prim){it.prim=e.prim.slice();it.sec=(e.sec||[]).slice();delete it.group}else if(it.group||it.sec){const c=convEx({group:it.group,sec:it.sec});it.prim=c.prim;it.sec=c.sec;delete it.group}}));for(const k of Object.keys(d))if(S[k]==null)S[k]=d[k];S.ui=Object.assign({tab:'log',period:90,stab:'ov'},S.ui||{});if(!S.settings.bands)S.settings.bands=d.settings.bands;if(!S.settings.trx)S.settings.trx=defTrx();if(!S.settings.trx.std)S.settings.trx.std=defStd();if(!S.settings.trx.amode)S.settings.trx.amode='std';if(S.settings.trx.manH==null)S.settings.trx.manH=1.82;if(!S.settings.trx.place)S.settings.trx.place='bar';S.workouts.concat(S.draft?[S.draft]:[]).forEach(w=>w.items.forEach(it=>{if(it.type!=='trx'||trxModeOf(it.exId)!=='angle')return;it.sets.forEach(st=>{if(st.pos&&!st.pos.dir){st.pos.dir=trxDirOf(it.exId);if(!st.man){const c=trxCalc(st.pos);st.ang=c.ang;st.w=String(c.lvl)}}})}));
@@ -3039,7 +3196,7 @@ function tgtDiff(it,w){if(!tgtNewOn()||!it||!w||!w.tplId||!STR.includes(it.type)
  if(!Object.keys(ap).length)return null;const sig=[ti.sets,ti.reps,ti.rir].join('|'),key=w.tplId+'|'+it.exId;if((S.settings.tgtNo||{})[key]===sig)return null;
  return{ap,D,sig,key,cur:{sets:ti.sets,reps:ti.reps,rir:ti.rir},tn:t.name}}
 function makeItem(e,t={}){if(e.type==='wu'||WU[e.id])return{uid:uid(),exId:e.id,name:e.name,type:'wu',role:WU[e.id]||e.role||'warm',descOv:t.desc||'',sec:0,t0:null,sets:[]};const LT=!t.type&&STR.includes(e.type)?lastTypeFor(e.id):null;const type=t.type||(LT&&STR.includes(LT.type)?LT.type:e.type);const it={uid:uid(),exId:e.id,name:e.name,type,uni:t.uni!=null?!!t.uni:!!e.uni,group:'',prim:primOf(e).slice(),sec:(e.sec||[]).slice(),cf:e.cf?e.cf.slice():null,tgt:{sets:t.sets||'',reps:t.reps||'',rir:t.rir||'',note:t.note||'',work:t.work||'',rest:t.rest||'',tech:t.tech||'',techN:t.techN||'',dropPct:t.dropPct||''},sets:[]};if(t.ssN&&ssOn())it.ssN=true;
- const n=type==='cardio'?1:Math.max(1,+t.sets||2);const b=type==='band'?(lastBandFor(e.id)||null):type==='trx'?lastTrxFor(e.id):null;for(let i=0;i<n;i++)it.sets.push(blankSet(it,t,b));if(lvList(e.id)){const lv=lastLvFor(e.id);if(lv)it.sets.forEach(s=>{s.lv=lv.lv;if(lv.par)s.par=true})}if(type==='weight')it.mach=machDefault(e.id);if((type==='db1'||type==='db2')&&stpOn()){const sm=num((S.settings.stepMem||{})[e.id]);if(sm>0)it.stp=sm}/* v58.25 */if(LT&&LT.type===type?LT.neg:exNeg(e))it.neg=true;if(it.neg&&!negType(it))delete it.neg;if(benchOk(it)){const b=lastBenchFor(e.id);it.bench=b!=null?b:benchDefOf(e.id)}if(bwNew()&&bwlOk(it)){it.bwl=lastBwlFor(e.id)||bwlDef(it);if(it.bwl.add==='assist')it.neg=true;else delete it.neg}if(gbOn()&&GBT.includes(type)&&!it.neg){const lb=lastGbFor(e.id,type);if(lb)it.bx=lb}/* v58.28: гуми - як в останньому підході минулого разу */if(STR.includes(type))tplSets(it,t);ldLast(it);stpMemTo(it);return it}
+ const n=type==='cardio'?1:Math.max(1,+t.sets||2);const b=type==='band'?(lastBandFor(e.id)||null):type==='trx'?lastTrxFor(e.id):null;for(let i=0;i<n;i++)it.sets.push(blankSet(it,t,b));if(lvList(e.id)){const lv=lastLvFor(e.id);if(lv)it.sets.forEach(s=>{s.lv=lv.lv;if(lv.par)s.par=true})}if(type==='weight')it.mach=machDefault(e.id);if((type==='db1'||type==='db2')&&stpOn()){const sm=num((S.settings.stepMem||{})[e.id]);if(sm>0)it.stp=sm;const im=(S.settings.invMem||{})[e.id],iv=im&&invById(im);if(iv&&invOn()){it.inv=iv.id;it.invN=iv.name}}/* v58.25 */if(LT&&LT.type===type?LT.neg:exNeg(e))it.neg=true;if(it.neg&&!negType(it))delete it.neg;if(benchOk(it)){const b=lastBenchFor(e.id);it.bench=b!=null?b:benchDefOf(e.id)}if(bwNew()&&bwlOk(it)){it.bwl=lastBwlFor(e.id)||bwlDef(it);if(it.bwl.add==='assist')it.neg=true;else delete it.neg}if(gbOn()&&GBT.includes(type)&&!it.neg){const lb=lastGbFor(e.id,type);if(lb)it.bx=lb}/* v58.28: гуми - як в останньому підході минулого разу */if(STR.includes(type))tplSets(it,t);ldLast(it);stpMemTo(it);return it}
 /* v57.5: навантаження підходів - як минулого разу (Р у гравітроні, робочі з поясом): код підходу з того ж за порядком і видом підходу минулого тренування */
 function ldLast(it){if(!isBwl(it))return;const ws=sortedW();let pit=null;for(let i=ws.length-1;i>=0&&!pit;i--)pit=ws[i].items.find(x=>x.exId===it.exId&&x.type==='bw'&&x.bwl)||null;if(!pit||!pit.sets.some(s=>s.ld))return;const t=ldTyp(it);it.sets.forEach((s,n)=>{const q=prevPair(it.sets,pit.sets,n);if(q&&q.ld&&LDS.includes(q.ld)&&q.ld!==t)s.ld=q.ld})}
 /* v52.1: схема підходів із шаблону - розминкові, Myo (кожен робочий), дроп (останній робочий) */
@@ -3393,13 +3550,13 @@ function itemHTML(it,i,n,w){if(it.type==='rest')return restHTML(it,i,n);if(it.ty
  if(SIM){h+=`<button class="chipb" data-a="it-mode" data-i="${it.uid}" aria-label="Режим навантаження: змінити">${esc(tLbl(it.type,it.exId))}${it.uni?(sidesOf(it)===2?' · по черзі':' · Л/П'):''}${it.ssN?' · суперсет':''} ›</button>`}
  else if(STR.includes(it.type)){h+=`<span class="mgrp"><select data-c="it-type" data-i="${it.uid}" aria-label="Режим навантаження">${STR.map(t=>`<option value="${t}" ${t===it.type?'selected':''}>${TYPES[t]}</option>`).join('')}</select>${itArrows()?'<!--TI-->':''}</span><label class="chk"><input type="checkbox" data-c="it-uni" data-i="${it.uid}" id="uni-${it.uid}" ${it.uni?'checked':''}>Л/П окремо</label>${ssOn()&&ssNextOk(w,it)?`<label class="chk"><input type="checkbox" data-c="it-ss" data-i="${it.uid}" id="ss-${it.uid}" ${it.ssN?'checked':''}>Суперсет з наступною</label>`:''}`}
  else h+=`<span class="mgrp"><span class="pill p-mut">${TYPES[it.type]}</span>${itArrows()?'<!--TI-->':''}</span>`;
- const HI=[];if(it.type==='trx'&&it.sets.some(isTc)){const s1=it.sets.find(x=>isTc(x)&&!x.wu);const t=s1?tcTxt(s1.tc,it.exId,false):'';if(trxPOf(it.exId).length)HI.push(t?'Як виконуєш: '+esc(t)+(it.sets.filter(isTc).some(x=>tcSig(x.tc)!==tcSig(s1.tc))?' (у підходах різні)':''):'Натисни «Як» у підході: відміть, наскільки полегшуєш вправу (замість ваги)')}if(bwNew()&&bwlOk(it)){h+=`<button class="chipb" data-a="pick-bwl" data-i="${it.uid}" aria-label="Навантаження: власна вага">⚙ ${esc(bwlChip(it))}</button>`;if(it.bwl)HI.push(bwlTxt(it,true))}else if(benchOk(it))h+=`<button class="chipb" data-a="pick-bench" data-i="${it.uid}" aria-label="Кут лави: ${benchOf(it)}°">⚙ Лава ${benchOf(it)}°</button>`;if(stpOn()&&(it.type==='db1'||it.type==='db2'))h+=`<button class="chipb" data-a="pick-stp" data-i="${it.uid}" aria-label="Крок ваги: ${nf(stepOf(it),2)} кг">⚙ Крок ${nf(stepOf(it),2)} кг</button>`;if(gbOn()&&GBT.includes(it.type)&&!it.neg){const x=it.bx&&it.bx.b&&it.bx.b.length?it.bx:null;h+=`<button class="chipb" data-a="pick-gb" data-i="${it.uid}" aria-label="Гума разом з вагою: ${x?esc(gbLbl(x)):'без гуми'}">${x?'⚙ Гума '+(x.m==='help'?'−':'+')+' '+esc(gbLbl(x)):'+ Гума'}</button>`;}if(it.type==='weight'){const m=it.mach||{k:'free'};h+=`<button class="chipb" data-a="pick-mach" data-i="${it.uid}" aria-label="Тренажер: ${esc(machLbl(m))}">⚙ ${esc(machLbl(m))}</button>`;if(m.k!=='free')HI.push('Вписуй вагу, як на тренажері: '+esc(machFormula(m)))}
+ const HI=[];if(it.type==='trx'&&it.sets.some(isTc)){const s1=it.sets.find(x=>isTc(x)&&!x.wu);const t=s1?tcTxt(s1.tc,it.exId,false):'';if(trxPOf(it.exId).length)HI.push(t?'Як виконуєш: '+esc(t)+(it.sets.filter(isTc).some(x=>tcSig(x.tc)!==tcSig(s1.tc))?' (у підходах різні)':''):'Натисни «Як» у підході: відміть, наскільки полегшуєш вправу (замість ваги)')}if(bwNew()&&bwlOk(it)){h+=`<button class="chipb" data-a="pick-bwl" data-i="${it.uid}" aria-label="Навантаження: власна вага">⚙ ${esc(bwlChip(it))}</button>`;if(it.bwl)HI.push(bwlTxt(it,true))}else if(benchOk(it))h+=`<button class="chipb" data-a="pick-bench" data-i="${it.uid}" aria-label="Кут лави: ${benchOf(it)}°">⚙ Лава ${benchOf(it)}°</button>`;if(stpOn()&&(it.type==='db1'||it.type==='db2')){const iv=invOf(it);h+=iv?`<button class="chipb" data-a="pick-stp" data-i="${it.uid}" aria-label="Набір гантелей: ${esc(iv.name||'')}">⚙ Набір ${esc(invShort(iv.name))}</button>`:`<button class="chipb" data-a="pick-stp" data-i="${it.uid}" aria-label="Крок ваги: ${nf(stepOf(it),2)} кг">⚙ Крок ${nf(stepOf(it),2)} кг</button>`}if(gbOn()&&GBT.includes(it.type)&&!it.neg){const x=it.bx&&it.bx.b&&it.bx.b.length?it.bx:null;h+=`<button class="chipb" data-a="pick-gb" data-i="${it.uid}" aria-label="Гума разом з вагою: ${x?esc(gbLbl(x)):'без гуми'}">${x?'⚙ Гума '+(x.m==='help'?'−':'+')+' '+esc(gbLbl(x)):'+ Гума'}</button>`;}if(it.type==='weight'){const m=it.mach||{k:'free'};h+=`<button class="chipb" data-a="pick-mach" data-i="${it.uid}" aria-label="Тренажер: ${esc(machLbl(m))}">⚙ ${esc(machLbl(m))}</button>`;if(m.k!=='free')HI.push('Вписуй вагу, як на тренажері: '+esc(machFormula(m)))}
  {const mh=modeHint(it);if(mh)HI.push(mh)}
  if(SSL&&it.ssIn&&restMode()!=='off')HI.push(`Суперсет: «Відп» тут - пауза після попередньої вправи суперсету${ssRestStd()?' (підказка '+ssRestStd()+' с)':''}. Рахується окремо.`);
  TIPHI[it.uid]=HI.join('<br>');h=h.replace('<!--TI-->',HI.length||hasTips(it.exId)?tipsBtn(it):'');  // v57: ⓘ - поради до вправи + пояснення режиму
  h+=`</div>`;
  if(gbOn()&&GBT.includes(it.type)&&!it.neg){const gl=gbLine(it);if(gl)h+=`<div class="muted small gbl">${gl}</div>`}
- if(prev)h+=prevLine(it,prev,!!RC);if(RC)h+=recHTML(it,RC,w);else if(STR.includes(it.type)&&whyMode()==='sheet')h+=nrecHTML(it,cardWhy(it,w,null));/* v58.5 */if(STR.includes(it.type)&&(!RC||RC.other)){const OR=oriFor(it,w);if(OR){if(!(OR.none||OR.mach)||!cardSimple())h+=oriHTML(it,OR);else if(OR.mach&&omOn()&&!it.sets.some(q=>!q.wu&&(num(q.w)!=null||(repsOf(it,q)||{}).tot)))h+=nmLine(it)}}/* v58.11: простий вигляд - один рядок «підбери пробним підходом» *//* простий вигляд: «орієнтира немає» / «тренажер» не показуємо - це не дія (є в ⓘ) */if(STR.includes(it.type))h+=recovNote(it)+(whyMode()==='sheet'?'':orderNote(it,w));/* v58.5: HIIT-підказка - в аркуші «Чому» */
+ if(prev)h+=prevLine(it,prev,!!RC);if(RC){h+=recHTML(it,RC,w);if(invOf(it))h+=invLine(it,RC)}else if(STR.includes(it.type)&&whyMode()==='sheet')h+=nrecHTML(it,cardWhy(it,w,null));/* v58.5 */if(STR.includes(it.type)&&(!RC||RC.other)){const OR=oriFor(it,w);if(OR){if(!(OR.none||OR.mach)||!cardSimple())h+=oriHTML(it,OR);else if(OR.mach&&omOn()&&!it.sets.some(q=>!q.wu&&(num(q.w)!=null||(repsOf(it,q)||{}).tot)))h+=nmLine(it)}}/* v58.11: простий вигляд - один рядок «підбери пробним підходом» *//* простий вигляд: «орієнтира немає» / «тренажер» не показуємо - це не дія (є в ⓘ) */if(STR.includes(it.type))h+=recovNote(it)+(whyMode()==='sheet'?'':orderNote(it,w));/* v58.5: HIIT-підказка - в аркуші «Чому» */
  if(STR.includes(it.type)){h+=strRows(it,prev);h+=ldCwHint(it);h+=coachMark(it,RC)}else if(it.type==='hiit')h+=hiitRows(it,prev);else h+=cardioForm(it,prev);
  h+=`<div class="it-foot"><div class="stat" id="ft-${it.uid}">${footTxt(it)}</div><div class="minibtns">${it.type==='cardio'?'':`<button class="btn" data-a="del-set" data-i="${it.uid}" ${it.sets.length<2?'disabled':''} aria-label="Прибрати останній підхід">−</button><button class="btn" data-a="add-set" data-i="${it.uid}">+ ${it.type==='hiit'?'Раунд':'Підхід'}</button>`}</div></div></article>`;
  return h}
@@ -4226,6 +4383,7 @@ function vSet(){const t=S.settings.theme,sy=syState(),rm=restMode();const SQ=set
  ${bandTabs()}${bandHelp()}<div>${bandRows(false)}</div><button class="btn full" data-a="band-add">+ Додати гуму</button>
  <button class="btn full" data-a="band-recalc">Перерахувати збережені тренування з гумами</button>
  <p class="muted small" style="margin:0">Зміни показників діють для нових записів. Збережені тренування зберігають гуми такими, якими вони були в день запису. Кнопка «Перерахувати» підставить поточні показники в збережені тренування за обраний період або за весь час, і обсяг та 1ПМ по гумах в історії зміняться.</p>`))
+ +acc('inv','Мій інвентар',invList().length?invList().length+' '+pln(invList().length,'набір','набори','наборів')+(invOn()?'':' · вимкнено'):'набірні гантелі',HL(invSetHTML()))
  +acc('garmin','Garmin',gOn()?'силові '+GM.filter(g=>gmK(g[0],'s')).length+' · HIIT '+GM.filter(g=>gmK(g[0],'h')).length:'вимкнено',gHTML())
  +`<div class="gh sgh">Аналітика і довідка</div>`
  +acc('an','Аналітика','непрямі ×'+(secW()===1?'1':'0,5'),anHTML())
@@ -4796,8 +4954,24 @@ const ACT={
   const nA=w.items.filter(it=>it.auto).length;toast(`Сформовано${o.force?' без урахування відновлення':''}: ${nA} ${pln(nA,'вправа','вправи','вправ')}, ≈${R.est} хв${blkPlanMin(w.items)?` + таймерні блоки ≈${blkPlanMin(w.items)} хв`:''}${en.length?'. Увімкнено в Налаштуваннях: '+en.join(', '):''}`)},
  'pick-tag'(){tagSheet()},
  'pick-wtype'(el){WTCTX=el.dataset.t?'t':'w';wtSheet()},
- 'stp-set'(el){const it=itemBy(STPCTX);if(!it)return;const k=stpSet(it,+el.dataset.v);closeSheet();if(k)toast('Крок змінено - вписане рекомендацією перераховано')},'stp-def'(){const it=itemBy(STPCTX);if(!it)return;const k=stpSet(it,null);closeSheet();if(k)toast('Крок змінено - вписане рекомендацією перераховано')},
+ 'stp-set'(el){const it=itemBy(STPCTX);if(!it)return;invClear(it);const k=stpSet(it,+el.dataset.v);closeSheet();if(k)toast('Крок змінено - вписане рекомендацією перераховано')},'stp-def'(){const it=itemBy(STPCTX);if(!it)return;invClear(it);const k=stpSet(it,null);closeSheet();if(k)toast('Крок змінено - вписане рекомендацією перераховано')},
  'pick-stp'(el){stpSheet(el.dataset.i)},
+ 'stp-mode'(el){if(STPCTX)stpSheet(STPCTX,el.dataset.v)},
+ 'inv-pick'(el){const it=itemBy(STPCTX);const x=invById(el.dataset.v);if(!it||!x)return;it.inv=x.id;it.invN=x.name;(S.settings.invMem=S.settings.invMem||{})[it.exId]=x.id;GBC.clear();BORC.clear();const k=stpRefill(it);save();render();stpSheet(STPCTX,'set');toast(k?'Набір «'+(x.name||'')+'» - вписане рекомендацією перераховано':'Набір «'+(x.name||'')+'»')},
+ 'inv-tog'(el){const u=el.dataset.i;if(INVOPEN.has(u))INVOPEN.delete(u);else INVOPEN.add(u);render()},
+ 'inv-go'(){closeSheet();S.ui.tab='set';S.ui.acc=['inv'];render();setTimeout(()=>{const d=document.querySelector('[data-acc=inv]');if(d)d.scrollIntoView()},50)},
+ 'inv-new'(){INVED={id:'i_'+uid(),name:'',k:'db',hd:[{w:2,n:2,fit:null}],pl:[{w:2,n:8}]};INVED._from=SHEET==='stp'?STPCTX:null;INVCP=-1;invEdSheet()},
+ 'inv-ed'(el){const x=invById(el.dataset.v);if(!x)return;INVED=JSON.parse(JSON.stringify(x));INVCP=-1;invEdSheet()},
+ 'inv-hadd'(){if(!INVED)return;INVED.hd.push({w:'',n:1,fit:null});invEdRe()},
+ 'inv-hdel'(el){if(!INVED)return;INVED.hd.splice(+el.dataset.v,1);invEdRe()},
+ 'inv-padd'(){if(!INVED)return;INVED.pl.push({w:'',n:''});invEdRe()},
+ 'inv-pdel'(el){if(!INVED)return;INVED.pl.splice(+el.dataset.v,1);if(INVCP>=INVED.pl.length)INVCP=-1;invEdRe()},
+ 'inv-cp'(el){const i=+el.dataset.v;INVCP=INVCP===i?-1:i;invEdRe()},
+ 'inv-cc'(el){if(!INVED||INVCP<0)return;const p=INVED.pl[INVCP];if(!p)return;if(el.dataset.v)p.c=el.dataset.v;else delete p.c;invEdRe()},
+ 'inv-save'(){const x=INVED;if(!x)return;x.name=String(x.name||'').trim()||'Набір '+(invList().length+1);x.hd=(x.hd||[]).filter(h=>num(h.w)>0&&num(h.n)>0).map(h=>({w:num(h.w),n:num(h.n),lk:num(h.lk)||0,fit:h.fit&&num(h.fit.n)>0?{n:num(h.fit.n),w:num(h.fit.w)||null}:null}));x.pl=(x.pl||[]).filter(p=>num(p.w)>0&&num(p.n)>0).map(p=>{const o={w:num(p.w),n:Math.round(num(p.n))};if(p.c)o.c=p.c;if(num(p.t)>0)o.t=num(p.t);return o});
+  if(!x.hd.length||!x.pl.length){toast('Додай хоча б один гриф і один диск');return}const top=Math.max(...x.pl.map(p=>p.w));x.hd.forEach(h=>{if(h.fit)h.fit.w=top});const from=x._from;delete x._from;S.settings.inv=invList();const i=S.settings.inv.findIndex(y=>y.id===x.id);if(i>=0)S.settings.inv[i]=x;else S.settings.inv.push(x);INVC.clear();GBC.clear();BORC.clear();
+  (S.draft?S.draft.items:[]).forEach(it=>{if(it.inv===x.id){it.invN=x.name;stpRefill(it)}});save();INVED=null;if(from&&itemBy(from)){stpSheet(from,'set')}else{closeSheet();render()}toast('Набір збережено')},
+ 'inv-del'(){const x=INVED;if(!x||!invById(x.id))return;confirmSheet('Видалити набір «'+(x.name||'')+'»? Картки з ним повернуться до кроку, історія не зміниться','Видалити',()=>{S.settings.inv=invList().filter(y=>y.id!==x.id);const m=S.settings.invMem||{};Object.keys(m).forEach(k=>{if(m[k]===x.id)delete m[k]});(S.draft?S.draft.items:[]).forEach(it=>{if(it.inv===x.id){delete it.inv;delete it.invN}});INVC.clear();GBC.clear();BORC.clear();INVED=null;save();render()})},
  'bstp-set'(el){const it=itemBy(BWLCTX);if(!it)return;const v=+el.dataset.v;const k=stpSet(it,v>0?v:null);bwlSheet(BWLCTX);toast(k?'Крок змінено - вписане рекомендацією перераховано':'Крок: '+nf(stepOf(it),2)+' кг')},
  'pick-gb'(el){GBX=null;gbSheet(el.dataset.i)},
  'gb-m'(el){if(!GBX)return;GBX.x.m=el.dataset.v;gbSheet(GBX.u)},
@@ -4914,7 +5088,7 @@ const ACT={
  'exed-cf'(el){const k=el.dataset.v;const a=EXED.cf||[];EXED.cf=a.includes(k)?a.filter(x=>x!==k):a.concat(k);renderExEd()},
  'exed-save'(){const e=EXED;e.name=(e.name||'').trim();if(!e.name){toast('Впиши назву вправи');return}if(e._new&&S.catalog.some(x=>x.name.toLowerCase()===e.name.toLowerCase())){toast('Вправа з такою назвою вже є');return}
   const fromPick=e._fromPick,isNew=e._new,cpo=e._copyOf;delete e._new;delete e._fromPick;delete e._copyOf;if(e.type==='cardio'&&!(e.cf&&e.cf.length))e.cf=['time','dist','kcal','hr'];if(e.type!=='cardio')e.cf=null;
-  if(isNew)S.catalog.push(e);else{const i=S.catalog.findIndex(x=>x.id===e.id);S.catalog[i]=e}if(isNew&&cpo)['machMem','stepMem'].forEach(m=>{const M=S.settings[m];if(M&&M[cpo]!=null&&M[e.id]==null)M[e.id]=JSON.parse(JSON.stringify(M[cpo]))});save();
+  if(isNew)S.catalog.push(e);else{const i=S.catalog.findIndex(x=>x.id===e.id);S.catalog[i]=e}if(isNew&&cpo)['machMem','stepMem','invMem'].forEach(m=>{const M=S.settings[m];if(M&&M[cpo]!=null&&M[e.id]==null)M[e.id]=JSON.parse(JSON.stringify(M[cpo]))});save();
   if(fromPick&&PICK){const cb=PICK;PICK=null;cb(e)}else closeSheet();toast(isNew?(cpo?'Копію додано в каталог':'Вправу додано в каталог'):'Вправу збережено')},
  'exed-copy'(){const c=exCopy(EXED);if(!c)return;EXED=c;renderExEd();toast('Копія: зміни назву і налаштування, потім «Зберегти»')},
  'exed-del'(){const id=EXED.id;if(WU[id])return;confirmSheet('Видалити вправу з каталогу? З шаблонів вона теж зникне, історія залишиться','Видалити',()=>{S.catalog=S.catalog.filter(e=>e.id!==id);S.templates.forEach(t=>{t.items=t.items.filter(i=>i.exId!==id);t.items.forEach(i=>{if(i.kind==='block')i.ex=(i.ex||[]).filter(x=>x.exId!==id)})});save()})},
@@ -6129,6 +6303,8 @@ document.addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)ret
  if(f==='tpl'){const t=edT();if(t){t[k]=v;save();tplDirtyUI()}return}
  if(f==='ti'){const t=edT();if(t){t.items[+el.dataset.n][k]=v;save();if(k==='type'||k==='tech')render();else tplDirtyUI()}return}
  if(f==='step'){(S.settings.steps=S.settings.steps||{})[k]=v.replace(',','.');save();return}
+ if(f==='inved'){const x=INVED;if(!x)return;const i=+el.dataset.i;if(k==='name')x.name=v;else if(k==='hw'&&x.hd[i])x.hd[i].w=v;else if(k==='hn'&&x.hd[i])x.hd[i].n=v;else if(k==='hf'&&x.hd[i]){const q=num(v);x.hd[i].fit=q>0?{n:q,w:Math.max(...x.pl.map(p=>num(p.w)||0))}:null}else if(k==='pw'&&x.pl[i])x.pl[i].w=v;else if(k==='pn'&&x.pl[i])x.pl[i].n=v;else if(k==='pt'&&x.pl[i]){if(num(v)>0)x.pl[i].t=v;else delete x.pl[i].t}
+  clearTimeout(window.__invT);window.__invT=setTimeout(()=>{const t=document.getElementById('inv-sum');if(t&&INVED)t.innerHTML=invSumHTML(invNumC(INVED))},250);return}
  if(f==='stp'){const it=itemBy(STPCTX);if(!it)return;const q=num(v);if(q!=null&&q>0&&q<=50)stpSet(it,Math.round(q*100)/100);return}if(f==='bstp'){const it=itemBy(BWLCTX);if(!it)return;const q=num(v);if(q!=null&&q>0&&q<=50){stpSet(it,Math.round(q*100)/100);document.querySelectorAll('#bstp .chip').forEach(c=>c.classList.remove('on'))}return}if(f==='bench'){const it=itemBy(BNCTX);if(!it)return;const q=num(v);if(q!=null&&q>=0&&q<=90)it.bench=Math.round(q);save();return}
  if(f==='cw'){if(CWSEL){CWSEL[k]=v;if(k==='ratio'){const t=document.getElementById('cw-total');const it=itemBy(CWCTX);if(t&&it){const r=num(v)>0?num(v):1,q=it.sets.find(s=>ldOf(it,s)==='assist'&&num(s.w)!=null),x=q?num(q.w):30;t.querySelector('b').textContent=`Плитки ${nf(x,1)} → ≈ ${f0(x*r)} кг допомоги`}}}return}
  if(f==='bwl'){const it=itemBy(BWLCTX);if(!it)return;if(!it.bwl)it.bwl=bwlDef(it);const q=num(v);/* v57: частка - у цьому записі; у каталог (для нових тренувань) - лише в поточному, не в редагуванні історії */if(q!=null&&q>0&&q<=150)it.bwl.sh=String(q);else delete it.bwl.sh;const e=(S.catalog||[]).find(x=>x.id===it.exId);if(e&&S.draft&&!S.draft._edit){if(q!=null&&q>0&&q<=150)e.bwShare=String(q);else if(String(v).trim()==='')delete e.bwShare}save();const t=document.getElementById('bwl-total');if(t)t.innerHTML=bwlTxt(it);return}
