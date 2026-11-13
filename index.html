@@ -934,7 +934,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.28 · 13.11.2026';
+const APPV='58.28.1 · 13.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -1278,7 +1278,7 @@ function mmss(sec){if(!sec)return '0:00';sec=Math.round(sec);return Math.floor(s
 /* ========== state ========== */
 let S, CACHE=null;
 const HOST_THEME=document.documentElement.getAttribute('data-theme');
-function defaults(){return{v:1,seedV:27,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:[],workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
+function defaults(){return{v:1,seedV:28,settings:{theme:'auto',bw:80,bands:DEFAULT_BANDS.map(b=>({...b})),trx:defTrx()},catalog:seedCatalog(),templates:[],workouts:[],draft:null,ui:{tab:'log',period:90,stab:'ov'}}}
 let PERSIST=null;
 const SNAP='trainlog.snap.',SNAPN=7;let LOADFAIL=false;
 // хто читає збережене (Android-автокопія, експорт), отримує свіже: відкладене збереження виконується перед читанням
@@ -1609,7 +1609,24 @@ function gbVirt(items,f){const ch=[];const g={C:CACHE,EP,FPS,DIRTY,FPD,WSET,ISET
  try{items.forEach(i=>{const u=gbU(i);i.sets.forEach(q=>{const x=gbOf(i,q);if(!x)return;const v=num(q.w);if(v==null)return;const K=gbKg(x).k/u;ch.push([q,q.w]);q.w=String(Math.round(Math.max(0,v+K)*100)/100)})});
   window.__noMemo=true;CACHE=null;GBV=true;return f()}
  finally{GBV=false;GBM=false;ch.forEach(([q,v])=>{q.w=v});CACHE=g.C;EP=g.EP;FPS=g.FPS;DIRTY=g.DIRTY;FPD=g.FPD;WSET=g.WSET;ISET=g.ISET;MEMW=g.MEMW;MEMI=g.MEMI;MEMR=g.MEMR;RVC=g.RVC;FWC=g.FWC;TAGC=g.TAGC;TAGK=g.TAGK;RVCM.clear();g.RV.forEach((v,k)=>RVCM.set(k,v));for(const k in RIRC)delete RIRC[k];Object.assign(RIRC,g.RI);if(g.nm===undefined)delete window.__noMemo;else window.__noMemo=g.nm}}
-function recFor(it,w){if(!it||!w||!gbOn()||!GBT.includes(it.type)||it.neg)return recFor0(it,w);const L=gbItems(it,w);const has=i=>i.sets.some(q=>gbOf(i,q));if(!L.some(has))return recFor0(it,w);
+/* v58.28.1 «Схожа вправа»: вправа без власної історії бере минулий раз схожої (явні пари SIMX, оригінал копії cpOf; для власної ваги, гум, TRX - також simEx того самого типу і руху).
+   Історію схожої на час розрахунку видаємо за цю вправу (exId), решта (зони, ціль, хват) - від цієї вправи; кеші - як у gbVirt. Перемикач S.settings.borOn (Тонке → Нові вправи) */
+const borOn=()=>S.settings.borOn!==false&&!window.__borOld;
+function exHistBefore(exId,type,w){return(S.workouts||[]).some(x=>x!==w&&x.id!==(w&&w.id)&&(!w||!w.date||x.date<=w.date)&&(x.items||[]).some(i=>i.exId===exId&&(!type||i.type===type)&&(i.sets||[]).some(q=>!q.wu&&(repsOf(i,q)||{}).tot)))}
+function borDonor(it,w){if(!borOn()||!it||!STR.includes(it.type)||it.neg)return null;if(exHistBefore(it.exId,null,w))return null;const e=ex(it.exId)||{};
+ const C=[].concat(SIMX[it.exId]||[],Object.keys(SIMX).filter(k=>(SIMX[k]||[]).includes(it.exId)),e.cpOf?[e.cpOf]:[]);
+ if(!EQF[it.type]){const pp=patOf(e);simEx(it.exId).forEach(x=>{if(x.type===it.type&&patOf(x).some(p=>pp.includes(p)))C.push(x.id)})}
+ for(const d of C){if(d!==it.exId&&exHistBefore(d,it.type,w))return d}return null}
+let BORC=new Map();
+function recFor(it,w){const d=w?borDonor(it,w):null;if(!d)return recFor1(it,w);
+ const key=EP+'|'+todayStr()+'|'+d+'|'+JSON.stringify([it,w.id,w.date,w.diff,w.bw,(w.items||[]).map(i=>i===it?0:[i.exId,i.type,(i.sets||[]).length,(i.sets||[]).filter(q=>(repsOf(i,q)||{}).tot).length]),S.settings.bands,S.settings.gumWt,S.settings.bandK,S.settings.health,S.settings.lightLoad]);
+ const cl=R=>R&&JSON.parse(JSON.stringify(R));const c=BORC.get(it.uid);if(c&&c.k===key)return cl(c.R);
+ const ch=[];const g={C:CACHE,EP,FPS,DIRTY,FPD,WSET,ISET,MEMW,MEMI,MEMR,RVC,FWC,TAGC,TAGK,RV:new Map(RVCM),RI:Object.assign({},RIRC),nm:window.__noMemo,GC:new Map(GBC)};let R=null,dd='';
+ try{(S.workouts||[]).forEach(x=>{if(x===w)return;(x.items||[]).forEach(i=>{if(i.exId===d&&i.type===it.type){ch.push([i,i.name]);i.exId=it.exId;if(x.date>dd)dd=x.date}})});window.__noMemo=true;CACHE=null;GBC.clear();R=recFor1(it,w)}
+ finally{ch.forEach(([i,n])=>{i.exId=d;i.name=n});CACHE=g.C;EP=g.EP;FPS=g.FPS;DIRTY=g.DIRTY;FPD=g.FPD;WSET=g.WSET;ISET=g.ISET;MEMW=g.MEMW;MEMI=g.MEMI;MEMR=g.MEMR;RVC=g.RVC;FWC=g.FWC;TAGC=g.TAGC;TAGK=g.TAGK;RVCM.clear();g.RV.forEach((v,k)=>RVCM.set(k,v));for(const k in RIRC)delete RIRC[k];Object.assign(RIRC,g.RI);GBC=g.GC;if(g.nm===undefined)delete window.__noMemo;else window.__noMemo=g.nm}
+ if(R){const t=`своєї історії ще немає - за схожою вправою «${(ex(d)||{}).name||d}»${dd?' ('+dShort(dd)+')':''}; перший раз підбери за відчуттям, далі - за своєю історією (оцінка)`;R.why.unshift(t);R.whyS.unshift('base');R.adj=[{t,r:false,sec:'base'}].concat(R.adj||[]);R.bor={id:d,date:dd}}
+ BORC.set(it.uid,{k:key,R:cl(R)});return R}
+function recFor1(it,w){if(!it||!w||!gbOn()||!GBT.includes(it.type)||it.neg)return recFor0(it,w);const L=gbItems(it,w);const has=i=>i.sets.some(q=>gbOf(i,q));if(!L.some(has))return recFor0(it,w);
  const key=EP+'|'+todayStr()+'|'+JSON.stringify([it,w.id,w.date,w.diff,w.bw,(w.items||[]).map(i=>i===it?0:[i.exId,i.type,(i.sets||[]).length,(i.sets||[]).filter(q=>(repsOf(i,q)||{}).tot).length]),S.settings.bands,S.settings.gumWt,S.settings.bandK,S.settings.health,S.settings.lightLoad]);/* інші картки - лише склад і кількість виконаних підходів (контекст), не кожна цифра */const cl=R=>R&&JSON.parse(JSON.stringify(R));/* копія: викликачі можуть змінювати R */const c=GBC.get(it.uid);if(c&&c.k===key&&c.R!==undefined)return cl(c.R);let R=null;try{R=gbRec(it,w,L)}finally{GBC.set(it.uid,{k:key,R:cl(R)})}return R}
 function gbRec(it,w,L){const u=gbU(it),tW=it.sets.filter(q=>!q.wu),xT=(tW.length?tW:[{}]).map(q=>gbOf(it,q)),KT=xT.map(x=>gbKg(x).k/u);
  const prevS=[];L.forEach(i=>{if(i===it)return;i.sets.forEach(q=>{if(!q.wu&&(repsOf(i,q)||{}).tot)prevS.push([i,q])})});
@@ -2146,6 +2163,8 @@ function fix(){const d=defaults(),sv=S.seedV||1;(S.templates||[]).concat(S.worko
  if(sv<26){/* v58.24: Олег 07.11 - запас у клітинках «Ціль» замість «Минулого разу» (перемикач лишається) */if(S.settings&&S.settings.rirPh==='last')S.settings.rirPh='rec';S.seedV=Math.max(S.seedV||1,26)}
  if(sv<27){/* v58.27: +3 вправи каталогу; петлі Береша в шаблонах «(М)» (лише раз - далі Олег може свідомо повернути турнік) */const names=new Set((S.catalog||[]).map(e=>String(e.name).toLowerCase().trim()));seedCatalog().filter(e=>CAT5827.includes(e.id)&&!S.catalog.some(c=>c.id===e.id)&&!names.has(e.name.toLowerCase())).forEach(e=>S.catalog.push(e));
   const LP={knee_raise:'knee_raise_strap',leg_raise:'leg_raise_strap'};(S.templates||[]).forEach(t=>{if(!/\(М\)/.test(t.name||''))return;exWalk(t.items,o=>{const n=LP[o.exId];if(!n||!ex(n))return;o.exId=n;if(o.name!=null)o.name=ex(n).name})});S.seedV=Math.max(S.seedV||1,27)}
+ if(sv<28){/* v58.28.1: Олег 13.11 - у Максимовичах підняття колін/ніг завжди в петлях: історія тренувань за шаблонами «(М)» → петлі (раз) */const LP={knee_raise:'knee_raise_strap',leg_raise:'leg_raise_strap'};const tM=new Set((S.templates||[]).filter(t=>/\(М\)/.test(t.name||'')).map(t=>t.id));
+  (S.workouts||[]).forEach(w=>{if(!(tM.has(w.tplId)||/\(М\)/.test(w.tplName||'')))return;exWalk(w.items,o=>{const n=LP[o.exId];if(!n||!ex(n))return;o.exId=n;if(o.name!=null)o.name=ex(n).name})});S.seedV=Math.max(S.seedV||1,28)}
  gobMerge();
  if(sv<17){/* v57.4: Enter типово «Далі»; хто вже користувався без вибору - лишаємо «Готово», як було */if(S.settings&&S.settings.entKey==null&&(S.workouts||[]).length)S.settings.entKey='done';S.seedV=Math.max(S.seedV||1,17)}
  if(sv<16){/* v56.9: нові TRX-вправи; «TRX віджимання» (жим стоячи з нахилом) - точніша назва */const NEWIDS=['trx_hirow','trx_row1','trx_pullup','trx_face','trx_pushup_h','trx_pushup_f','trx_dip','trx_fly','trx_bss','trx_side_lunge','trx_bridge','trx_knees_alt','trx_pike','trx_plank','trx_rollout','trx_bodysaw','trx_sideplank'];const names=new Set((S.catalog||[]).map(e=>String(e.name).toLowerCase().trim()));seedCatalog().filter(e=>NEWIDS.includes(e.id)&&!S.catalog.some(c=>c.id===e.id)&&!names.has(e.name.toLowerCase())).forEach(e=>S.catalog.push(e));(S.catalog||[]).forEach(e=>{if(e.id==='trx_push'&&e.name==='TRX віджимання')e.name='TRX жим від грудей стоячи з нахилом'});S.seedV=Math.max(S.seedV||1,16)}}
@@ -4099,6 +4118,8 @@ function advHTML(){const st=S.settings.steps||{};const sf=(k,l,ph)=>`<label clas
  ${setqAct()?'':'<div class="lbl tsub">Нові вправи</div>'}
  <label class="chk"><input type="checkbox" data-c="sett" data-k="oriMach" id="set-orimach" ${omOn()?'checked':''}>Орієнтир ваги для нових вправ на тренажерах</label>
  ${hlp('Нова вправа на тренажері чи блоці: вага перерахована з твоєї схожої або базової вправи за співвідношенням сили (Strength Level) і налаштуванням тренажера (2:1, важіль), мінус 30-40% для обережності - позначка «грубо», для кількох пар «орієнтовно». Немає даних - рядок «підбери вагу пробним підходом». <b>Приклад:</b> пуловер на блоці 2:1 від твоєї вертикальної тяги 60×11 - ≈40 кг стеку, грубо. Вимкнено - для тренажерів орієнтира немає.')}
+ <label class="chk"><input type="checkbox" data-c="sett" data-k="borOn" id="set-bor" ${borOn()?'checked':''}>Нова вправа - за історією схожої</label>
+ ${hlp('Поки вправа не має своєї історії, рекомендація береться від минулого разу схожої: явні пари (підняття колін у петлях ↔ у висі, гоблет біля стіни ↔ гоблет), оригінал для копії, а для власної ваги, гум і TRX - найближча вправа з тим самим рухом і м’язами. У «Чому» - яка саме. Після першого свого запису - своя історія.')}
  <label class="chk"><input type="checkbox" data-c="sett" data-k="oriOn" id="set-ori" ${oriOn()?'checked':''}>Орієнтир ваги для нової вправи</label>
  ${hlp('Коли вправа нова (або новий режим, наприклад гантелі замість штанги), програма шукає схожу з історії: той самий рух (жим, тяга, присідання…) і ті самі м’язи - основні, або основний в одній і допоміжний в іншій (слабший збіг). З її 1ПМ рахує стартову вагу із запасом обережності; для жимів на лаві враховує кут лави. Показується помаранчевим «≈» у клітинці ваги і рядком під назвою вправи; сама не вписується. Лише штанга, вільна вага і гантелі; якщо схожої вправи немає - так і пише.<br><b>Приклад:</b> жим гантелей на похилій (лава 30°) 1ПМ ≈ 30 кг на гантель → новий жим гантелей лежачи (0°) 8-12, запас 1-2: 30 × 0,9 × 1/0,78 ≈ 35 кг 1ПМ → ≈ 24 кг на гантель на 8 повторів із запасом 3.')}
  ${setqAct()?'':'</div></details>'}`}
@@ -4355,7 +4376,7 @@ function musEdChips(e){const st=id=>e.prim.includes(id)?'mus-p':e.sec.includes(i
 function exCopy(src){if(!src||src.sys||WU[src.id]||src.type==='wu')return null;const c=JSON.parse(JSON.stringify(src)),id=src.id;['_new','_fromPick','_copyOf','sys','role'].forEach(k=>delete c[k]);c.id='u_'+uid();
  const D=BWDEF[id]||[];if(['bw','band','weight'].includes(c.type)){if(c.type==='bw'&&c.noKg===undefined)c.noKg=!!D[3];if(c.bwLvl===undefined&&D[1])c.bwLvl=D[1];if(c.lvDef===undefined&&D[2])c.lvDef=D[2];if((c.bwShare==null||c.bwShare==='')&&D[0]!=null&&D[0]!==1)c.bwShare=String(Math.round(D[0]*100))}
  if(c.negDef===undefined&&exNeg(src))c.negDef='neg';if(!c.machP&&MACHDEF[id])c.machP=MACHDEF[id];if(c.benchDef==null&&BENCHDEF[id]!=null)c.benchDef=BENCHDEF[id];if(c.type==='trx'){if(!c.trxMode&&TRX_DEF[id])c.trxMode=TRX_DEF[id];if(!Array.isArray(c.trxP)&&TRXP[id])c.trxP=TRXP[id].slice()}
- if(!c.tipsOf&&TIPS[id])c.tipsOf=id;const base=String(src.name||'').replace(/\s*\(копія( \d+)?\)$/,'')+' (копія';let nm=base+')',n=2;const has=x=>(S.catalog||[]).some(e=>String(e.name).toLowerCase()===x.toLowerCase());while(has(nm))nm=base+' '+(n++)+')';c.name=nm;c._new=true;c._copyOf=id;c._fromPick=false;return c}
+ if(!c.tipsOf&&TIPS[id])c.tipsOf=id;c.cpOf=id;const base=String(src.name||'').replace(/\s*\(копія( \d+)?\)$/,'')+' (копія';let nm=base+')',n=2;const has=x=>(S.catalog||[]).some(e=>String(e.name).toLowerCase()===x.toLowerCase());while(has(nm))nm=base+' '+(n++)+')';c.name=nm;c._new=true;c._copyOf=id;c._fromPick=false;return c}
 function exEditor(e,fromPick){EXED=e?convEx(JSON.parse(JSON.stringify(e))):{id:'u_'+uid(),name:'',type:fromPick&&PICKBLK?'hiit':'weight',prim:[],sec:[],uni:false,cf:null,_new:true};EXED._fromPick=!!fromPick;renderExEd()}
 function trxEdFields(e){const P=Array.isArray(e.trxP)?e.trxP:trxPOf(e.id);
  return`<label class="field"><span>Група рухів</span><select class="in" data-c="exed-trxg" id="exed-trxg"><option value="">-</option>${Object.entries(TRXG).map(([k,v])=>`<option value="${k}" ${e.trxG===k?'selected':''}>${v[0]}</option>`).join('')}</select></label>
