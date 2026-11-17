@@ -1007,7 +1007,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.37.1 · 17.11.2026';
+const APPV='58.37.2 · 17.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -6875,11 +6875,21 @@ function draftDirty(){const d=S.draft;if(!d)return false;if(d._edit){const o=S.w
 /* v57.1: підставлене з ранку (без змін) і службові позначки підходу (wu, st…) - не дані користувача */
 function draftHasData(){const d=S.draft;if(!d)return false;const m=S.settings.morn,auto=k=>d._mf&&d._mf[k]&&m&&String(m[k])===String(d[k]);if(['notes','sleep','well','bw','srpe','dur'].some(k=>String(d[k]??'').trim()&&!auto(k))||GM.some(g=>String(d[g[0]]??'').trim()&&!auto(g[0])))return true;const SK=['r','rl','rr','w','rir','rest','restR'];return d.items.some(i=>(i.type==='block'&&blockStats(i).has)||(i.type==='wu'&&wuSec(i)>0)||(i.sets||[]).some(s=>s&&(SK.some(k=>String(s[k]??'').trim())||(s.mini||[]).some(x=>x&&x.r)||(s.drops||[]).some(x=>x&&(x.r||x.w)))))}
 function audioMode(){try{if(navigator.audioSession)navigator.audioSession.type=S.settings.duck===false?'ambient':'transient'}catch(e){}}
-function audioInit(){try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&!ACX)ACX=new AC();audioMode();if(ACX&&ACX.resume)ACX.resume()}catch(e){}}
+function audioInit(){if(window.__sndOld){try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&!ACX)ACX=new AC();audioMode();if(ACX&&ACX.resume)ACX.resume()}catch(e){}return}
+ /* 58.37.2: iPhone після будильника, дзвінка, Siri чи іншого звуку може лишити аудіоканал «перерваним» (resume() не діє) або «завислим» (стан running, а годинник стоїть) - тоді створюємо новий канал на дотику і відмикаємо його беззвучним звуком */
+ try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;let bad=!ACX||ACX.state==='closed'||ACX.state==='interrupted';
+  if(!bad&&ACX.state==='running'&&ACK.at&&Date.now()-ACK.at>1500&&ACX.currentTime===ACK.ct)bad=true;
+  if(bad){try{if(ACX&&ACX.close&&ACX.state!=='closed')ACX.close()}catch(e){}ACX=new AC();ACN++}
+  audioMode();if(ACX.resume&&ACX.state!=='running'){try{const r=ACX.resume();if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+  try{const b=ACX.createBuffer(1,1,22050),q=ACX.createBufferSource();q.buffer=b;q.connect(ACX.destination);q.start(0)}catch(e){}
+  ACK={ct:ACX.currentTime,at:Date.now()}}catch(e){}}
+let ACK={ct:0,at:0},ACN=0;
+/* сигнал посеред таймера (без дотику): канал призупинено - пробуємо продовжити */
+function audioWake(){if(window.__sndOld||!ACX)return;try{if(ACX.state!=='running'&&ACX.state!=='closed'&&ACX.resume){const r=ACX.resume();if(r&&r.catch)r.catch(()=>{})}}catch(e){}}
 const SNDS=[['sharp','Різкий','пробивається крізь музику (типовий)'],['soft','М’який','чистий тон, плавний'],['bell','Дзвіночок','короткий удар із затуханням'],['double','Подвійний','два короткі тихі сигнали'],['low','Низький','глухий, найменш нав’язливий']];let SNDOV=null;
 const sndP=()=>{const p=SNDOV||S.settings.sndP;return SNDS.some(x=>x[0]===p)?p:'sharp'};
 function tone(type,fr,t0,dur,peak,att,dec){const o=ACX.createOscillator(),g=ACX.createGain();o.type=type;o.frequency.value=fr;o.connect(g);g.connect(ACX.destination);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(peak,t0+att);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.start(t0);o.stop(t0+dur+.05)}
-function beep(f,d,force){try{if(!ACX||(S.settings.sound===false&&!force))return;const vol=Math.min(1,Math.max(.3,num(S.settings.vol)||1));const t=ACX.currentTime;const P=sndP();
+function beep(f,d,force){try{if(!ACX||(S.settings.sound===false&&!force))return;audioWake();const vol=Math.min(1,Math.max(.3,num(S.settings.vol)||1));const t=ACX.currentTime;const P=sndP();
  if(P==='soft'){tone('sine',f*.6,t,Math.max(.18,d+.08),.9*vol,.03,0);return}
  if(P==='bell'){const L=Math.max(.5,d*1.6);tone('sine',f*.8,t,L,.8*vol,.005,0);tone('sine',f*.8*2.76,t,L*.5,.22*vol,.005,0);return}
  if(P==='double'){const fr=f*.75,n=d>=.4?3:2;for(let i=0;i<n;i++)tone('sine',fr,t+i*.13,.08,.7*vol,.008,0);return}
@@ -6888,7 +6898,7 @@ function beep(f,d,force){try{if(!ACX||(S.settings.sound===false&&!force))return;
  [['square',f,.5],['sine',f*2,.35]].forEach(([ty,fr,lv])=>{const o=ACX.createOscillator(),og=ACX.createGain();o.type=ty;o.frequency.value=fr;og.gain.value=lv;o.connect(og);og.connect(g);o.start(t);o.stop(t+d+.05)});
  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.setValueAtTime(vol,t+Math.max(.02,d-.05));g.gain.exponentialRampToValueAtTime(.0001,t+d)}catch(e){}}
 async function wake(on){if(AND){try{AND.keepScreen(!!on)}catch(e){}return}try{if(on&&navigator.wakeLock){WL=await navigator.wakeLock.request('screen')}else if(!on&&WL){await WL.release();WL=null}}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&TM&&!TM.done){wake(true);tmTick()}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&TM&&!TM.done){wake(true);tmTick()}if(document.visibilityState==='visible')audioWake()});
 function buildPhases(b,noOpen){const c=b.cfg,E=mainEx(b),n=Math.max(1,E.length),P=[];const hw=!noOpen&&b.ex.some(x=>roleOf(x)==='warm'),hc=!noOpen&&b.ex.some(x=>roleOf(x)==='cool');
  /* v57.8: слоти (Л/П) і перехід перед вправою (pre, с - відпочинок не менший за нього; лише перед першою стороною) */const SL=slotsOf(b),m=Math.max(1,SL.length),preOf=k=>{const q=SL[k];return q&&q.sd!=='R'&&E[q.e]?(num(E[q.e].pre)||0):0};
  const pd=prepS();if(hw){if(pd)P.push({k:'prepw',d:pd});P.push({k:'warm',open:true});P.push({k:'gap',open:true})}
@@ -7075,7 +7085,8 @@ Object.assign(ACT,{
  'w-mark'(){const d=todayStr();const q=S.workouts.filter(w=>isWarm(w)&&w.date===d);if(q.length){const quick=q.filter(w=>w.quick);if(!quick.length){toast('Сьогодні вже є записана зарядка. Видалити її можна в історії');return}S.workouts=S.workouts.filter(w=>!(w.quick&&isWarm(w)&&w.date===d))}else{const t=S.templates.find(x=>x.tag===WARM);S.workouts.push({id:uid(),date:d,tplId:t?t.id:null,tplName:t?t.name:'Зарядка',tag:WARM,quick:true,items:[],startedAt:Date.now()})}save();render()},
  'w-stats'(){S.ui.scope='warm';S.ui.tab='stats';S.ui.stab='ov';save();render();window.scrollTo(0,0)},
  'snd-play'(el){audioInit();const k=el.dataset.v;const go=(f,d,ms)=>setTimeout(()=>{SNDOV=k;beep(f,d,true);SNDOV=null},ms);go(1200,.15,0);go(1200,.15,500);go(1200,.15,1000);go(1800,.45,1500)},
- 'snd-test'(){audioInit();beep(1200,.15,true);setTimeout(()=>beep(1800,.45,true),400);if(S.settings.sound===false)toast('Звук у таймері вимкнено, це лише перевірка')},
+ 'snd-test'(){audioInit();beep(1200,.15,true);setTimeout(()=>beep(1800,.45,true),400);if(S.settings.sound===false)toast('Звук у таймері вимкнено, це лише перевірка');
+  /* 58.37.2: канал так і не пішов - підказка */if(!window.__sndOld&&ACX){const c0=ACX.currentTime;setTimeout(()=>{try{if(ACX.state!=='running'||ACX.currentTime-c0<.2)toast('Звук заблоковано системою. Перевір перемикач беззвучного режиму збоку телефона і гучність; не допомогло - закрий застосунок і відкрий знову.')}catch(e){}},900)}},
  musmode(el){S.settings.musMode=el.dataset.v;save();render()},
  warmpos(el){S.settings.warmPos=el.dataset.v;save();render()},
  scope(el){S.ui.scope=el.dataset.v;S.ui.exk='';save();render()},
