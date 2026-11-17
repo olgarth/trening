@@ -588,8 +588,8 @@ body.kb .savebar{bottom:0}
 /* v57.1: огріхи з піксельної перевірки (ux57b/DEFECTS.md) */
 span.cell{display:flex;align-items:center;justify-content:center}
 .bandbtn{justify-content:center}
-.it-name>.chev{transform:translateY(4px) rotate(90deg)}
-.it-name[aria-expanded=false]>.chev{transform:translateY(1px)}
+.it-name>.chev{transform:rotate(90deg)}
+.it-name[aria-expanded=false]>.chev{transform:none}
 .it-name .lead .chev{transform:rotate(90deg);line-height:1}
 .it-name[aria-expanded=false] .lead .chev{transform:none}
 .it-name .lead{display:inline-flex;flex-direction:column;align-items:center;flex:none;width:22px;margin-right:4px;align-self:flex-start;padding-top:2px}
@@ -627,7 +627,7 @@ button.tpk.tgmore{align-items:center;width:100%;background:none;border:0;border-
 .tilehd[aria-expanded=false] .chev{transform:none}
 .tilehd .lbl{margin:0}
 .throw .tilehd{align-items:center}
-.tilehd .chev{position:relative;top:-2px}
+.tilehd .chev{position:relative;top:0}
 .tile.tcol>:not(.tilehd):not(.throw):not(.tsum){display:none!important}
 .tile.tcol>.throw>:not(.tilehd){display:none!important}
 .tsum{margin-top:2px}
@@ -853,7 +853,7 @@ nav.tabs{column-gap:3px}nav.tabs button{min-width:0;overflow:hidden}
 .rd5 details.hlpm>summary{position:relative}.rd5 details.hlpm>summary::after{content:'';position:absolute;inset:-6px -4px}
 .rd5 tr[data-a=sel-ex]{height:40px}
 /* 58.35 F Н34: шеврон згорнутої картки - на середині великих літер (був нижче на 2-3,5 px) */
-.rd5 .it-name[aria-expanded=false] .lead .chev{transform:translateY(-2.5px)}
+.rd5 .it-name[aria-expanded=false] .lead .chev{transform:none}
 /* 58.35 F Н32: тост з кнопкою - довгий текст на всю ширину, кнопка під ним (на 320 текст не стискається у вузьку колонку) */
 .rd5 .toast{flex-wrap:wrap;row-gap:0}.rd5 .toast>span{flex:1 1 auto}.rd5 .toast>button{margin-left:auto}
 /* 58.35 F Н36: майбутні дні календаря Звіту з пунктирною рамкою - тієї ж висоти, що й інші (рамка 1 px не додає висоти) */
@@ -864,8 +864,16 @@ nav.tabs{column-gap:3px}nav.tabs button{min-width:0;overflow:hidden}
 tr[data-a=sel-ex]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 /* «Зберегти як шаблон»: назва шаблону окремим рядком */.btn.ntov{flex-direction:column;gap:0;line-height:1.2;padding-top:6px;padding-bottom:6px}.btn.ntov .ntn{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:400;color:var(--muted)}
 .dmix{font-family:Manrope,system-ui,sans-serif!important}
-.wkit select.in{height:42px}.wkit .sechd .chev{position:relative;top:2px}.wkit .tilehd .chev{top:-1px}
+.wkit select.in{height:42px}
 @media (min-width:900px){nav.tabs{grid-template-columns:repeat(5,minmax(0,150px));justify-content:center}.tm>.tm-ctl{max-width:480px}}
+
+/* 58.41: шеврон намальовано рамкою (не гліфом «›»): центр - у центрі коробки, тож поворот на 90° не зсуває його, однаково в Safari і Chrome */
+.chev{font-size:0!important;line-height:0!important;display:inline-flex!important;align-items:center;justify-content:center;width:14px!important;height:14px;flex:none;vertical-align:middle;color:var(--muted)}
+/* у назві вправи - по центру великих літер першого рядка */.it-name .chev{position:relative;top:1px}
+.strow .stl{display:inline-flex;align-items:center;gap:4px}.strow .chev{transition:transform .15s}.strow[aria-expanded=true] .chev{transform:rotate(90deg)}
+/* 58.41: кнопки таймера - завжди дві колонки (третя порожня колонка на ≥390 px), непарна остання - на всю ширину */.tm-ctl{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* 58.41: крапка «вл. вага» в клітинці навантаження - по центру рядка */.ldsgd{display:inline-block;transform:translateY(-1.5px)}
+.chev::before{content:'';display:block;width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateX(-2.5px) rotate(-45deg);box-sizing:content-box}
 </style>
 </head>
 <body>
@@ -1023,7 +1031,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.40 · 17.11.2026';
+const APPV='58.41 · 18.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -4082,7 +4090,7 @@ function stRowHTML(k,R){const P=stSeries(k,R.from);if(!P.length)return'';const t
  else{const a=avg(P.map(p=>p.y));v=stFmt(k,a,1)+' <small class="muted">середнє</small>';const B=R.pf?stSeries(k,R.pf,R.pt):[];
   if(!R.pf)ch=P.length+' '+pln(P.length,'день','дні','днів')+' із записом';
   else if(P.length>=2&&B.length>=2){const b=avg(B.map(p=>p.y)),df=a-b,TH={sleep:.25,well:.5,gRhr:2}[k]||(k==='gHrv'?Math.max(3,b*.05):5);ch=Math.abs(df)<TH?R.cmp.replace(/^ніж /,'як '):k==='sleep'?'на\u00a0'+f0(Math.abs(df)*60)+'\u00a0хв '+(df>0?'більше':'менше')+', '+R.cmp:'на\u00a0'+(k==='well'?f1(Math.abs(df)):f0(Math.abs(df)))+'\u00a0'+(df>0?'більше':'менше')+', '+R.cmp}else ch='мало даних для порівняння'}
- const op=S.ui.stOpen===k;return`<button class="strow" data-a="st-row" data-k="${k}" aria-expanded="${op}"><span class="stl">${esc(lab)}</span><b class="stn">${v}</b><span class="muted small stch">${esc(ch)}</span>${ch2?`<span class="muted small stch">${esc(ch2)}</span>`:''}</button>${op?`<div class="stchart">${k==='bw'?bwOvHTML('кг',1):stChart(k,P)}</div>`:''}`}
+ const op=S.ui.stOpen===k;return`<button class="strow" data-a="st-row" data-k="${k}" aria-expanded="${op}"><span class="stl"><span class="chev" aria-hidden="true">›</span>${esc(lab)}</span><b class="stn">${v}</b><span class="muted small stch">${esc(ch)}</span>${ch2?`<span class="muted small stch">${esc(ch2)}</span>`:''}</button>${op?`<div class="stchart">${k==='bw'?bwOvHTML('кг',1):stChart(k,P)}</div>`:''}`}
 function stChart(k,P){const u=k==='sleep'?'год':k==='gRhr'?'уд/хв':k==='gHrv'?'мс':'',dg=k==='sleep'||k==='well'?1:0;if(P.length<2)return chart(P.map(p=>({d:p.d,y:p.y,k:'__all',lab:'',col:SERC[0],sig:null,abs:1})),u,dg);
  const av=P.map(p=>{const q=P.filter(x=>x.d<=p.d&&x.d>addDays(p.d,-7));return{d:p.d,y:Math.round(avg(q.map(x=>x.y))*10)/10}});
  return chartMulti([{name:'За день',col:SERC[0],pts:P.map(p=>({d:p.d,y:Math.round(p.y*10)/10})),dot:1},{name:'Середнє за 7 днів',col:SERC[1],pts:av,line:1}],u,dg,1)+`<div class="kv small"><span><i class="cdot" style="background:${SERC[0]}"></i> за день</span><span><i class="cdot" style="background:${SERC[1]}"></i> середнє за 7 днів</span></div>`}
@@ -4380,7 +4388,7 @@ function strRows(it,prev){const prevT=prev&&prev.item.type===it.type?prev:prevSe
   const reps=it.uni?`<div class="lr"><input class="cell" inputmode="numeric" ${a} data-k="rl" id="rl-${id}" value="${esc(s.rl)}" placeholder="${esc(p.rl??'Л')}" aria-label="Повтори ліва"><input class="cell" inputmode="numeric" ${a} data-k="rr" id="rr-${id}" value="${esc(s.rr)}" placeholder="${esc(p.rr??'П')}" aria-label="Повтори права"></div>`:`<input class="cell" inputmode="numeric" ${a} data-k="r" id="r-${id}" value="${esc(s.r)}" placeholder="${esc(p.r??'')}" aria-label="Повтори">`;
   if(isBwl(it)&&p.w==null&&!RP){const q=it.sets.slice(0,n).reverse().find(x=>!!x.wu===!!s.wu&&ldOf(it,x)===ldOf(it,s)&&num(x.w)!=null);if(q)p.w=q.w}/* v57.5: без минулого разу - підказка з попереднього підходу того ж виду і навантаження */
   const bwlC=()=>{const b=it.bwl;if(ldLegacy(it)&&!s.ld){/* до 57.5: кг і гума разом - як було */const inp=negW(it,`<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??'0')}" aria-label="${b.add==='assist'?'Допомога, кг (віднімається)':b.add==='db2'?'Вага однієї гантелі, кг':'Додаткова вага, кг'}">`);return`<div class="lr bwlr">${inp}${bandBtnH(it,s,n,b.band==='minus')}</div>`}
-   /* v57.5: одна клітинка = зона знаку (кнопка: вікно навантаження підходу) + величина */const c=ldOf(it,s),ph=c!=='none'&&num(s.w)==null&&!bandsAll(s).length,sg=`<button class="ldsg${ph?' ph':''}" data-a="pick-ld" data-i="${it.uid}" data-n="${n}" aria-label="Навантаження підходу: ${LDLBL[c]}. Змінити">${ldSign(c)}</button>`;
+   /* v57.5: одна клітинка = зона знаку (кнопка: вікно навантаження підходу) + величина */const c=ldOf(it,s),ph=c!=='none'&&num(s.w)==null&&!bandsAll(s).length,sg=`<button class="ldsg${ph?' ph':''}" data-a="pick-ld" data-i="${it.uid}" data-n="${n}" aria-label="Навантаження підходу: ${LDLBL[c]}. Змінити">${c==='none'&&rd10f()?'<span class="ldsgd">·</span>':ldSign(c)}</button>`;
    if(ldBand(c))return`<div class="ldc">${sg}${bandBtnH(it,s,n,c==='bandm')}</div>`;if(c==='none')return`<div class="ldc">${sg}<span class="ldnone" aria-label="Навантаження: власна вага"><span class="lf">вл. вага</span><span class="ls" aria-hidden="true">вл.</span></span></div>`;
    return`<div class="ldc">${sg}<input class="cell" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??'0')}" aria-label="${c==='assist'?'Противага, кг на плитках (віднімається)':c==='db2'?'Вага однієї гантелі, кг':'Додаткова вага, кг'}">${(()=>{/* 58.29.2: + гума разом з поясом / гантелями - кольорова крапка в клітинці (кільце - гума допомагає) */const g=gbOn()&&gbEl(it,s)?gbOf(it,s):null;if(!g)return'';const b=gbB(g,g.b[0])||{};return`<span class="ldgb${g.m==='help'?' hl':''}" style="--gbc:${esc(b.hex||'#888')}" role="img" aria-label="${g.m==='help'?'мінус':'плюс'} гума: ${esc(gbLbl(g))}"></span>`})()}</div>`};
   const load=nk?'<span></span>':isBwl(it)?bwlC():isLv?(()=>{const lv=lvOf(it,s),kg=baseLoad(it,s,bwv);return`<button class="bandbtn lvb" data-a="pick-lv" data-i="${it.uid}" data-n="${n}" aria-label="Положення: ${esc(lv[1])}"><b>${esc(lv[2])}${s.par&&lvKind(it.exId)==='push'?'+П':''}${num(s.w)?'+'+esc(s.w):''}</b><span class="muted">≈${kg==null?'?':f0(kg)} кг</span></button>`})():it.type==='trx'&&tcUse(s)?tcBtnH(it,s,n):it.type==='trx'?`<button class="bandbtn" data-a="pick-trx" data-i="${it.uid}" data-n="${n}" style="justify-content:center">${num(s.w)?(s.pos&&s.pos.sys==='std'?`<b class="num tca">${s.pos.vert?'в':nf(num(s.pos.st)||0,1)}</b><span class="muted tcs">р${esc(s.w)}${s.pos.len&&s.pos.len!==(trxDirOf(it.exId)==='push'?'fl':'fs')?' '+(HSTD[s.pos.len]||HSTD.fs)[1]:''}${s.pos.el?'+':''}</span>`:`<b class="num" style="font-size:18px">р${esc(s.w)}</b>${s.pos?`<span class="muted" style="font-size:11px">${esc(posLbl(s.pos))} ${s.pos.vert?'в':nf(num(s.pos.st)||0,1)}</span>`:''}`):`<span class="muted blg">${trxModeOf(it.exId)==='angle'?'Ступні':'Рівень'}</span><span class="muted bsh">+</span>`}</button>`:it.type==='band'?bandBtnH(it,s,n,isNeg(it),lvList(it.exId)?baseLoad(it,s,bwv):bandKg(s,it)):negW(it,`<input class="cell${ORI&&p.w==null&&!s.wu?' ori':''}" inputmode="decimal" ${a} data-k="w" id="w-${id}" value="${esc(s.w)}" placeholder="${esc(p.w??(ORI&&!s.wu?'≈'+nf((!window.__rdy2Old&&invOf(it)&&oriInvW(it,S.draft))||ORI.w,1):it.type==='bw'?'0':''))}" aria-label="${isNeg(it)?'Противага, кг (віднімається)':LOADLBL[it.type]}">`);
