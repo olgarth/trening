@@ -1031,7 +1031,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.42 · 18.11.2026';
+const APPV='58.43 · 18.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -7299,7 +7299,7 @@ function nfSetHTML(){const I=nfInfo();let h='';
   else if(on&&typeof AND.ntfSettings==='function')h+=`<p class="muted small" style="margin:0">Не видно на заблокованому екрані? У Samsung: Налаштування → Заблокований екран → Сповіщення - показувати сповіщення і вміст.</p><button class="btn" data-a="ntf-set" id="ntf-set">Налаштування сповіщень Android</button>`}
  else if(AND)h+=`<p class="muted small" style="margin:0">Щоб бачити таймер на заблокованому екрані, онови застосунок Android (новий APK).</p>`;
  else h+=`<p class="muted small" style="margin:0">Таймер на заблокованому екрані є лише в застосунку для Android. На iPhone сайти і веб-застосунки не можуть показувати таймер на заблокованому екрані - це обмеження iOS. Відлік і сигнали працюють, коли застосунок відкритий.</p>`;
- if(AND||window.__vib0)h+=`<label class="chk"><input type="checkbox" data-c="vib" id="set-vib" ${S.settings.vib!==false?'checked':''}>Вібрація</label>${hlp('Короткі вібрації в кінці відпочинку, перед кінцем відпочинку і при зміні руки в таймері, легкий відгук на дотик. Вимкнено - телефон не вібрує, звук лишається.')}`;
+ if(AND||window.__vib0)h+=`<label class="chk"><input type="checkbox" data-c="vib" id="set-vib" ${S.settings.vib!==false?'checked':''}>Вібрація</label>${hlp('Вібрація в кінці відпочинку між підходами, а в таймері інтервалів - на початку роботи (довга) і відпочинку (дві короткі), на 3-2-1 і в кінці блоку; також при зміні руки і легкий відгук на дотик. Вимкнено - телефон не вібрує, звук лишається.')}`;
  return h}
 /* 58.39 (iPhone): нові правила звуку - лише у веб-версії, Android без змін */
 const SND9=()=>rd9f()&&!AND;let TMQ=0,SNDL=0,ACW={ct:-1,at:0};
@@ -7385,12 +7385,14 @@ function tmResume(u){const b=itemBy(u),T=RD5()?tmGet(u):S.draft&&S.draft._tm;if(
  TM={u,P,i,start:now-el5*1000,begin:bg5||now,paused:false,t0:T.mn!=null?now-T.mn*1000:null,mainEnd:null,wdone:T.wdone||0,lastBeep:null,rounds:T.rounds||0,rstart:null,done:false,rec:Object.assign({warm:0,p:0,p2:0,cool:0},T.rec||{}),wskip:!!T.wskip,cskip:!!T.cskip,wsl:(T.wsl||[]).slice()};if(T.wsk)TM.wsk=T.wsk;if(RD5()&&T.rr)TM.rr=1;
  if(!TM.t0&&P[i]&&P[i].main)TM.t0=now;tmSnap();save();beep(1400,.08);wake(true);tmRender();TM.iv=setInterval(tmTick,200)}
 function tmB(){return TM&&itemBy(TM.u)}
+/* 58.43: вібрація в таймері блоку - початок роботи (довга), відпочинку (дві короткі), 3-2-1 (коротка), кінець блоку; не під час тихого наздоганяння фаз */
+function vibT(p){if(TMQ||!rd10f())return;try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 function tmTick(){if(!TM||TM.paused||TM.done)return;if(SND9()){const nw=Date.now(),lt=TM.lt||nw;TM.lt=nw;if(nw-lt>2500){/* 58.39: сторінка спала (екран заблоковано) - фази, що минули, проходимо тихо, звучить лише поточна */TMQ=1;try{let g=0;while(TM&&!TM.done&&!TM.paused&&g++<2000){const p=TM.P[TM.i];if(!p||p.k==='up'||p.open)break;const r=p.d-(Date.now()-TM.start)/1000;if(r>0)break;tmNext(Date.now()+r*1000)}}finally{TMQ=0}if(!TM||TM.done)return;sndChk()}}const ph=TM.P[TM.i];if(!ph)return;
  if(RD4()&&(ph.amrap||ph.open||ph.k==='up'||(ph.d||0)>=60)){const nw=Date.now();if(!TM.snT)TM.snT=nw;else if(nw-TM.snT>=15000){TM.snT=nw;tmSnap();save()}}/* цикл 4 (перевірка 58.34) V2.4: AMRAP і довгі фази - позиція в чернетку раз на 15 с (вбивство без pagehide) */
  if(ph.k==='up'||ph.open){tmDigits();return}
  const rem=ph.d-(Date.now()-TM.start)/1000;const s=Math.ceil(rem);
  /* v57.8: зміна руки на середині інтервалу - подвійний сигнал і вібрація, сторона - з часу */if(ph.k==='work'&&ph.sd==='sw'&&TM.swAt!==TM.i&&rem<=ph.d/2&&rem>0){TM.swAt=TM.i;beep(1500,.12);setTimeout(()=>beep(1500,.12),160);try{navigator.vibrate&&navigator.vibrate(200)}catch(e){}tmRender();return}
- if(s<=3&&s>=1&&TM.lastBeep!==TM.i+':'+s){TM.lastBeep=TM.i+':'+s;beep(1200,.15)}
+ if(s<=3&&s>=1&&TM.lastBeep!==TM.i+':'+s){TM.lastBeep=TM.i+':'+s;beep(1200,.15);vibT([60])}
  {const pv=ivPreS();if(ph.k==='rest'&&pv>0&&ph.d>=pv+5&&s===pv&&TM.lastPre!==TM.i){TM.lastPre=TM.i;beep(1000,.22);try{navigator.vibrate&&navigator.vibrate(120)}catch(e){}}}
  if(rem<=0){tmNext(Date.now()-(rem*-1000));return}tmDigits()}
 function tmRec(ph,now,skip){const d=Math.max(0,(now-TM.start)/1000);if(skip)return;if(ph.k==='warm')TM.rec.warm+=d;else if(ph.k==='gap'||ph.k==='prep'||ph.k==='prepw')TM.rec.p+=d;else if(ph.k==='gap2'||ph.k==='prepc')TM.rec.p2+=d;else if(ph.k==='cool')TM.rec.cool+=d}
@@ -7404,13 +7406,13 @@ function tmNext(at,skip){if(!TM)return;try{if(S.draft&&S.draft.run)S.draft.run.l
  if(ph.main&&!(TM.P[TM.i+1]||{}).main&&!TM.mainEnd)TM.mainEnd=now;
  TM.i++;TM.start=now;TM.lastBeep=null;if(b){b.res.part={wdone:TM.wdone,rounds:TM.rounds,main:TM.t0?Math.round(((TM.mainEnd||now)-TM.t0)/1000):0,at:now}}/* v57: прогрес таймера зберігається - перезапуск сторінки його не стирає */tmSnap();save();
  if(TM.i>=TM.P.length){tmFinish(false);return}
- const np=TM.P[TM.i];beep(np.k==='rest'||np.k==='gap'||np.k==='gap2'?900:1800,.45);
+ const np=TM.P[TM.i];beep(np.k==='rest'||np.k==='gap'||np.k==='gap2'?900:1800,.45);vibT(np.k==='rest'||np.k==='gap'||np.k==='gap2'?[150,80,150]:[400]);
  if(np.k==='rest'&&b&&b.fmt==='int'&&(!RD4()||(ph.k==='work'&&wOK))){const x=E[np.e];if(x&&x.mode==='reps')blkFill(b,np.r,np.e,np.sd,x)}
  tmRender()}
 function tmFinish(stopped){if(!TM)return;try{if(S.draft&&S.draft.run)S.draft.run.ls=Date.now()}catch(e){}clearInterval(TM.iv);const now=TM.paused?TM.pauseAt:Date.now();const ph=TM.P[TM.i];
  if(ph&&!TM.done&&(ph.open||ph.k==='prep'||ph.k==='prepw'||ph.k==='prepc')&&TM.i<TM.P.length)tmRec(ph,now,false);
  if(TM.t0&&!TM.mainEnd)TM.mainEnd=now;
- TM.done=true;TM.stopped=stopped;const b=tmB();wake(false);beep(2000,.7);if(RD5())tmPut(TM.u,null);else if(S.draft&&S.draft._tm)delete S.draft._tm;
+ TM.done=true;TM.stopped=stopped;const b=tmB();wake(false);beep(2000,.7);if(!stopped)vibT([300,100,300,100,300]);if(RD5())tmPut(TM.u,null);else if(S.draft&&S.draft._tm)delete S.draft._tm;
  if(b){const r=b.res,E=mainEx(b);delete r.part;r.wdone=TM.wdone;r.done=(!stopped&&!(!window.__rdy1Old&&TM.wsk>0&&!TM.wdone))||TM.wdone>0||TM.rounds>0;/* 58.30.1 Т2: усі робочі інтервали пропущено - не виконано */if(!window.__rdy1Old&&TM.wsk)r.wsk=TM.wsk;else delete r.wsk;if(stopped)r.stopped=true;else delete r.stopped;if(b.fmt==='emom'&&stopped){r.iv=r.iv||{};const N=(buildPhases(b,true).filter(p=>p.k==='work').map(p=>p.iv));N.forEach(k=>{if(r.iv[k]==null)r.iv[k]={done:false}})}if(RD5()&&b.fmt==='emom'&&!r.done)emomNone(b);/* 58.35 С10 */
   if(b.fmt==='int'&&RD4()){r.reps=r.reps||{};(TM.wsl||[]).forEach(([rr,e,sd])=>{const x=E[e];if(x&&x.mode==='reps')blkFill(b,rr,e,sd||undefined,x)});if(TM.wsk&&!TM.wdone)blkTfClr(b)}/* 58.34 В2: лише відпрацьовані слоти; усе пропущено - без підставлених повторів */
   else if(b.fmt==='int'){const SL=slotsOf(b),m=Math.max(1,SL.length);r.reps=r.reps||{};for(let k=0;k<TM.wdone;k++){const q=SL[k%m],x=q&&E[q.e];if(x&&x.mode==='reps')blkFill(b,Math.floor(k/m),q.e,q.sd,x)}}
