@@ -950,7 +950,7 @@ tr[data-a=sel-ex]:focus-visible{outline:2px solid var(--accent);outline-offset:-
 .rd16 .wk-tags .chipb{font-size:15px}
 .rd16 .wk-tags .chipb .a{font-size:13px}
 .rd16 .tpk .wsub{font-size:13px}
-.rd16 .wk-name{font-size:28px}
+.rd16 .wk-name{font-size:20px}
 .rd16 .it{border-radius:var(--r)}
 .rd16 .it-name{font-size:20px}
 .rd16 .it-name .chev{font-size:18px}
@@ -1390,6 +1390,8 @@ tr[data-a=sel-ex]:focus-visible{outline:2px solid var(--accent);outline-offset:-
 .rd16 .rd16 .tm-bar>i{height:100%}
 .rd16 .rd16 .tm-bar>i{border-radius:999px}
 .rd16 .rd16 .tm-ctl [data-a="tm-stop"]{min-height:56px}
+.rd16 .rd16 input[type=radio]{height:28px;width:28px}
+.rd16 .rd16 input[type=radio]{border-radius:50%}
 @media (max-width:360px){.rd16 .it-name{font-size:17px}.rd16 .srow.u .lr .cell{font-size:17px}.rd16 .tblw .tbl{font-size:13px}.rd16 body nav.tabs button{font-size:12px}.rd16 .seg button{font-size:13px}.rd16 .rd16 .it-tools .ib{height:36px;width:36px}.rd16 .rd16 .rb i{height:36px;width:36px}.rd16 .rd16 .it-meta button.chipb:not(.tgc){font-size:13px}}
 @container (max-width:56px){.rd16 .ldc .ldgb{height:7px}}
 @container (max-width:76px){.rd16 .ldc .ldnone .ls:has(br){font-size:12px}}
@@ -1449,6 +1451,13 @@ tr[data-a=sel-ex]:focus-visible{outline:2px solid var(--accent);outline-offset:-
 /* «Стоп»: червоний текст на світлій плашці - фаза таймера має своє тло (синє, зелене…), червоне без плашки там не читається (перевіряльник 58.47) */
 .rd16 .tm-ctl [data-a="tm-stop"]{background:rgba(255,255,255,.88);border-color:transparent;color:#A93322;min-height:44px;box-shadow:none}
 .rd16 .sheetfoot{background:var(--surface)}.rd16 .it-name{hyphens:manual;-webkit-hyphens:manual}
+/* 58.47.1 доробки за перевіряльником */
+.rd16 .gh.sgh{padding-left:0;margin-left:0}
+.rd16 .row.between>span.pill.p-mut{background:transparent;border-color:transparent;padding-left:0;padding-right:0}
+@media (max-width:360px){.rd16 .it-tools{gap:12px}.rd16 .it-tools .ib::after{inset:-6px}}
+.rd16 input[type=radio]{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:2px solid var(--muted);background:transparent;flex:none}.rd16 input[type=radio]:checked{border:6px solid var(--accent)}
+.rd16 .card.warnbox.wquiet{border-left:1px solid var(--line);position:relative}.rd16 .card.warnbox.wquiet::before{content:"";position:absolute;left:6px;top:14px;bottom:14px;width:4px;border-radius:999px;background:var(--warn)}
+.rd16 .ti .it-name>.chev{margin-right:6px}.rd16 .it-name .nm,.rd16 .it-name .n{hyphens:manual;-webkit-hyphens:manual}
 /* 58.47 rd16 ручні: кінець */
 </style>
 </head>
@@ -1609,7 +1618,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.47 · 19.11.2026';
+const APPV='58.47.1 · 19.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
