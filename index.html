@@ -1678,7 +1678,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.51.2 · 21.11.2026';
+const APPV='58.51.3 · 21.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -3255,7 +3255,7 @@ function wPost(it,w,R){if(!r19On()||!R||R.err||R.other||!R.rr||!R.rr.length||!w|
   if(skip.length){const t=`вибрана важча вага (${[...new Set(skip.map(x=>nf(x,2)))].join('/')} кг) сьогодні не застосована: ${nU} - порада як звичайно`;X=Object.assign({},X,{why:[t].concat(X.why||[]),whyS:['base'].concat(X.whyS||[])})}}
  if(reOn()){const wsX=wWs(it,X)||ws0,re={},tl=[];let xL=null;for(let k=0;k<n&&k<W.length;k++){const q=W[k],x=num(q.w);if(x==null||(q.rf||[]).includes('w'))continue;const b=wsX[Math.min(k,wsX.length-1)];if(b==null||Math.abs(x-b)<1e-9)continue;if(!(L(x)>0)||Math.abs(L(x)/L(b)-1)>.3)continue;/* інша вага більше ніж на 30% - схоже на одрук або інший план: не перераховуємо */if(nU&&L(x)>L(b)+1e-9)continue;const rr=wRr(it,w,X,x,k);if(!rr)continue;let any=false;
    /* підхід з цією вагою вже зроблено - решта за результатом: (повтори + запас) проти очікуваного, від −2 до +1 (як перерахунок на льоту) */const dq=(repsOf(it,q)||{}).tot?(()=>{const rq=num(q.rir),qm=X.rir?(X.rir[0]+X.rir[1])/2:1.5,r0=rpOfI(it,q);if(r0==null||rr[k]==null)return 0;return Math.max(-2,Math.min(1,Math.round((r0+(rq==null?qm:rq))-(rr[k]+qm))))})():0;if(dq)rr.forEach((v,j)=>{if(v!=null&&j>k)rr[j]=Math.max(1,v+dq)});
-   for(let j=k;j<n&&j<W.length;j++){if(rr[j]==null)continue;const qj=W[j],done=!!(repsOf(it,qj)||{}).tot;if(done)continue;if(j===k){re[j]={r:rr[j]};any=true}else if(num(qj.w)==null||(qj.rf||[]).includes('w')){re[j]={w:x,r:rr[j]};any=true}}
+   for(let j=k;j<n&&j<W.length;j++){if(rr[j]==null)continue;const qj=W[j],done=!!(repsOf(it,qj)||{}).tot;if(done)continue;if(rd21f()&&j>k&&sel&&sel[j]!=null&&!skip.includes(num(sel[j])))continue;/* 58.51.3: вага, вибрана у «Вага на сьогодні», для решти підходів важливіша за вписану вручну в іншому підході */if(j===k){re[j]={r:rr[j]};any=true}else if(num(qj.w)==null||(qj.rf||[]).includes('w')){re[j]={w:x,r:rr[j]};any=true}}
    if(any){xL=x;tl.push(`вписано ${nf(x,2)} кг у ${k+1}-му підході (порада ${nf(b,2)} кг) - підказки перераховано під ${nf(x,2)} кг: ${Object.keys(re).filter(j=>+j>=k).map(j=>re[j].r).join('/')} повт. (≈1 повтор на кожні 2,5% ваги${dq?'; з урахуванням зробленого підходу':''}; оцінка)`)}}
   if(tl.length){const ks=Object.keys(re).map(Number).sort((a,b)=>a-b);X=Object.assign({},X,{re,reT:`під вписані ${nf(xL,2)} кг: повтори ${ks.map(j=>re[j].r).join('/')} (оцінка)`,why:tl.concat(X.why||[]),whyS:tl.map(()=>'base').concat(X.whyS||[])})}}
  return X}
