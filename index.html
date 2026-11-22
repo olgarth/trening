@@ -1480,6 +1480,23 @@ tr[data-a=sel-ex]:focus-visible{outline:2px solid var(--accent);outline-offset:-
 .ms52bar{position:fixed;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom,0px));z-index:45;background:var(--surface);border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:10px;display:flex;gap:8px;max-width:560px;margin:0 auto}.ms52bar .btn{flex:1;margin:0;min-height:44px;padding:0 8px;white-space:nowrap}.ms52sp{height:84px}
 /* 58.52.1: панель вибору лежала поверх затемнення і вікна підтвердження (закривала заголовок) - поки відкрите вікно або таймер, ховаємо, як смужку відпочинку */
 body.sheetopen .ms52bar,body.tmopen .ms52bar{display:none}
+/* 58.53: нерухомий низ вікон і таймера; вміст прокручується під кнопками з м'яким затуханням */
+.rd24 .sheet .sheetfoot{border-top:0}
+.rd24 .sheet .sheetfoot::before{content:'';position:absolute;left:0;right:0;top:-22px;height:22px;background:inherit;-webkit-mask-image:linear-gradient(to bottom,transparent,#000);mask-image:linear-gradient(to bottom,transparent,#000);pointer-events:none;opacity:0;transition:opacity .15s}
+.rd24 .sheet.mb24 .sheetfoot::before{opacity:1}
+.rd24 .tm.tm24{overflow:hidden;bottom:var(--kb,0px)}
+.rd24 .tm24 .tmh{flex:none;display:flex;flex-direction:column;gap:10px}
+.rd24 .tm24 .tmb{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:10px;padding:4px 0 14px}
+/* ширина і центрування, як було в .tm>* (рядки 88-89, 875) - тепер елементи всередині трьох частин */
+.rd24 .tm24 .tmh>*,.rd24 .tm24 .tmb>*,.rd24 .tm24 .tmf>*{width:100%;max-width:760px;margin-inline:auto}.rd24 .tm24 .tmf>.tm-snd{width:auto}.rd24 .tm24 .tmf>.tm-ctl{max-width:480px}
+.rd24 .tm24 .tmb>*{flex-shrink:0}
+.rd24 .tm24 .tmb:empty{display:none}
+.rd24 .tm24 .tmb.mb24{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent)}
+.rd24 .tm24 .tmb.sc24{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 16px);mask-image:linear-gradient(to bottom,transparent,#000 16px)}
+.rd24 .tm24 .tmb.sc24.mb24{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(to bottom,transparent,#000 16px,#000 calc(100% - 22px),transparent)}
+.rd24 .tm24 .tmf{flex:none;display:flex;flex-direction:column;gap:10px;padding-top:4px}
+/* відкрита клавіатура (повтори у відпочинку): таймер над нею і прокручується цілком, як раніше - на малому екрані верх і низ разом не вміщаються */
+.rd24 body.kb .tm.tm24{overflow-y:auto}.rd24 body.kb .tm24 .tmb{flex:none;overflow:visible;-webkit-mask-image:none;mask-image:none}
 /* 58.51.1: тост вибору ваги - вгорі, не над «− / + Підхід» */.toast.tt{bottom:auto;top:calc(68px + env(safe-area-inset-top,0px))}.rd19c .chipb.s17>svg.i16{margin:3.5px 0}
 .rd17 .recb.r17{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:8px;row-gap:6px;align-items:start}
 .rd17 .recb.r17>*{grid-column:1/-1}
@@ -1683,7 +1700,7 @@ function tagOf(w){if(!w)return'Інше';if(!tagOn())return tagN((wTpl(w)||{}).t
 function tagInfo(w){const m=w.tagM||null,x=tagX(Object.assign({},w,{tagM:null})),A=tagAuto(w);const t=wTpl(w);return{m,auto:x||A.t,why:x?(t&&t.tag&&t.tag!=='Інше'?'тип шаблону «'+t.name+'»':'записано в тренуванні'):A.why,src:x?'x':A.src}}
 
 const IC={play:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.6v14.8c0 .8.9 1.3 1.6.9l12-7.4c.6-.4.6-1.3 0-1.7l-12-7.4C7.9 3.3 7 3.8 7 4.6z"/></svg>',stop:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>'};
-const APPV='58.52.1 · 21.11.2026';
+const APPV='58.53 · 22.11.2026';
 /* ---- Android-застосунок: міст до системи (у браузері AND = null і нічого не змінюється) ---- */
 const AND=(()=>{try{return window.TrenAndroid||null}catch(e){return null}})();
 const IOSD=(()=>{try{const u=navigator.userAgent||'';return/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&'ontouchend' in document)}catch(e){return false}})();
@@ -3198,7 +3215,17 @@ function wSelRows(it,RC,M){if(!r19On()||!altOn()||!RC||!M)return'';const rec=RC.
 function rd20f(){return!window.__rdy20Old&&rd19f()}
 function rd21f(){return!window.__rdy21Old&&rd20f()}/* 58.51.2 */
 function rd22f(){return!window.__rdy22Old&&rd21f()}/* 58.52: вибір шаблонів, «У Нотатки» вимикається, нові назви налаштувань */
-function rd23f(){return!window.__rdy23Old&&rd22f()}/* 58.52.1: великий крок - легші підходи провалились, а важчий 1-й був у нормі; межа противаги */
+function rd23f(){return!window.__rdy23Old&&rd22f()}
+function rd24f(){return!window.__rdy24Old&&rd23f()&&rd16f()}/* 58.53: кнопки дій унизу таймера і вікон стоять, вміст прокручується під ними; таймер - верх (назва, фаза, цифри) теж стоїть */
+/* 58.53: затухання тексту над кнопками - лише коли нижче ще є вміст (mb), угорі - коли прокручено (sc) */
+function fade24(e){if(!e)return;const sc=e.scrollTop>2,mb=e.scrollTop+e.clientHeight<e.scrollHeight-2;e.classList.toggle('sc24',sc);e.classList.toggle('mb24',mb)}
+function obs24(e){if(!e||e.__o24)return;e.__o24=1;const u=()=>requestAnimationFrame(()=>fade24(e));e.addEventListener('scroll',u,{passive:true});try{new MutationObserver(u).observe(e,{subtree:true,childList:true,attributes:true,attributeFilter:['open','class','style']})}catch(x){}try{new ResizeObserver(u).observe(e)}catch(x){}u()}
+/* вікно: остання група кнопок без нерухомого низу → у .sheetfoot (як у ≈70 вікнах, де він уже є); списки вибору не чіпаємо */
+function sheet24(){if(!rd24f())return;const sh=document.querySelector('#sheetHost .sheet');if(!sh)return;if(!sh.querySelector(':scope>.sheetfoot')){const L=sh.lastElementChild;const isB=c=>c.matches('button.btn,a.btn');
+ const ok=L&&!L.classList.contains('grab')&&(isB(L)||(L.children.length>0&&L.children.length<=3&&[...L.children].every(isB)&&!L.querySelector('input,select,textarea')));if(ok){const f=document.createElement('div');f.className='sheetfoot f24';sh.appendChild(f);f.appendChild(L)}}obs24(sh)}
+/* таймер: верх / список / кнопки */
+function tm24(osc){const t=document.querySelector('#timerHost .tm');if(!t||!rd24f()||t.classList.contains('tm24'))return;const K=[...t.children];const H=document.createElement('div'),B=document.createElement('div'),F=document.createElement('div');H.className='tmh';B.className='tmb';F.className='tmf';
+ K.forEach(c=>{const k=c.className||'';if(/\btm-(top|phase|dig|bar|sub)\b/.test(k))H.appendChild(c);else if(/\btm-(extra|snd|ctl)\b/.test(k))F.appendChild(c);else B.appendChild(c)});t.append(H,B,F);t.classList.add('tm24');t.addEventListener('focusin',ev=>{const e=ev.target;if(e&&e.matches('input'))setTimeout(()=>{try{e.scrollIntoView({block:'nearest'})}catch(x){}},350)});if(osc)B.scrollTop=osc;obs24(B)}/* 58.52.1: великий крок - легші підходи провалились, а важчий 1-й був у нормі; межа противаги */
 /* 58.52.1: противага не більша за «вага тіла (частка) − крок» - інакше підтягування без навантаження; порада росла без межі, коли підходи щоразу провалювались */
 function negCap(it,w,R){if(!rd23f()||!R||R.err||R.other||!R.rr||!R.rr.length)return R;let o;try{o=wLd(it,w)}catch(e){return R}if(!o.neg)return R;const ws=wWs(it,R);if(!ws)return R;
  const st=num(stepOf(it))||5,AB=o.L(0),lim=Math.floor((AB-st)/st+1e-9)*st;if(!(lim>0)||!ws.some(v=>v>lim+1e-9))return R;const W=ws.map(v=>Math.min(v,lim)),RR=R.rr.slice();
@@ -5000,7 +5027,7 @@ function applyTheme(){const t=S.settings.theme;const r=document.documentElement;
 function render(){try{nfSync()}catch(e){}if(BOOTW){/* 58.31: дані ще в сховищі - нічого не вводимо */try{applyTheme()}catch(e){}const m=document.getElementById('main');if(m)m.innerHTML=dataBanner();return}RIRC={};applyTheme();CMSHOWN='';const t=S.ui.tab;SCOPE=t==='log'?(S.draft&&isWarm(S.draft)?'warm':'main'):(t==='hist'||t==='stats')?(S.ui.scope==='warm'&&(t==='hist'?warmOn():warmStatsOn())?'warm':pastHide()?'view':'main'):'main';$('#ttl').textContent=TITLES[t];$('#tmini').textContent=TITLES[t];document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
  $('#tsub').innerHTML=t==='log'&&S.draft?runSub(S.draft):'';/* v58.6 */
  for(const k in CH)delete CH[k];
- document.body.classList.toggle('wide',t!=='log'||!S.draft);document.documentElement.classList.toggle('rd5',RD5());document.documentElement.classList.toggle('rd16',rd16f());document.documentElement.classList.toggle('rd17',rd17f());document.documentElement.classList.toggle('rd18',rd18f());document.documentElement.classList.toggle('rd19c',rd18f()&&rd19f());document.documentElement.classList.toggle('rd20c',rd18f()&&rd20f());document.documentElement.classList.toggle('navcap',navCap());lookSave();if(!NAVP)navProbe();/* 58.35 F: вигляд 58.35 (цілі дотику, тост) - під прапорцем */
+ document.body.classList.toggle('wide',t!=='log'||!S.draft);document.documentElement.classList.toggle('rd5',RD5());document.documentElement.classList.toggle('rd16',rd16f());document.documentElement.classList.toggle('rd17',rd17f());document.documentElement.classList.toggle('rd18',rd18f());document.documentElement.classList.toggle('rd19c',rd18f()&&rd19f());document.documentElement.classList.toggle('rd20c',rd18f()&&rd20f());document.documentElement.classList.toggle('rd24',rd24f());document.documentElement.classList.toggle('navcap',navCap());lookSave();if(!NAVP)navProbe();/* 58.35 F: вигляд 58.35 (цілі дотику, тост) - під прапорцем */
  const keep=LASTVIEW===t+'|'+(S.ui.stab||'')+'|'+(S.ui.ttab||'')+'|'+(S.ui.editTpl||'')+'|'+(S.draft?S.draft.id:''),y=window.scrollY;
  let openD=keep?[...document.querySelectorAll('#main details[open] > summary')].map(x=>x.textContent):[];
  const wasSq=$('#main').classList.contains('sqon'),hk=x=>x.textContent.replace(/\s+/g,'').slice(0,80);let openH=keep&&!wasSq?[...document.querySelectorAll('#main details.hlp[open]')].map(hk):[];/* ⓘ у Налаштуваннях мають однаковий заголовок - відновлюємо за текстом пояснення; після пошуку - нічого */if(!window.__rdy4Old){/* 58.34 Ш3: вкладені розділи в лінивому (не розгорнутому) розділі - їх немає в DOM, стан «відкрито» переноситься далі */const inD=new Set([...document.querySelectorAll('#main details > summary')].map(x=>x.textContent)),inH=new Set([...document.querySelectorAll('#main details.hlp')].map(hk));openD=keep?[...new Set(openD.concat(LZOD.filter(x=>!inD.has(x))))]:[];openH=keep&&!wasSq?[...new Set(openH.concat(LZOH.filter(x=>!inH.has(x))))]:[];LZOD=!setqAct()&&!wasSq?openD:[];LZOH=openH}
@@ -8552,6 +8579,8 @@ function tmRender(){try{nfSync()}catch(e){}const b=tmB();if(!b){tmClose();return
   <label class="chk tm-snd"><input type="checkbox" data-c="snd" id="tm-snd" ${S.settings.sound!==false?'checked':''}>Звук</label>
   <div class="tm-ctl"><button class="btn" data-a="tm-pause">${TM.paused?'Продовжити':'Пауза'}</button>${ph.k==='up'||ph.open?'':`<button class="btn" data-a="tm-skip">${ph.k==='prepw'||ph.k==='prepc'?'Почати':'Пропустити'}</button>`}<button class="btn" data-a="tm-stop">Стоп</button></div></div>`;
  tmDigits()}
+{const f1=openSheet;openSheet=function(){const r=f1.apply(this,arguments);try{sheet24()}catch(e){}return r}}
+{const f0=tmRender;tmRender=function(){const ob=document.querySelector('#timerHost .tmb');const k=TM?String(TM.i)+(TM.done?'d':''):'';const osc=ob&&ob.dataset.k===k?ob.scrollTop:0;const r=f0.apply(this,arguments);try{tm24(osc);const nb=document.querySelector('#timerHost .tmb');if(nb)nb.dataset.k=k}catch(e){}return r}}
 function tmDigits(){const el=document.getElementById('tm-dig');if(!el||!TM)return;const ph=TM.P[TM.i];if(!ph)return;const now=TM.paused?TM.pauseAt:Date.now();
  if(ph.k==='up'||ph.open){el.textContent=mmss((now-TM.start)/1000);const t=document.getElementById('tm-tot');if(t&&TM.t0)t.textContent='Загалом '+mmss((now-TM.t0)/1000)}
  else{el.textContent=mmss(Math.max(0,Math.ceil(ph.d-(now-TM.start)/1000)));const bi=document.getElementById('tm-bari');if(bi&&ph.d>0)bi.style.width=Math.max(0,Math.min(100,100*(ph.d-(now-TM.start)/1000)/ph.d)).toFixed(1)+'%'}}
